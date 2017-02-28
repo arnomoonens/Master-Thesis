@@ -1,89 +1,626 @@
 \documentclass[a4paper]{article}
-
+\usepackage{natbib}
 \usepackage[english]{babel}
 \usepackage[utf8x]{inputenc}
 \usepackage{amsmath}
+\usepackage{hyperref} % To show urls
 \usepackage{graphicx}
 \usepackage[colorinlistoftodos]{todonotes}
+\usepackage{float}
+\usepackage{amssymb}
+\usepackage[linesnumbered, ruled]{algorithm2e}
 
-\title{Your Paper}
-\author{You}
+\title{Thesis notes}
+\author{Arno Moonens}
 
 \begin{document}
 \maketitle
+\tableofcontents
 
-\begin{abstract}
-Your abstract.
-\end{abstract}
+\section{Sutton-Barto book}
+\cite{Sutton1998ReinforcementIntroduction.}.
+\subsection{Basics}
+$Q_t^{*}(a)$: Actual value of action $a$.\\
+$Q_t(a)$: Estimated value at the $t$'th play. Can be calculated by averaging the rewards after taking action $a$:
+\begin{equation}
+Q_t(a) = \frac{r_1 + r_2 + \dots + r_{k_a}}{k_a}
+\end{equation}
+$\epsilon$-greedy selection: select action with the best $Q_t(a)$.\\
+Softmax selection: select action $a$ on the $t$'th play with probability
+\begin{equation}
+\frac{e^{Q_t(a)/\tau}}{\sum_{b=1}^n e^{Q_t(a)/\tau}}
+\end{equation}
+$V(s)$: Estimate of the value of a state $s$.\\
+Policy $\pi$: mapping from each state $s$ and action $a$ to the probability $\pi(s,a)$ of taking action $a$ when in state $s$: $\pi_t(s,a) = P(a_t = a | s_t = s)$.\\
+$V^\pi(s)$: Expected return when starting in $s$ and following policy $\pi$ thereafter:
+\begin{equation}
+V^\pi(s) = E_\pi\{R_t|s_t=s\}=E_\pi\big \{ \sum_{k=0}^{\infty}\gamma^k r_{t+k+1} | s_t=s\big \}
+\end{equation}
+Where $\gamma$ is a discount applied over time to past rewards.
 
-\section{Introduction}
+%Chapter 4
+\subsection{Dynamic programming}
+In Dynamic programming, the whole model of the problem is known. A such, we have the complete probability distribution of all the possible transitions. For example, to evaluate a policy $\pi$:
+\begin{align}
+V^{\pi}(s) &= E_{\pi} \{r_{t+1} + \gamma r_{t+2} + \gamma^2r_{t+3}+\dots \mid s_t=s\}\\
+&= E_{\pi} \{r_{t+1} + \gamma V^{\pi}(s_{t+1}) \mid s_t=s\}\\
+&= \sum_a \pi(s,a) \sum_{s'} \mathcal{P}^a_{ss'} [\mathcal{R}^a_{ss'} + \gamma V^{\pi}(s')]
+\end{align}
+Here, $\pi(s,a)$ is the probability of taking action $a$ in state $s$. This $V^{\pi}(s)$ can be computed using iterative updates for every $s$:
+\begin{align}
+V_{k+1}(s) &= E_{\pi}\{r_{t+1} + \gamma V_k(s_{t+1}) \vert s_t=s\}\\
+&= \sum_a \pi(s,a) \sum_{s'}\mathcal{P}^a_{ss'} [\mathcal{R}^a_{ss'} + \gamma V_k(s')]
+\end{align}
+This iteration stops when this state-value function has converged. As can be seen, every possible next states is used in the computation instead of just a sample. Because of this, this kind of updates is called a full backup.\\
+The optimal state-value function $V*(s)$ and state-action-value function $Q*(s,a)$ can be calculated using the following formulas:
+\begin{align}
+V^{*}(s) &= \max_a E\{r_{t+1} + \gamma V^{*}(s_{t+1}) \vert s_t = s, a_t = a\}\\
+&= \max_a \sum_{s'} \mathcal{P}^a_{ss'} [\mathcal{R}^a_{ss'}+\gamma V^{*}(s')]\\
+Q^{*}(s,a) &= E\{r_{t+1} + \gamma \max_{a'} Q^{*}(s_{t+1},a') \vert s_t=s, a_t=a\}\\
+&= \sum_{s'} \mathcal{P}^a_{ss'} [\mathcal{R}^a_{ss'}+\gamma \max_{a'} Q^{*}(s',a')]
+\end{align}
+Other methods only need sample transitions. These methods try to solve 2 problems that can arise with problems. First, the model may be large, which makes it unfeasible to use for computing for example an optimal policy. Second, in real world problems, a complete model of the problem may not be available. It may for example be unknown what is the probability of ending in a certain state when taking a certain action from a start state.
 
-Your introduction goes here! Some examples of commonly used commands and features are listed below, to help you get started. If you have a question, please use the help menu (``?'') on the top bar to search for help or ask us a question. 
+\subsection{Other techniques}
+Monte-Carlo method for approximating $V$:
+\begin{equation}
+V(s_t) \leftarrow V(s_t) + \alpha\big[R_t - V(s_t)\big]
+\end{equation}
+$R_t$ is the actual return of an action and $\alpha$ is a constant step-size parameter.
+TD(0): 
+\begin{equation}
+V(s_t) \leftarrow V(s_t) + \alpha\big[r_{t+1}+\gamma V(s_{t+1}) - V(s_t)\big]
+\end{equation}
+Sarsa: On-Policy TD Control. Because it's on-policy, we must estimate the action-value function $Q^\pi(s,a)$ for the current behavior policy $\pi$ and for all states $s$ and actions $a$. We consider transitions from state-action pair to state-action pair instead of transitions from state to state (and then learned the value of states). The update is as follows:
+\begin{equation}
+Q(s_t,a_t) \leftarrow Q(s_t,a_t) + \alpha \big[ r_{t+1} + \gamma Q(s_{t+1},a_{t+1}) - Q(s_t,a_t) \big]
+\end{equation}
+%The Gamma parameter has a range of 0 to 1 (0 <= Gamma > 1).  If Gamma is closer to zero, the agent will tend to consider only immediate rewards.  If Gamma is closer to one, the agent will consider future rewards with greater weight, willing to delay the reward.
+Q-learning: off-policy TD control. It is defined by:
+\begin{equation}
+Q(s_t,a_t) \leftarrow Q(s_t,a_t) + \alpha \big[ r_{t+1} + \gamma \max_{a} Q(s_{t+1}, a) - Q(s_t,a_t) \big]
+\end{equation}
+Q will directly approximate Q* independently of the policy followed. The policy however can influence which state-action pairs are visited and updated. To guarantee finding the optimal behaviour, it is required that all pairs continue to be updated.\\
 
-\section{Some examples to get started}
+%Chapter 7
+\subsection{Eligibility traces}
+Eligibility traces are used in order to only influence eligible states or actions when a certain action is taken.\\
+%$n$-Step TD prediction
+Monte Carlo methods perform a backup for each state based on the entire sequence of observed rewards from that state until the end of the episode. The backup of simple methods is only based on the next reward of a state, using the state value one step later as a proxy for the remaining rewards. An intermediate method would perform a backup based on an intermediate number of rewards. Then, we use the rewards of the intermediate steps and the estimated value of the last state. A visualization can be seen in Figure \ref{fig:nStepTD}.
+\begin{figure}[H]
+\includegraphics[width=\linewidth]{images/nStepTD.png}
+\caption{Returns each based on a different amount of rewards and by using the state value as a proxy afterwards. This is not needed for Monte Carlo methods as they use all the future rewards.}
+\label{fig:nStepTD}
+\end{figure}
+The $n$-step target can be formulated as:
+\begin{equation}
+R_t^{(n)} = r_{t+1} + \gamma r_{t+2} + \dots + \gamma^{n-1}r_{t+n} + \gamma^n V_t(s_{t+n})
+\end{equation}
+There, we treat the terminal state as a state that always transitions to itself with zero reward. This way of treating an episodic task the same as a continuing task doesn't influence the result, even if we discount the returns. As such, all $n$-step returns that last up to or past termination have the same value as the complete return.\\
+The increment to $V_t(s_t)$ is then defined by:
+\begin{equation}
+\Delta V_t(s_t) = \alpha \big[ R_t^{(n)} - V_t(s_t) \big]
+\end{equation}
+In on-line updating, the updates are done during the episode, as soon as a $\Delta V_t(s_t)$ is computed. In off-line updating, these increments are set aside and applied after the episode is done.\\
+$n$-step TD methods are rarely used because they are inconvenient to implement. To compute $n$-step returns, you have to wait $n$ steps to observe the resultant rewards and states.\\
 
-\subsection{How to include Figures}
-
-First you have to upload the image file from your computer using the upload link the project menu. Then use the includegraphics command to include it in your document. Use the figure environment and the caption command to add a number and a caption to your figure. See the code for Figure \ref{fig:frog} in this section for an example.
-
-\begin{figure}
-\centering
-\includegraphics[width=0.3\textwidth]{frog.jpg}
-\caption{\label{fig:frog}This frog was uploaded via the project menu.}
+We can also take the weighted average of $n$-step return. This is called the forward view or theoretical view. The requirement is that the weights sum to 1. TD($\lambda$) is a particular way of doing this. The $\lambda$-return is defined by
+\begin{equation}
+R^\lambda_t = (1-\lambda) \sum_{n=1}^{\infty} \lambda^{n-1} R_t^{(n)}
+\end{equation}
+After a terminal state has been reached, all subsequent $n$-step returns are equal to $R_t$, so the $(1-\lambda)$ isn't applied. When $\lambda=1$, we will only have the conventional return $R_t$. The increment, $\Delta V_t(s_t)$, is:
+\begin{equation}
+\Delta V_t(s_t) = \alpha \big[ R_t^{\lambda} - V_t(s_t) \big]
+\end{equation}
+In this forward view, we look for each state visited forward in time to all the future rewards and decide how best to combine them. After looking forward from and updating one state, we move to the next and don't work with that state anymore. Future states, however, are viewed and processed repeatedly. This way of thinking is visualized in Figure \ref{fig:TDForwardView}.
+\begin{figure}[H]
+\includegraphics[width=\linewidth]{images/TDForwardView.png}
+\caption{The forward view, where each state value is updated by looking forward to the states and their rewards that follow.}
+\label{fig:TDForwardView}
 \end{figure}
 
-\subsection{How to add Comments}
+The backward view can be seen as a practical version of the forward view, as it achieves the same but is easier to implement.
+Here we have an additional memory variable associated with each state, the eligibility trace, denoted $e_t(s) \in \rm I\!R^+$. On each step, they are decayed by $\gamma \lambda$, and the eligibility trace for the one state visited on the step is incremented by 1. The increment $\Delta V_t(s_t)$ is then defined as such:
+\begin{subequations}
+\label{eq:backview}
+\begin{align}
+\delta_t &= r_{t+1} + \gamma V_t(s_{t+1}) - V_t(s_t) \label{eq:backview1} \\
+\Delta V_t(s) &= \alpha \delta_t e_t(s), \qquad \text{for all} \quad s \in S \label{eq:backview2}
+\end{align}
+\end{subequations}
+Here we work backwards and update backward to each prior state according to the state's eligibility trace at that time. This is visualized in Figure \ref{fig:TDBackwardView}.
+\begin{figure}[H]
+\includegraphics[width=\linewidth]{images/TDBackwardView.png}
+\caption{The backward view, where the value of visited states are updated based on their eligibility values.}
+\label{fig:TDBackwardView}
+\end{figure}
+If we set $\lambda = 0$, then we only update the trace for $s_t$, thus getting TD(0). For larger values, with $\lambda < 1$, more of the preceding states are changed. The more distant states are changed by a smaller amount because the eligibility trace is smaller. This way, they are blamed less for the TD error.\\
+If $\lambda = 1$ the credit given to earlier states falls only by $\gamma$ per step. If $\lambda = 1$ and $\gamma = 1$, then there is no decay at all and we achieve the Monte Carlo method for an undiscounted episodic task. This is known as TD(1). This TD(1) is more general however because it cannot only be applied to episodic tasks, but also to discounted continuing tasks. It can also be performed incrementally and on-line, while Monte Carlo methods have to wait until the episode is over. If the Monte Carlo control method does something bad, its behaviour cannot change during the same episode, while on-line TD(1) can (using $n$-step).\\
+Both methods achieve the same weight update.\\
 
-Comments can be added to your project by clicking on the comment icon in the toolbar above. % * <john.hammersley@gmail.com> 2016-07-03T09:54:16.211Z:
-%
-% Here's an example comment!
-%
-To reply to a comment, simply click the reply button in the lower right corner of the comment, and you can close them when you're done.
+To combine TD($\lambda$) and Sarsa, called Sarsa($\lambda$), we need eligibility traces for each state-action pair: $e_t(s,a)$. As such, we do updates like this:
+\begin{equation}
+Q_{t+1}(s,a) = Q_t(s,a) + \alpha \delta_t e_t(s,a), \qquad \text{for all} \quad s,a
+\end{equation}
+where
+\begin{equation}
+\delta_t = r_{t+1} + \gamma Q_t(s_{t+1},a_{t+1}) - Q_t(s_t,a_t)
+\end{equation}
+and
+\begin{equation}
+e_t(s,a) = \begin{cases}
+	\gamma \lambda e_{t-1}(s,a) + 1 & \text{if $s=s_t$ and $a=a_t$;} \\
+	\gamma \lambda e_{t-1}(s,a) & \text{otherwise}.
+\end{cases}
+\qquad \text{for all $s,a$}
+\end{equation}
 
-Comments can also be added to the margins of the compiled PDF using the todo command, \todo{Here's a comment in the margin!} as shown in the example on the right. You can also add inline comments:
+Q($\lambda$): There exists 2 different methods: Watkins's Q($\lambda$) and Peng's Q($\lambda$).\\
+Here, we must cut off the look ahead until the first exploratory action instead of the episode's end. This is done because this exploratory action doesn't have any relationship with the greedy policy. Recall that Q-learning is an off-policy method and the policy learned about is not necessarily the same as the one used to select actions. As such, it can learn about the greedy policy while following a policy involving exploratory (suboptimal) actions.
 
-\todo[inline, color=green!40]{This is an inline comment.}
+For Watkins's Q($\lambda$), if $a_{t+n}$ is the first exploratory action, the longest backup is toward:
+\begin{equation}
+r_{t+1} + \gamma r_{t+2} + \dots + \gamma^{n-1} r_{t+n} + \gamma^n \max_a Q_t(s_{t+n},a)
+\end{equation}
+Where we assume off-line updating.\\
+In the backward view, we update the eligibility traces just like in Sarsa, with the only exception that we set one to zero when an exploratory action is taken. We get the following result:
+\begin{equation}
+e_t(s,a) = I_{s s_t} * I_{a a_t} + \begin{cases}
+	\gamma \lambda e_{t-1}(s,a) & \text{if $Q_{t-1}(s_t,a_t) = \max_a Q_{t-1}(s_t,a)$;} \\
+    0 & \text{otherwise}
+\end{cases}
+\end{equation}
+Where $I_{xy}$ is an identity indicator function, equal to $1$ if $x=y$ and $0$ otherwise. The Q update is defined by:
+\begin{equation}
+Q_{t+1}(s,a) = Q_t(s,a) + \alpha \delta_t e_t(s,a)
+\end{equation}
+Where
+\begin{equation}
+\delta_t = r_{t+1} + \gamma \max_{a'} Q_t(s_{t+1}, a') - Q_t(s_t,a_t)
+\end{equation}
+Because exploratory actions happen often, backups won't be long and so eligibility traces won't have a lot of advantage anymore. Peng's Q($\lambda$) tries to solve this, being a hybrid of Sarsa($\lambda$) and Watkin's Q($\lambda$). Its component backups are neither off- nor on-policy. The earlier transitions are each on-policy and the last transition uses the greedy policy. As such, all but the last uses the actual experiences. Because of this, for a fixed non-greedy policy, $Q_t$ converges to neither $Q^{\pi}$ nor $Q^{*}$, but some hybrid between the 2. If the policy is more greedy, the method may still converge to $Q^{*}$.\\
 
-\subsection{How to add Tables}
+Replacing traces: a modified kind of eligibility traces that can yield a slightly better performance. With the traditional kind of traces (accumulating traces), the trace of a state is augmented by 1 when visiting it. With replacing traces, however, they are set to 1. Thus, we get the following update:
+\begin{equation}
+e_t(s) = \begin{cases}
+\gamma \lambda e_{t-1}(s) & \text{if $s \neq s_t$;}\\
+1 & \text{if $s=s_t$.}
+\end{cases}
+\end{equation}
+Prediction or control algorithms using this are called replace-trace methods.
+\begin{equation}
+e_t(s,a) = \begin{cases}
+1 + \gamma \lambda e_{t-1}(s,a) & \text{if $s=s_t$ and $a=a_t$;}\\
+0 & \text{if $s=s_t$ and $a \neq a_t$;} \qquad \text{for all $s,a$}\\
+\gamma \lambda e_{t-1}(s,a) & \text{if $s \neq s_t$.}
+\end{cases}
+\end{equation}
 
-Use the table and tabular commands for basic tables --- see Table~\ref{tab:widgets}, for example. 
+Variable $\lambda$: A different $\lambda$ can be used at each different time step $t$. It can for example depend on the current state: $\lambda_t = \lambda(s_t)$. We can for example set it to zero when we are sure about the estimate of the state $s_t$, so we don't have to use estimates of following states anymore. By setting it to $1$, we can achieve the opposite.
 
-\begin{table}
-\centering
-\begin{tabular}{l|r}
-Item & Quantity \\\hline
-Widgets & 42 \\
-Gadgets & 13
-\end{tabular}
-\caption{\label{tab:widgets}An example table.}
-\end{table}
+%Chapter 8
+\subsection{Generalization and function approximation}
+Normally, if there are a lot of possible states, it will take a long time to learn the estimates of all states. It is even possible that, after some time, previously unseen states will be encountered. This problem is possible when using continuous variables, images, \dots To solve this, we generalize states. As such, we can apply information of seen states to related states that haven't been visited yet. To do this, we combine standard reinforcement learning methods with generalization methods. A well known kind of generalization methods is called function approximation: it takes examples of a desired function and tries to approximate it. This is supervised learning (the input is the original value and the output to predict is the generalized value). The used supervised learning algorithm needs to be able to handle non-stationary target functions, as learning must be able to occur on-line. The error for the algorithm to minimize is the mean-squared error (MSE) between the true value of the state and the approximated one:
+\begin{equation}
+MSE(\overrightarrow{\theta_t}) = \sum_{s \in S} P(s) \big[ V^{\pi}(s) - V_t(s) \big]^2 
+\end{equation}
+Where $\theta_t$ is a component of the model that the algorithm generated and $P$ is a distribution weighting the errors of different states. As there are less components $\overrightarrow{\theta_t}$ than states, the flexibility for approximation is limited. Because of this, we use $P$ to define the trade-offs of focusing on improving the approximation of some states at the expense of others. Usually, this distribution $P$ is the same as the one from which the states in the training examples are drawn from and thus the distribution of states at which backups are done. For minimizing the error over a certain distribution of states, it is of course preferred that the training examples come from the same distribution.\\
+Another interesting distribution is the on-policy distribution, which describes the frequency with which states are encountered while the agent is interacting with the environment and selecting actions according to policy $\pi$. Minimizing the error over this distribution, we concentrate on states that actually occur while following the policy and ignoring others. Training examples for this distribution are also the easiest to get using Monte Carlo or TD methods because they generate backups from sample experience using the policy $\pi$.\\
+%Minimizing the MSE may not lead to finding the best predictions. However, we have no alternative yet.\\
+For simple function approximators such as linear ones, the best MSE we find might also be the global optimum. This is however rarely possible for more complex ones, e.g. kernel based methods or artificial neural networks, and they may stop at a local optimum. For many cases of interest in reinforcement learning, convergence to an optimum, i.e. achieving the highest possible reward, does not occur.\\
 
-\subsection{How to write Mathematics}
+One of the most widely used function approximation methods is based on gradient descent. Here, the parameter vector is a column vector with a fixed number of real valued components, $\overrightarrow{\theta_t} = (\theta_t(1), \theta_t(2), \dots, \theta_t(n)^T$. $V_t(s)$ is a smooth differentiable function of $\overrightarrow{\theta_t}$ for all $s \in S$. At each time step $t$, we observe a new example $s_t \mapsto V^{\pi}(s_t)$. The order of the received states is not assumed to be the same as the order of gathering them from transitions in the environment. Even if we would give the exact $V^{\pi}(s_t)$, the function approximator has only limited resources and would not be able to approximate the function exactly. Thus, it must generalize.\\
+Like already discussed, we assume that the states over which we want to minimize the MSE over come from the same distribution $P$ as the from examples. Gradient descent works by reducing the error by adjusting the parameters using the gradient:
+\begin{align}
+\overrightarrow{\theta}_{t+1} &= \overrightarrow{\theta}_t - \frac{1}{2} \alpha \Delta_{\overrightarrow{\theta}_t} \big[ V^{\pi}(s_t) - V_t(s_t) \big]^2\\
+&= \overrightarrow{\theta}_t + \alpha \big[ V^{\pi}(s_t) - V_t(s_t) \big] \Delta_{\overrightarrow{\theta}_t} V_t(s_t)
+\end{align}
+Where $\alpha$ is a positive step-size parameter and $\nabla_{\overrightarrow{\theta}_t}$ denotes the vector of partial derivatives for every function $f$. This vector is called the gradient of $f$ with respect to $\overrightarrow{\theta}_t$. The method is called gradient descent because the step with which we change $\overrightarrow{\theta}_t$ is proportional to the negative gradient of the MSE of the examples, i.e. in the direction of a lower MSE.\\
+If $V^{\pi}(s_t)$ is unavailable because we only have a noise-corrupted version or one with backed-up values, we can simple use $v_t$ instead of $V^{\pi}(s_t)$:
+\begin{equation}
+\overrightarrow{\theta}_{t+1} = \overrightarrow{\theta}_t + \alpha \big[ v_t - V_t(s_t) \big] \Delta_{\overrightarrow{\theta}_t} V_t(s_t)
+\end{equation}
+If $v_t$ is an unbiased estimate and so $E\{v_t\} = V^{\pi}(s_t)$ for each $t$, then $\overrightarrow{\theta}_t$ is guaranteed to converge to a local optimum under stochastic approximation conditions for decreasing the step-size parameter $\alpha$. This is the case for Monte Carlo state-value prediction.\\
 
-\LaTeX{} is great at typesetting mathematics. Let $X_1, X_2, \ldots, X_n$ be a sequence of independent and identically distributed random variables with $\text{E}[X_i] = \mu$ and $\text{Var}[X_i] = \sigma^2 < \infty$, and let
-\[S_n = \frac{X_1 + X_2 + \cdots + X_n}{n}
-      = \frac{1}{n}\sum_{i}^{n} X_i\]
-denote their mean. Then as $n$ approaches infinity, the random variables $\sqrt{n}(S_n - \mu)$ converge in distribution to a normal $\mathcal{N}(0, \sigma^2)$.
+An important special case is when the approximate function $V_t$ is a linear function of the parameter vector, $\overrightarrow{\theta}_t$. For every state $s$, there is a column vector of features $\overrightarrow{\phi}_s = (\phi_s(1), \phi_s(2), \dots, \phi_s(n))^T$, with the same number of components as $\overrightarrow{\theta}_t$. The approximate state-value function is then given by:
+\begin{equation}
+V_t(s) = \overrightarrow{\theta}_t^T \overrightarrow{\phi}_s = \sum_{i=1}^n \theta_t(i) \phi_s(i)
+\end{equation}
+The gradient with respect to $\overrightarrow{\theta}_t$ is then:
+\begin{equation}
+\nabla_{\overrightarrow{\theta}_t} V_t(s) = \overrightarrow{\phi}_s
+\end{equation}
+As can be seen, this update is rather simple. Furthermore, there is only one optimum (or several one which are equally good), $\overrightarrow{\theta}^{*}$. As a result, if a method is guaranteed to converge to or near a local optimum.\\
+Note that this linear form doesn't allow for the representation of interactions between features, for example when the presence of a certain features is good only if another feature is absent. For this, we need to introduce features that are combinations of feature values.\\
 
+Coarse coding is the representation of a state with features that overlap, for example a binary feature that is $1$ when the coordinate given by a $x$ and $y$ feature lies in a circle. If 2 points \textit{A} and \textit{B} have circles "in common", there will be some generalization between them, as the features for both points for those circles will be 1. The more in common, the greater this effect. If the circles are small or large, generalization will be over respectively a short or large distance. The nature of the generalization is also affected by the shape of the features. The fineness of discrimination is however only determined by the total number of features.\\
+In tile encoding, a form of coarse encoding, the fields of the features are grouped into exhaustive partitions of the input space, called tilings. These tilings are defined by ranges of values for state attributes that they cover. For one specific tiling, the state can only lie in the ranges of 1 tile.
+\todo{It's possible that it doesn't lie in any of the tiles.}
+As such, exactly one feature is active in each tiling and the total number of features present is always the same as the number of tilings. This allows us to set the step-size parameter $\alpha$ (used in formula \ref{eq:backview1}) in an easy, intuitive way. We can for example choose $\alpha = \frac{1}{m}$, where $m$ is the number of tilings.
+\todo{What is one-trial learning?}
+This results in exact one-trial learning. When the example $s_t \mapsto v_t$ is received, then the new value will be $V_{t+1}(s_t) = v_t$, whatever the prior value $V_t(s_t)$ was. For a slower change using for example $\alpha=\frac{1}{10m}$, one would move one-tenth of the way to the target in one update.\\
+The weighted sum to make up the approximate value function is almost trivial to compute, as in tile coding only binary features are used. Instead of performing $n$ multiplications and additions, we compute the indices of the $m<<n$ present features and then add up the $m$ corresponding components of the parameter vector. The eligibility trace computation is also easier because the components of the gradient $\nabla_{\overrightarrow{\theta}} V_t(s_t)$ are either $0$ or $1$.\\
+An easy to compute form of tilings are grid-like ones. Different tilings may also be used, ideally offset by different amounts. The width and shapes should match the width of generalization that is expected to be optimal. The denser the tiling, the more fine-grained the desired function can be, but also the greater the computational cost of updating. The width or shape of each tile must not be uniform or regular-shaped (like a square) however. One can also use stripes, diamond shapes, \dots To reduce memory requirements, hashing can be used. A large tiling can be collapsed in such way into a much smaller set of tiles. This hashing produces tiles consisting of non-contiguous, disjoint regions randomly spread throughout the state space, but that still form an exhaustive tiling.\\
+Radial basis functions are a generalization of coarse coding that allows for continuous-valued features: in the interval $[0,1]$ instead of just $0$ or $1$. This way, we can reflect various degrees to which the feature is present. A typical RBF feature, $i$, has a Gaussian (bell-shaped) response $\phi_s(i)$ dependent only on the distance between the state and the feature's centre state, $c_i$ and relative to the feature's width $\sigma_i$:
+\begin{equation}
+\phi_s(i) = e^{-\frac{||s-c_i||^2}{2 \sigma^2_i}}
+\end{equation}
+The advantage of this method is that they produce approximate functions that vary smoothly and are differentiable. The disadvantage is that $\sigma_i$ and $c_i$ must be tuned manually and that nonlinear RBF networks are computationally complex.\\
 
-\subsection{How to create Sections and Subsections}
+Kanerva coding: when there is high dimensionality, the previous methods can become impractical because of their computational complexity, even if we apply hashing. In the worst case, the complexity of the target function scales like the size of the state space. However, some dimensions of the state space may not matter and so don't contribute to the complexity. This way, adding dimensions may not be a problem and may even help.\\
+A way of using this approach is called Kanerva coding, where we choose binary features that correspond to particular prototype states. These are randomly selected from the entire state space. The receptive field of such a feature is all states sufficiently close to the prototype. The chosen distance is the hamming distance for a binary state space, which is the number of bits at which two states differ. Using Kanerva coding, the complexity of the functions depends entirely on the number of used features instead of the dimensionality.\\
 
-Use section and subsections to organize your document. Simply use the section and subsection buttons in the toolbar to create them, and we'll handle all the formatting and numbering automatically.
+To use function approximation for control, we use the action-value function $Q_t \approx Q^{\pi}$, that is represented as a parameterized functional form with parameter vector $\overrightarrow{\theta}_t$. Instead of only using training examples with $s_t$, they are now of the form $s_t, a_t \mapsto v_t$. The target output $v_t$ can be any approximation of $Q^{\pi}(s_t,a_t)$, including the usual backed-up values such as the full Monte Carlo return, $R_t$, or the one-step Sarsa return, $r_{t+1} + \gamma Q_t(s_{t+1}, a_{t+1})$. The gradient-descent update is now:
+\begin{equation}
+\overrightarrow{\theta}_{t+1} = \overrightarrow{\theta}_t + \alpha \big[ v_t - Q_t(s_t,a_t) \big] \nabla_{\overrightarrow{\theta}_t} Q_t(s_t,a_t)
+\end{equation}
+To select an action, we can just use a greedy (in off-policy methods) or $\epsilon$-greedy (in on-policy methods) approach.\\
+To use traces along with function approximation methods, we cannot set the trace of a state, because there are only traces for components of $\overrightarrow{\theta}_t$. Instead, we set the trace for each feature $i$ that the the current encountered state has.\\
+We can also set the traces of all non-selected actions to zero in the states encountered. To do this, for each state encountered, we first clear the traces of all features for the state and the actions not selected and then we set to 1 the traces of the features for the state and the action that was selected.\\
 
-\subsection{How to add Lists}
+Off-policy bootstrapping: Bootstrapping is the updating of a value estimate based on other value estimates. This is done by TD and DP methods, but not by Monte Carlo methods. TD($\lambda$) is a bootstrapping method when $\lambda <1$, but not when $\lambda = 1$. Although the latter involves bootstrapping within an episode, the net effect over a complete episode is the same as the non-bootstrapping Monte Carlo update. Bootstrapping methods such as TD($\lambda$) are harder to combine with function approximation because they only find near-minimal MSE solutions (only for the on-policy distribution) instead of the minimal MSE using for example linear, gradient-descent function approximation for any distribution of training examples, $P$.\\
+The restriction of convergence is especially a problem for off-policy methods such as Q-learning and DP methods because they do not backup states (or state-action pairs) with exactly the same distribution with which the states would be encountered following the policy whose value function they are estimating. Off-policy bootstrapping combined with function approximation can even lead to divergence and infinite MSE.\\
 
-You can make lists with automatic numbering \dots
+Bootstrapping looks like a bad idea because non-bootstrapping methods are more easy and reliably used with function approximation and over a broader range of conditions. Non-bootstrapping methods also achieve a lower asymptotic error, even when backups are done according to the on-policy distribution. In practice, however, bootstrapping methods achieve better performance. When $\lambda$ approaches $1$, which is the non-bootstrapping case, the performance becomes much worse.
 
-\begin{enumerate}
-\item Like this,
-\item and like this.
-\end{enumerate}
-\dots or bullet points \dots
+%Chapter 9
+\subsection{Planning and Learning}
+A model is something that can be used by an agent to predict the resulting state and reward of doing an action in the environment. Distribution model give a probability for each possibility, whereas sample models just return one of the possibilities. The model can be used to simulate experiences, as it can be used for several transitions and such to simulate entire episodes.\\
+Planning is the computational process of using this model and producing/improving a policy. State-space planning means the search through the state space for an optimal policy or path to a goal. In plan-space planning, we search through the space of plans. This includes evolutionary methods and partial-order planning. In the latter, the ordering of the steps is not fully defined in all the stages of planning.
+\begin{figure}[H]
+\includegraphics[width=\linewidth]{images/modelplanning.png}
+\label{fig:modelplanning}
+\end{figure}
+Planning uses simulated experience, whereas learning uses real experience. Learning algorithms that only require experience as input can be used with real experience as well as simulated experience.\\
+
+We planning is done online, new information gained from the interaction may change the model and influence planning. If decision-making and model-learning are both computationally expensive, the resources assigned to them must be divided.\\
+Real experience can be used by a planning agent in two ways: for improving the model (such that it more accurately represents the real environment), named \textit{model-learning}, and for directly improving the value function and as such the policy, called \textit{direct reinforcement learning}. Because the model is used by planning methods to influence the policy, it can be called \textit{indirect reinforcement learning}. Indirect models are complex but are able to achieve a better possible with less amount of experience. Direct methods are simpler and are not affected by biases that are present in the models used by indirect methods.\\
+Dyna-Q is an algorithm that combines planning, action, model-learning and direct-RL. The planning method is a random-sample on-step tabular Q-planning method. The direct RL method is one-step tabular Q-learning. The model-learning method is also table-based and assumes the world is deterministic. This means that it doesn't use probabilities and just return the previously experienced state and reward that was received after the queried state-action pair. The Q-planning algorithm only samples randomly from state-action pairs that have already been experienced, so the model is never queried with unknown pairs. Typically, as in Dyna-Q, the same reinforcement learning method is used both for learning from real experience and for planning from simulated experience.
+\begin{figure}[H]
+\includegraphics[width=\linewidth]{images/withwithoutplanning.png}
+\label{fig:withwithoutplanning}
+\end{figure}
+Without planning, each episode adds only one additional step to the policy. With planning, also only one step is added during the first episode, but during the second one, an extensive planning policy can be applied that reaches back almost to the start state.\\
+
+As could be seen in the previous figure, models may be able to fill in correct information. However, this is not always the case. Models may be wrong because only a limited number of samples have been observed, because of an imperfect function approximation that generalized wrongly or because the environment has changed and this hasn't been observed yet. When using this incorrect model, a sub-optimal policy will be computed. When the model is too optimistic, the algorithm will try to exploit this and notice that the optimistic values do not exist and will correct them. This optimism is for example discovered when a way in a maze gets blocked suddenly.\\
+There is a larger problem when the environment changes such that there are better opportunities than there were before. This "modeling error" may not be detected for a long time. In a maze, this may mean that suddenly a shorter path becomes available but the Dyna-Q algorithm doesn't detect it for a long time (or not at all) and keeps choosing the sub-optimal path.\\
+The general problem here is the trade-off between exploitation and exploration. As the algorithms didn't try actions that were computed as being sub-optimal in the policy, the new, optimal path was never discovered. We would like to explore changes in the environment, but without degrading to much the performance.\\
+The Dyna-Q+ algorithm is a heuristic that tries to find a perfect and practical solution. It encourages using actions that haven't been tried for a long time in the current state. It does so by increasing the reward of that transition by a value relative the the number of steps since the last use of the action. This way, exploration is encouraged.\\
+
+The previous Dyna agents simulated transitions starting from state-action pairs that were selected uniformly at random. However, focusing on certain state-action pairs may be more useful than others. In the start, for example, most state-action pairs still have a value of zero. As such, their is no using on simulating there transitions. Only transitions into states prior to the goal or from it into the goal are useful to simulate. Later on, there are more and more useful backups. This may again result in sampling from too many backups. It may be more useful to focus on transitions that would do the most good.\\
+When a value of a state has changed, the only useful transitions are those to this changed state. Afterwards, the transitions leading to these can be simulated as well, and so on. This way, we work backwards from the changed state.\\
+Again, we will have a lot of state-action pairs that can be backed up. Again, not all of them may be equally useful. The values of some states may have changed a lot, and as such the predecessor pairs of those are more likely to change a lot. The use this information, we insert backups of predecessors of changed states into a priority queue, sorted by the size of the change. We only insert it if the priority is larger than some threshold.\\
+The current (when the book was published) algorithms have to problem of relying on the fact that states are discrete. When function approximation is used (because the states are continuous), a single backup could influence a lot of other states. It is not clear of these states could be identified or processed efficiently.\\
+When using stochastic environments, the only difference is that we need to do a full backup and take into account all the possible next states along with their possibilities, instead of doing a sample backup.\\
+
+The computation of (one-step) backups can differ in 3 possible ways: The first is the binary difference of whether they back up state values or action values. The second one is whether they estimate the value for the optimal policy or for an arbitrary given policy. The last one is whether the backups are full backups or just sample backups. This results in 8 cases, of which 7 result in useful kind of backups. These are shown in the following figure.
+\begin{figure}[H]
+\includegraphics[width=\linewidth]{images/backuptypes.png}
+\label{fig:backuptypes}
+\end{figure}
+Full backups are only possible when we have a distribution model. Otherwise, we have to do sample backups using sample transitions from the environment or from a sample model. Full backups may give a better estimate because they are uncorrupted by the sample error, but they also require more computation because they need to do a lot more backups: they consider all the possible next states ($b$, the branching factor) instead of just one next state. This is probability not feasible to use with planning when there is not a lot of time available.\\
+
+In dynamic programming, we perform sweeps through the entire state(-action) space. As we already said, this may take a lot of time. In many tasks, some states may be irrelevant as they are only visited with a low probability and/or using very poor policies. The second possibility is to sample from the state(-action) space according to a distribution. If we would sample uniformly, we would have the same problems as the already explained exhaustive sweep.\\
+We could also use the distribution observed when following the current policy. This is easily generated by just starting in the start state and simulating until the terminal state (in case of an episodic task, otherwise it just keeps simulating). Here we simulate explicit individual trajectories and we perform backups using the state or state-action pairs encountered. This way of generating experience is called \textit{trajectory sampling}.\\
+If we would have an explicit representation of the on-policy distribution, we could sweep through all states, weighting the backup according to this distribution. This however will gives us again a large computational cost. We could also sample and update individual state-action pairs from this distribution, but this would not give a huge benefit over simulating the trajectories. Moreover, computing the on-policy distribution may require itself a big computational cost, as the distribution changes whenever the policy changes.\\
+Focusing on the on-policy distribution may be good because uninteresting parts of the state(-action) space may be ignored. However, it may also result in backing op the same part of the space over and over again. In experiments it was seen that sampling according to the on-policy distribution results in faster planning (faster change in value of start state) initially and retarded planning in the long run than using the uniform distribution. The effect is stronger with smaller branching factors, as well as when the number of states increased. In the short term, using the on-policy distribution results in performing backups on states that are near descendants of the start state. In the long run, this distribution may be bad for us because we keep focusing on the same states, which already have more or less their correct values. Other states may be more interesting to explore, which is why the exhaustive unfocused approached may be better in this case, at least for small problems (because of the computational cost).\\
+
+The idea of heuristic search is to make improved action selections given a value function. As such, it is a part of the policy computation. For a state, it considers a tree of all possible continuations. The approximate value function is applied to the leaf nodes and then backed up (max-backups like for $V^{*}$ and $Q^{*}$) towards the current state at the root. Once these backed-up values are computed, we can choose the best of them and discard the rest. ($\epsilon$-)greedy action selection methods are alike, as they only compute the backup values for all the possible next states (not for the states after those).\\
+By searching deeper, we obtain better action selections. This can eliminate the problem of imperfect action selection and the actions will be near optimal. However, more computation time is needed for deeper searches.\\
+Besides using it for action selection, heuristic search can also suggest ways to distribute the backups such that the optimal value function is approximated faster and to make the search more efficient. Ideally, the tree should be grown and explored deeper for actions that seem most likely to be best. Practically, this could be done by updating state-action pairs of which the value is close to the maximum available from the state. These kind of possibilities however have not been explored yet.\\
+Much of the effectiveness of heuristic search is due to its search tree being tightly focused on the states and actions that might immediately follow the current state. In a state, you select the actions of which the state-action value urgently needs to be accurate. Besides this, you should limit your memory resources. This 2 ways of focusing are probably the reasons why heuristic search is effective.
+
+\section{Policy gradient}
+By David Silver.\\
+
+Here, we parametrise the policy instead of the state value or state-action value function.
+\todo{reference?}
+Methods that parametrise the policy tend to have better convergence properties. 
+No value must be stored for every specific state and value. This is useful in problems where the state and/or action space is high-dimensional and/or continuous. Last, they can also learn policies where a probability is provided for every action.
+\todo{Explain this in a text.}
+Disadvantages:
 \begin{itemize}
-\item Like this,
-\item and like this.
+\item Typically converge to a local rather than global optimum
+\item Evaluating a policy is typically inefficient and high variance
 \end{itemize}
+This policy gradient has the form of $\pi_{\theta}(s,a)$. The way of measuring the quality of a policy (i.e. how well it performs in an environment) depends on the type of environment:
+\begin{itemize}
+\item Episodic environments: use the value of the start state: $J_1(\theta) = V^{\pi_{\theta}}(s_1) = E_{\pi_{\theta}} [v_1]$
+\item Continuing environments: use the average value: $J_{avV}(\theta) = \sum_s d^{\pi_{\theta}}(s)V^{\pi_{\theta}}(s)$
+\item or the average reward per time step: $J_{avR}(\theta) = \sum_s d^{\pi_{\theta}} \sum_a \pi_{\theta}(s,a) R_s^a$
+\end{itemize}
+Where $d^{\pi_{\theta}}$ is the stationary distribution of the Markov chain for $\pi_{\theta}$. The stationary distribution $\bar{\pi}$ of a Markov distribution $P$ is a probability distribution such that $\bar{\pi} = \bar{\pi} P$. It can be thought of as denoting how much time is spent in each state. This way, values/rewards of states which are visited often are given a higher importance.\\
+As such, we need to find the parameters $\theta$ that maximize $J(\theta)$. This optimization problem can be solved using approaches that don't use a gradient, such as hill climbing or genetic algorithms. However, here we focus on gradient descent. To use this, we move the parameter values along the gradient using the quality function: $\Delta \theta = \alpha \nabla_{\theta} J(\theta)$, where $\alpha$ is the step-size parameter and $\nabla_{\theta} J(\theta)$ is the partial derivative for every dimension of $\theta$. To estimate each partial derivative, we can compute the policy objective function $J(\theta)$ for a slightly changed value of $\theta$, determined by $\epsilon$. For each dimension $k$, this is:
+\begin{equation}
+\frac{\partial J(\theta)}{\partial \theta_k} \approx \frac{J(\theta + \epsilon u_k) - J(\theta)}{\epsilon}
+\end{equation}
+where $u_k$ is a one-hot vector with a value of $1$ in dimension $k$ and $0$ elsewhere. This kind of gradient is called a Finite Difference gradient. It is a simple, black-box way that works for every policy (because we don't need the derivative), but it is inaccurate and inefficient. We also need to determine the value of $\epsilon$ ourselves, which influences the accuracy.\\
 
-We hope you find Overleaf useful, and please let us know if you have any feedback using the help menu above.
+Instead, we will solve the problem analytically. We assume that the policy is differentiable when it is non-zero and that we know the gradient. Likelihood ratios use the following identity:
+\begin{align}
+\nabla_{\theta}\pi_{\theta}(s,a) &= \pi_{\theta}(s,a) \frac{\nabla_{\theta}\pi_{\theta}(s,a)}{\pi_{\theta}(s,a)}\\
+&= \pi_{\theta}(s,a) \nabla_{\theta} \log \pi_{\theta}(s,a)
+\end{align}
+Writing it using the $\log$ is possible because $(\log f)' = \frac{f'}{f}$. The score function is $\nabla_{\theta} \log \pi_{\theta}(s,a)$.\\
+This can now be used with for example a softmax policy. Here, we weight actions using a linear combination of features: $\phi(s_a)^T \theta$. The probability of an action is then the following proportion:
+\begin{equation}
+\pi_{\theta}(s,a) \propto \rm{e}^{\phi(s,a)^T \theta}
+\end{equation}
+The score function is here defined as being:
+\begin{equation}
+\nabla_{\theta} \log \pi_{\theta}(s,a) = \phi(s,a) - E_{\pi_{\theta}}[\phi(s,\cdot)]
+\end{equation}
+When having a continuous action space, it is better to use a Gaussian policy, where the mean is a linear combination $\mu(s) = \phi(s)^T \theta$ and the variance can be either fixed or also parametrised. The policy is then $a \sim N(\mu(s), \sigma^2)$. The score function here is defined as being:
+\begin{equation}
+\nabla_{\theta} \log \pi_{\theta}(s,a) = \frac{(a-\mu(s))\phi(s)}{\sigma^2}
+\end{equation}
+We can now use the likelihood ratios to compute the policy gradients for one-step Markov decision processes:
+\begin{align}
+J(\theta) &= E_{\pi_{\theta}}[r]\\
+&= \sum_{s \in S} d(s) \sum_{a \in A} \pi_{\theta}(s,a) R_{s,a}\\
+\nabla_{\theta} J(\theta) &= \sum_{s \in S} d(s) \sum_{a \in A} \pi_{\theta}(s,a) \nabla_{\theta} \log \pi_{\theta}(s,a) R(s,a)\\
+&= E_{\pi_{\theta}} [\nabla_{\theta} \log \pi_{\theta}(s,a)r]
+\end{align}
+When considering multiple trajectories $\tau \sim p_\theta(\tau) = p(\tau \vert \theta)$, we can compute the quality like this:
+\begin{equation}
+J(\theta) = \int_{T} p_{\theta}(\tau \vert \pi)r(\tau) d\tau
+\end{equation}
+Where $r(\tau) = \sum_{k=0} \gamma^k r_k$. We again have a gradient:
+\begin{equation}
+\nabla_{\theta}J_{\theta} = \nabla_{\theta} \int_{T} p_{\theta}(\tau \vert \pi)r(\tau) d\tau = \int_T \nabla_{\theta} p_{\theta}(\tau \vert \pi) r(\tau) d\tau
+\end{equation}
+Using again the $\log$ trick, we get:
+\begin{align}
+\nabla_{\theta}J(\theta) &= \int_T p_{\theta}(\tau \vert \pi) \nabla \log p_{\theta} (\tau \vert \pi) r(\tau) d\tau\\
+&= E[\nabla_{\theta} \log p_{\theta}(\tau \vert \pi)r(\tau)]\\
+&\approx \frac{1}{K} \sum_{k=1}^K \nabla_{\theta} \log p_{\theta}(\tau \vert \pi) r(\tau_k)
+\end{align}
+The Policy Gradient theorem states that we can use this for multi-step MDP's \citep{sutton1999policy}. We can do this by replacing the reward with the state-action value:
+\begin{equation}
+E_{\pi_{\theta}} [\nabla_{\theta} \log \pi_{\theta}(s,a)Q^{\pi_{\theta}}(s,a)]
+\end{equation}
+Monte-Carlo Policy gradients use this policy gradient theorem and update parameters using stochastic gradient descent. For this, a return $v_t$ is used as an unbiased sample of $Q^{\pi_{\theta}}(s,a)$. The resulting algorithm is called \texttt{REINFORCE}:
+\begin{algorithm}[H]
+\DontPrintSemicolon
+Initialize $\theta$ arbitrarily\;
+\For{each episode $\{s_1, a_1, r_2, \dots, s_{T_1}, a_{T_1}, r_T\} \sim \pi_{\theta}$} {
+	\For{$t=1$ to $T-1$} {
+    	$\theta \gets \theta + \alpha \nabla_{\theta} \log \pi_{\theta}(s_t,a_t)v_t$
+    }
+}
+\Return $\theta$
+\caption{REINFORCE}
+\end{algorithm}
+The problem with the Monte-Carlo is that it has a high variance. This can be solved by using an actor-critic method. The critic is used to update the action-value function parameters $w$, such that $Q_w(s,a) \approx Q^{\pi_{\theta}}(s,a)$, while the actor updates the policy parameters $\theta$, in the direction suggested by the critic. These actor-critic algorithms follow an approximate policy gradient:
+\begin{align}
+\nabla_{\theta}J(\theta) &\approx E_{\pi_{\theta}}[\nabla_{\theta} \log \pi_{\theta}(s,a) Q_w(s,a)]\\
+\Delta \theta &= \alpha \nabla_{\theta} \log \pi_{\theta}(s,a) Q_w(s,a)
+\end{align}
+The critic function can be seen of a way of evaluating how good the policy is for the current $\theta$. A simple way of computing $Q_w(s,a)$ is simply a linear function of $w$ and $\phi(s,a)$: $Q_w(s,a) = \phi(s,a)^T w$. The algorithm, named \texttt{QAC} then is:
+\begin{algorithm}[H]
+\DontPrintSemicolon
+Initialize $s,\theta$\;
+Sample $a \sim \pi_{\theta}$\;
+\For{each step} {
+	Sample reward $r = R_s^a$; sample transition $s' \sim P_s^a$\;
+    Sample action $a' \sim \pi_{\theta}(s',a')$\;
+    $\delta = r + \gamma Q_w(s',a') - Q_w(s,a)$\;
+    $\theta = \theta + \alpha \nabla_{\theta} \log \pi_{\theta}(s,a)Q_w(s,a)$\;
+    $w \gets w + \beta \delta \phi (s,a)$\;
+    $a \gets a'$, $s \gets s'$\;
+    }
+\caption{QAC}
+\end{algorithm}
+For a function approximation to be compatible, it needs to fulfill 2 conditions:
+\begin{itemize}
+\item The value function approximator is compatible to the policy: $\nabla_w Q_w(s,a) = \nabla_{\theta} \log \pi_{\theta}(s,a)$
+\item The value function parameters w minimize the mean-squared error: $\epsilon = E_{\pi_{\theta}} [(Q^{\pi_{\theta}}(s,a) - Q_w(s,a))^2]$
+\end{itemize}
+The policy gradient will then be exactly:
+\begin{equation}
+\nabla_{\theta}J(\theta) = E_{\pi_{\theta}} [\nabla_{\theta} \log \pi_{\theta}(s,a) Q_w(s,a)]
+\end{equation}
+To reduce the variance in the policy gradient we subtract the baseline function $B(s)$ from it. This doesn't change the expectation:
+\begin{align}
+E_{\pi_{\theta}} [\nabla_{\theta} \log \pi_{\theta}(s,a)B(s)] &= \sum_{s \in S} d^{\pi_{\theta}}(s) \sum_a \nabla_{\theta} \pi_{\theta}(s,a)B(s)\\
+&= \sum_{s \in S} d^{\pi_{\theta}}B(s)\nabla_{\theta} \sum_{a \in A} \pi_{\theta} (s,a)\\
+&= 0
+\end{align}
+A good baseline function is the state value function: $B(s) = V^{\pi_{\theta}}$. When this is used as a baseline function, we can rewrite the policy gradient using the advantage function $A^{\pi_{\theta}}(s,a)$:
+\begin{align}
+A^{\pi_{\theta}}(s,a) &= Q^{\pi_{\theta}}(s,a) - V^{\pi_{\theta}}(s)\\
+\nabla_{\theta}J(\theta) &= E_{\pi_{\theta}}[\nabla_{\theta} \log \pi_{\theta}(s,a) A^{\pi_{\theta}}(s,a)]
+\end{align}
+This still reduces the variance. The critic should now estimate the advantage function. This can be done by estimating both $V^{\pi_{\theta}}(s)$ and $Q^{\pi_{\theta}}(s,a)$. With those 2 function approximators we then get:
+\begin{align}
+V_v(s) &\approx V^{\pi_{\theta}}(s)\\
+Q_w(s,a) &\approx Q^{\pi_{\theta}}(s,a)\\
+A(s,a) &= Q_w(s,a) - V_v(s)
+\end{align}
+For updating those values, we can again use temporal difference learning. The TD error is:
+\begin{equation}
+\delta^{\pi_{\theta}} = r + \gamma V^{\pi_{\theta}}(s') - V^{\pi_{\theta}}(s)
+\end{equation}
+This is an unbiased estimate of the advantage function:
+\begin{align}
+E_{\pi_{\theta}}[\delta^{\pi_{\theta}} | s,a] &= E_{\pi_{\theta}}[r + \gamma V^{\pi_{\theta}}(s') | s,a] - V^{\pi_{\theta}}(s)\\
+&= Q^{\pi_{\theta}}(s,a) - V^{\pi_{\theta}}(s)\\
+&= A^{\pi_{\theta}}(s,a)
+\end{align}
+As such, we can use this TD error to compute the policy gradient:
+\begin{equation}
+\nabla_{\theta}J(\theta) = E_{\pi_{\theta}}[\nabla_{\theta} \log \pi_{\theta}(s,a) \delta^{\pi_{\theta}}]
+\end{equation}
+In practice, we use the function approximator of the critic function for the value function, using the critic parameters $v$:
+\begin{equation}
+\delta_v = r + \gamma V_v(s') - V_v(s)
+\end{equation}
 
+\section{Deep learning}
+Review by \cite{LeCun2015DeepLearning}.\\
+
+Before deep learning, raw data had to be transformed into an internal representation using features usable for for example classifiers. In deep learning, these features are learned by itself, as it is a representation-learning method. Furthermore, different levels of representation can be used. Each level build upon the previous one, starting from the input itself, and represents it in a more abstract way. These abstraction are generated as to recognize aspects of the input that are important for the classification task. Because of this, it is possible that small variations in the input have no influence on the abstraction and output. Because these abstractions are learned automatically, there is no need anymore to create internal representations manually, which requires more work as it is different for every kind of classification task. The generated abstractions may also recognize useful patterns in the data that might not be represented using the hand-crafted features.
+
+In supervised learning, our data set contains pairs of an input and the associated right output, also called training examples. The goal is to be able to predict the correct output given the input. When doing classification, the output only has a finite set of possible values. As such, the classification algorithm can output a score for each possible output which signifies its certainty or confidence that that output is correct for the input. Because of this, we want the correct output to have the highest score. In order to evaluate and improve the algorithm, we compute the error by calculating the differences between the computed output and the right output. Using this error, the algorithm can then improve its predictions and subsequently reduce the error by adjusting its internal parameters. These parameters, also called weights, influence which output is generated given the input.\\
+
+In order to adjust the weights vector, a gradient is computed. This gradient indicates how the error would change when adjusting each parameter by an infinitely small amount (calculated using derivatives). The weight vector is then adjusted in the opposite direction of the gradient vector as to decrease the weights. 
+\todo{Something about local minima and that it's not a problem for deep neural networks}
+This process continues until the error can't be reduced further.
+It is possible to calculate this output, error and gradient for every training example and then adjusting the weights using the average of them. \todo{why?}
+In practice, however, stochastic gradient descent is used.
+Here, one calculates the errors, outputs and average gradient for only a few examples. This is again executed until the error does not decrease anymore. It is stochastic because only a few training examples are used, which results in an average gradient that can be noisy.\\
+After training, one can evaluate the trained algorithm on a different kind of data set, called a test set. This contains data that the algorithm hasn't trained on. It is a way of seeing how well the algorithm has generalized beyond the given training examples.\\
+
+One of the simplest classifier is one usable for 2 classes and which computes the linear combination of the input and a weight vector. The result is then one number of which a threshold can be used to determine to which class the output belongs. This algorithm however can only separate the input in simple regions, namely half-spaces separated by a hyperplane. This lack of granularity and influence of variance in input that is irrelevant for the classification task (e.g. shifted objects in a picture should still be classified correctly) is not suitable for complex tasks like image recognition, unless an adequate feature extractors is applied first. Generic methods like kernel methods can be applied but are not guaranteed to work well for the task. Generally, feature extractors need to be developed manually in order to represent the aspects of the input that are important. This, however, requires more work and requires knowledge about the domain and classification task. \todo{this is just a repetition of before.}
+Deep learning can be used to learn these important aspects automatically.
+
+In deep learning, different modules are combined in order to get higher abstractions and to eventually generate output. Most of these modules contain weights which can be trained.
+
+As already explained, stochastic gradient descent is used in order to reduce the error. This method requires however gradients to be computed. To do this, we use backpropagation. This requires that there exists a derivative of each computation. First, these are applied to the weights producing the final output (using the directly received error), and then by working backwards and propagating the gradient (using the chain rule) to the weights that directly handle the input.
+
+In most of the applications using deep learning, feedforward neural networks are used. Here the input and output have a fixed size and the input is processed, possible using multiple layers, in order to produce the output.
+The linear combination computed to go from one layer to the next can also pass through a non-linear function. One of the most popular is the rectified linear unit (\textit{ReLU}). This uses the formula $f(z) = max(0,z)$. Other possibilities include the \textit{tanh} function ($f(z) = tanh(z)$) and the sigmoid function ($f(z) = \frac{1}{1 + e^{-z}}$). \textit{ReLU} is the most popular for deep learning however as it learns much faster when having a lot of layers.
+
+Layers that are between the input and output units are called hidden layers. These process the input in a non-linear way such that the categories become linearly separable. These hidden layers can be thought of as feature extractors.
+
+Local minima might seem like a problem for neural networks, but in practice they are rarely a problem, according to theoretical and empirical results.
+\todo{Make clearer if these are a problem or not.}
+Instead, there are more saddle points. Here, the gradient is zero and the surface curves up in most of the dimensions and curves down in the others. Generally a lot of such points are present, but they all have the same value for the objective function (the error).
+
+Convolutional neural networks are neural networks that get as input data in multiple arrays, such as 2-dimensional images with pixel intensities for example.\\
+\todo{look this up somewhere else.}
+A convolutional neural networks is structured as a series of stages, which are combinations of layers. In the first stages, convolutional layers and pooling layers are used.
+\todo{What are units and feature maps.}
+In a convolutional layer, units are organized in feature maps. 
+\todo{Explain relation with a real convolution (mathematically)?}
+Each of these units is connected to a patch in the feature maps of the previous layer through a set of weights that is called the filter bank. The result of the linear combination using these weights is then passed through a \textit{ReLU} or another non-linearity. All units in a specific feature map of a layer use the same filter bank. Different feature maps in a layer use a different filter bank.\\
+This is done because local groups of values may be correlated and as such may have the same weights. This reduces the amount of weights that need to be trained. Furthermore, certain concepts and local statistics (of images) may be invariant to the location. A certain pattern or motif in an image might appear in different places of the image and may have the same meaning.
+
+These convolutional layers are then combined with pooling layers. Instead of detection local conjunctions of features from the previous layer, pooling tries to merge semantically similar features into one. This is necessary because the positions of features that form a motif are not exact and can vary somewhat. To detect the motifs more reliably, we course-grain their features. The typical pooling unit computes the maximum of a local patch of units in one or a few feature maps. The neighbouring pooling units do the same for patches that are shifted by one or more rows and/or columns and as such creating an invariance to small shifts and distortions.\\
+In ConvNet, a convolutional network architecture that achieved many successes, two or three of these convolutions, non-linearities and poolings are stacked. Afterwards, a convolutional layer and fully-connected layer follow.
+
+Recurrent neural networks (RNN) are used to process sequential data such as speech and language. Here, an input sequence is processed one element at a time. The first RNNs used a state vector in their units that contains history about the past elements in the sequence. This is be visualized in Figure \ref{fig:rnnunrolled}.
+\begin{figure}[H]
+\includegraphics[width=\linewidth]{images/RNN-unrolled.jpg} %source: http://www.wildml.com/2015/09/recurrent-neural-networks-tutorial-part-1-introduction-to-rnns/
+\caption{A recurrent neural network in which each state (hidden unit) is passed to the next one. $x_t$ and $o_t$ are respectively the input and output at time step $t$. $s_t$ is the output of a hidden layer and depends on the hidden unit at the previous time step: $s_t = U*x_t + W*s_{t-1}$. Note that the same weights $U$, $V$ and $W$ are used at each time step.}
+\label{fig:rnnunrolled}
+\end{figure}
+%The above diagram has outputs at each time step, but depending on the task this may not be necessary. For example, when predicting the sentiment of a sentence we may only care about the final output, not the sentiment after each word. Similarly, we may not need inputs at each time step. The main feature of an RNN is its hidden state, which captures some information about a sequence.
+
+Training them was a problem because of the vanishing or exploding gradients, because they either shrink or grow at every time step. Theoretical and empirical evidence has shown that it is hard for these kind of networks to store information long enough and have difficulties to learn the long-term dependencies.\\ %Sources for this: http://people.idsia.ch/~juergen/SeppHochreiter1991ThesisAdvisorSchmidhuber.pdf and http://www-dsi.ing.unifi.it/~paolo/ps/tnn-94-gradient.pdf
+\todo{Explain this better}
+A way of solving this is using a long short-term memory. This is a combination of different units and which has an explicit memory. One of the units has a connection with itself and is used to accumulate or forget the stored information. It can be learned using another unit to know when to forget something and when to remember past information.\\
+Networks using LSTM units have proven to be more successful, especially when using several layers at each time step.\\
+Other networks with memory include a Neural Turing Machine, in which a tape-like memory is used from which the network can read or write.\\
+Another kind is a memory network, in which a normal network is augmented by a associative memory.
+
+To learn RNNs, we also need to change the backpropagation algorithm in order to handle with the different time steps. Here, the error (for one training example) is just the sum of the errors at every time step: $e = \sum_t e_t$. The adapted backpropagation algorithm, called backpropagation through time (BPTT), also just sums up the gradient at every time step for every set of weights:  $\frac{\partial E}{\partial W} = \sum_t \frac{\partial E_t}{\partial W}$. For the weights $U$ and $V$ of Figure \ref{fig:rnnunrolled}, the gradients are computed just as in normal backpropagation. For $W$ however, we depend on the previous state, which cannot simple be treated as a constant, and must be replaced as well. Because of this, we get:
+\begin{equation}
+\frac{\partial E_t}{\partial W} = \sum_{k=0}^t \frac{\partial E_t}{\partial \hat{y}_t} \frac{\partial \hat{y}_t}{\partial s_t} \frac{\partial s_t}{\partial s_k} \frac{\partial s_k}{\partial W}
+\end{equation}
+We see that training can be hard when the sequences are long, because we need to propagate back through the first time step.\\
+
+For the \textit{tanh} and \textit{sigmoid} function, the derivative is $0$ at both ends. This means that the gradients in other layers will also go towards zero and for small values in the matrix multiplications the gradient values are shrinking exponentially fast and become nearly zero after a few time steps. Because of this, steps far away won't contribute much to what you're currently computing, and as such the long-term dependencies are small. If the values of the partial derivatives are high however, we could get exploding gradients. These are however easier to detect and solve, because the value of the gradients will be too high to be presented by a variable in the programming language. The problem can also easily be solved by restricting the value in a certain range. %source: http://www.jmlr.org/proceedings/papers/v28/pascanu13.pdf
+
+The problem of vanishing gradients can be solved by a better initialization of the weights, by regularization and by another non-linear function, namely the already explained \textit{ReLU}. 
+\todo{Explain why.}
+For this function, the derivative is either 0 or 1.\\
+
+\todo{Also discuss GRUs?}
+LSTM architectures are an even more popular solution. These units consist of different parts:
+\begin{itemize}
+\item An input gate $i$ that determines how much of the newly calculated state should be let through into the memory: $i = \sigma (x_tU^i + s_{t-1}W^i)$.
+\item A forget gate $f$ that determines how much of the previous state you want to let through: $f = \sigma (x_tU^f + s_{t-1}W^f)$.
+\item An output gate $o$ that determines how much of the internal hidden state you want to output to the next layer: $i = \sigma (x_tU^o + s_{t-1}W^o)$.
+\item A candidate hidden state $g$ that is based on the input of the current time step and the state of the previous time step: $i = tanh(x_tU^g + s_{t-1}W^g)$.
+\item An internal memory $c_t$ that is the sum a fraction of the memory of the previous time step (determined by the forget gate) and a fraction of the candidate state (determined by the input gate): $c_t = c_{t-1} \circ f + g \circ i$.
+\item Finally, the output hidden state $s_t$ is a fraction of the $tanh$ of the memory $c_t$, determined by the output gate: $s_t = tanh(c_t) \circ o$
+\end{itemize}
+Here, $U^i$ is for example one of the weight vectors for the input gate. The $\sigma$ function means the sigmoid function. $\circ$ refers to the dot product, e.g. $x \circ y = \sum_i^N x_i y_i$.\\
+We can almost get the original RNN by setting the input and output gate weights to 1 and the forget gate weights to 0. The only difference is the $tanh$ function used to compute the output hidden state, which squashes the result more (along with the $tanh$ used to compute the candidate hidden state).\\
+
+Dropout is a way to prevent overfitting. It does so by randomly leaving out some visible or hidden units. As a result, all incoming and outgoing connections to these temporarily removed units are also removed. The simplest way of determining if a unit has to be removed is by removing it with a certain probability $p$, e.g. $p=0.5$. This value can also be determined by validation. As each unit can be present or not when using the network, for $n$ units there are $2^n$ possible networks. By learning each time using a possibly different network, we have a way of combining multiple models where each model is trained only a few times and most weights are shared between other models. Dropout is only used when training. In the testing phase, no units are removed. Here, however, we multiple the outgoing weights of each unit by there probability $p$.
+This is done to make sure that the the \textit{expected} output for any hidden unit is the same as the actual output at test time.
+
+In deep learning there are usually millions of these weights which can each be adjusted and can influence the output.
+\section{DQN}
+Original paper by \cite{Mnih2015Human-levelLearning}.\\
+
+Here, a deep convolutional network is applied on the pixels of a game to approximate an action-value function $Q^{*}(s,a)$ by using a parametrised action-value function $Q(s;a;\theta_i$). It uses experience replay and periodically updated target value functions to reduce the instability caused by using a nonlinear function to approximate the action-value function. This instability is caused by the correlation between subsequent observations. Small changes in the $Q$ value can lead to a big change in the policy and because of that the data distribution and the correlations between the action-values $Q(s,a)$ and the target values $r+\gamma \max_{a'} Q(s',a')$. The action that is selected determines which states that will be observed next.
+
+Experience replay solves the problem of having correlated subsequent observations and changing data distributions by randomizing used mini-batches of the data on which is learned. Experiences can be used multiple times, which results in an efficient use of the available data.\\
+For the replay memory, all the encountered experiences can be used or only the $N$ most recent ones. Here, however, it is possible that we forget experiences that may be important. Because we use uniform sampling to determine which experiences to use, we also give no extra importance (i.e. more probability) to more useful experiences.
+
+A second improvement is to only update the used target function every $C$ steps. This helps to reduce the correlation between the action-value function values and the target values, as for example $Q(s_t, a_t)$ can have an influence on $Q(s_{t+1},a)$. To do this, we copy the current network weights to obtain an action-value function $\hat{Q}$ to generate target values $y_j$. By doing this, we add a delay between the time an update to $Q$ is made and the time the update affects the targets $y_j$, making divergence or oscillations much more unlikely.
+
+The loss function used to update the weights of the parametrised action-value function is:
+\begin{equation}
+L_i(\theta_i) = E_{s,a,r,s'} \sim U(D) \big [ (r + \gamma \max_{a'} Q(s',a'; Q^{-}_i - Q(s,a;\theta_i)^2 \big ]
+\end{equation}
+Where $U(D)$ means that we take a uniformly random subset of the data set $D$. $\theta^{-}_i$ are the network parameters used to compute the target value. $\gamma$ determines the importance of future rewards.
+
+The deep convolutional neural network gets as input the pixels and has an output unit for every possible action. As such we can compute the action-value function for every action when being in a certain state using only one forward pass.\\
+
+To select an action, we can use the classic action selection policies such as $\epsilon$-greedy and softmax. Using these policies, we can learn off-policy because we don't always choose the action with the highest action-value. The value of respectively $epsilon$ or $tau$ in these mentioned policies can change over time to get closer to on-policy.\\
+Instead of stochastic gradient descent, RMSProp is used here.\\
+
+All rewards were clipped between -1 and 1 to limit the scale of derivatives as to limit the amount of change of the weights and as to allow for using the same learning rate for multiple games.
+
+Pseudo code can be seen in figure \ref{fig:dqnpseudo}.
+\begin{figure}[H]
+\includegraphics[width=\linewidth]{images/DQNPseudo.png}
+\caption{Pseudo code of the DQN algorithm}
+\label{fig:dqnpseudo}
+\end{figure}
+
+\section{Continuous control with deep reinforcement learning}
+Uses Actor-critic with replay and (slightly) different target value function. By \cite{Lillicrap2015ContinuousLearning}.\\
+
+Uses just like DQN a replay buffer.\\
+For the critic, a function approximator following loss is used:
+\begin{equation}
+L(\theta^Q) = E_{s_t \sim \rho^{\beta}, a_t \sim \beta, r_t \sim E} \big [ (Q(s_t, a_t \vert \theta^Q) - y_t)^2 \big ]
+\end{equation}
+Where
+\begin{equation}
+y_t = r(s_t,a_t) + \gamma Q(s_t, \mu(s_{t+1}) \vert \theta^Q)
+\end{equation}
+$\mu(s_t \vert \theta^Q)$ is a function that specifies the policy by mapping states to actions.
+\todo{Explicitly say what the Bellman equation is.}
+It can be seen that using the loss function we have a critic that is learned using the Bellman equation, just like in Q-learning.\\
+
+Instead of just copying the weights to the target value network every $C$ steps, we gradually move the target value network values towards the learned network values: $\theta' \leftarrow \tau \theta + (1-\tau) \theta'$ with $\tau \ll 1$. This has the effect that target values can only change slowly. This stability slows learning but helps to avoid divergence.\\
+
+Most of the games have different scales for their state values. Possible solutions are to change the hyperparameters for each game individually or the scale the states manually. Here, however, we use the more general solution called batch normalization. Here, we scale normalize each dimension across the samples in a minibatch in order to have unit mean and variance. This minimizes the covariance shift during training.
+
+\todo{Lookup how this works.}
+To have more exploration, noise is added to the actor policy. This noise is generated using the Ornstein-Uhlenbeck process.
+
+\section{Asynchronous Methods for Deep Reinforcement Learning}
+By \cite{Mnih2016AsynchronousLearning}.
+Here, they don't use experience replay because of memory and computation usage and because it is off-policy (it learns from data generated by a policy that may already be outdated). Instead, we use multiple agents (that use well-known reinforcement algorithms) that run in parallel but each running on a separate instance of the same type of environment. These all run on a multi-core CPU (i.e. on only one computer). Each of the agents use the same parameters $\theta$, but by using certain exploration policies, they are able to each explore a possibly different part of the state space. It is possible to use a different exploration policy for each agent as to maximize the exploration of different states. Each agent also calculates a gradient w.r.t. the parameters $\theta$ depending on its experience. These gradients are accumulated and after a certain number of steps they are applied to the parameters $\theta$. Because they are global, this update has an effect on all agents. After an amount (possibly the same amount as for the gradient update) of steps, the target network parameters $\theta^{-}$ can also be updated using the current parameters $\theta$.\\
+In $n$-step Q-learning and advantage actor-critic, a forward-view is used instead of the more commonly used backward view (which uses eligibility traces). Forward view was found to be easier when training neural networks with momentum-based methods and backpropagation through time. To do this, we first compute a certain number of steps (or until the episode is over). Then, the gradients are computed for each state-action pair encountered since the last update. Each n-step update uses the longest possible n-step return resulting in a one-step update for the last state, a two-step update for the second last state, and so on for a total of up to the previously determined number of maximum allowed steps. These accumulated gradients are then immediately applied to $\theta$.
+
+\section{Using Task Features for Zero-Shot Knowledge Transfer in Lifelong Learning}
+By \cite{Isele2016UsingOn}.\\
+Here, every task is represented by some features. When a new task arrives along with its predefined features, obtained from its task descriptor, a policy can be generated that immediately results in a good performance, even though the algorithm was not applied on that task before and the task descriptor, task order and task distrubtion was not known on beforehand. This way, knowledge transfer can take place without the need of training data to identify relationships across tasks. For each subsequent task, the policy and feature vector are iteratively improved.\\
+%factorization: ontbinding in factoren: bijv. 15=3*5
+First, it is assumed that the policy parameters for every task $t$ can be factorized using a shared knowledge base $L \in \mathbb{R}^{d \times k}$: $\theta^{(t)} = Ls^{(t)}$. $s^{(t)} \in \mathbb{R}^{(k)}$ are the sparse coefficients over the basis, i.e. the latent representation of the policy's parameters for task $t$. $L$ is able to capture relationships among policies as this is used to compute every policy, whereas there is a sparse representation for computed for each task separately.\\
+The features of the task are obtained by (possibly non-linear) feature extractors applied on the descriptor of the task: $\phi(m^{(t)}) \in \mathbb{R}^{d_m}$. These features can also be linearly factorized using another shared knowledge base $D \in \mathbb{R}^{d_m \times k}$: $\phi(m^{(t)}) = Ds^{(t)}$, where the same sparse representation is used as the one used to compute the policy. Both knowledge bases provide information about the task and because of this they share the same coefficient vectors $S$. We then used coupled dictionary optimization techniques from the sparse coding literature to optimize these dictionaries. They are updated iteratively based on trajectories samples from the current task.\\
+When a new task arrives, with its task descriptor, we search for the coefficients $s^{(t_{new})}$ that minimize the difference between the extracted features and the reconstruction of it using the shared knowledge base $D$. Using these coefficients, we can compute the policy parameters using $\theta = Ls^{(t_{new})}$. Afterwards, we can iterate again to improve $s$ and the knowledge bases.
+
+\section{Optimization techniques}
+\subsection{RMSProp}
+By \cite{Tieleman2012LectureMagnitude.}.
+
+In RMSProp, we only use the sign of the gradient to update the weights. This allows us the escape from plateaus more quickly. This is combined with a step size, used to control how much of the gradient to apply to the weight, that is adapted for each weight separately. For example, we can multiply the step-size of a certain weight by a factor greater than one if its last 2 gradients agreed on the sign, and multiply the step-size by a value less than 1 otherwise. This means that, when the gradients agree on the direction, we give them more influence. If the are not consistent and disagree in subsequent steps, we decrease the influence. We can also put a limit on the step-size as to not let it grow to excessively low or high amounts.\\
+By just using this, we would however have a problem of weights growing too high in unwanted situations. For example, when a gradient is for 9 times a small positive amount (e.g. $0.1$) and once a large negative amount (e.g. $-0.9$), we don't want to change the weights a lot because they balance each other out. Using the current algorithm however, the step-size and so the weights would become too high because we only look at the signs and not the magnitude of the gradients.\\
+Notice that, right know, we are dividing by the size of the gradient in order to just get $+1$ or $-1$ depending on the sign. It is however better to divide each weight by a moving average of the squared weight using the gradients of the past steps:
+\begin{align}
+MeanSquare(w, t) &= \gamma * MeanSquare(w, t-1) + (1 - \gamma) * f'(\theta_t)^2 \\
+v_{t+1} &= \frac{\alpha}{\sqrt{MeanSquare(w,t)}}f'(\theta_t)
+\end{align}
+Where $f'(\theta_t)$ is the gradient, $\alpha$ is the learning rate and $v_{t+1}$ is the eventual update.
+\bibliographystyle{apalike}
+\bibliography{Mendeley.bib}
 \end{document}
