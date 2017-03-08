@@ -10,7 +10,7 @@
 \usepackage{amssymb}
 \usepackage[linesnumbered, ruled]{algorithm2e}
 
-\title{Thesis notes}
+\title{Thesis}
 \author{Arno Moonens}
 
 \begin{document}
@@ -20,23 +20,32 @@
 \section{Sutton-Barto book}
 \cite{Sutton1998ReinforcementIntroduction.}.
 \subsection{Basics}
-$Q_t^{*}(a)$: Actual value of action $a$.\\
-$Q_t(a)$: Estimated value at the $t$'th play. Can be calculated by averaging the rewards after taking action $a$:
-\begin{equation}
-Q_t(a) = \frac{r_1 + r_2 + \dots + r_{k_a}}{k_a}
-\end{equation}
-$\epsilon$-greedy selection: select action with the best $Q_t(a)$.\\
-Softmax selection: select action $a$ on the $t$'th play with probability
-\begin{equation}
-\frac{e^{Q_t(a)/\tau}}{\sum_{b=1}^n e^{Q_t(a)/\tau}}
-\end{equation}
-$V(s)$: Estimate of the value of a state $s$.\\
-Policy $\pi$: mapping from each state $s$ and action $a$ to the probability $\pi(s,a)$ of taking action $a$ when in state $s$: $\pi_t(s,a) = P(a_t = a | s_t = s)$.\\
-$V^\pi(s)$: Expected return when starting in $s$ and following policy $\pi$ thereafter:
+In reinforcement learning, one tries to find which action to take in a certain situation in order to maximise a possibly delayed numerical reward. It does not now on beforehand which actions are optimal. As such, this must be discovered by trial-and-error. Subsequently, it can change its policy (denoted with the symbol $\pi$) to increase the achieved rewards. Because feedback in the form of numerical rewards may not be immediate, it must be able to backtrack which actions in certain situation lead to the reward that the reinforcement learning algorithm received.\\
+Reinforcement learning problems can be formulated in the form of a Markov Decision Process (MDP). This is four-tuple $(\mathcal{S}, \mathcal{A}, \mathcal{P}, \mathcal{R})$. $\mathcal{S}$ is the state space and contains all the possible states of the environment. The action space, $\mathcal{A}$, denotes all the possible actions that the agent can take in the environment. $\mathcal{P}: \mathcal{S} \times \mathcal{A} \to \mathcal{S}$ is the transition function and defines the probabilities for being in next state given a state and an action. $\mathcal{R}: \mathcal{S} \times \mathcal{A} \to \mathcal{R}$ gives probabilities for rewards when taking an action in a certain state.\\
+
+As was already stated, the reinforcement learning algorithm needs to devise a policy $\pi$. This is a mapping from each state $s$ and action $a$ to the probability $\pi(s,a)$ of taking action $a$ when in state $s$: $\pi_t(s,a) = P(a_t = a | s_t = s)$.\\
+Reinforcement learning algorithms often use a state-value function $V(s)$. This function says how good it is to be in a certain state $s$ by stating the expected return in the future starting from state $s$, where the return is the discounted rewards. This expected value when starting in state $s$ and following a specific policy $\pi$ is denoted as $V^\pi(s)$:
 \begin{equation}
 V^\pi(s) = E_\pi\{R_t|s_t=s\}=E_\pi\big \{ \sum_{k=0}^{\infty}\gamma^k r_{t+k+1} | s_t=s\big \}
 \end{equation}
-Where $\gamma$ is a discount applied over time to past rewards.
+Where $\gamma$ is a discount applied over time to past rewards. The optimal policy $\pi$ is the one that leads to the highest $V^\pi(s)$ for all $s \in \mathcal{S}$. The resulting state-value function is $V^*(s) = \max_\pi V^\pi(s)$ for all $s \in \mathcal{S}$.
+
+Like for states, it is also possible to use the value of an action $Q_t(a)$ at time step $t$. Which can be calculated by averaging the rewards obtained by applying action $a$ to time step $t$:
+\begin{equation}
+Q_t(a) = \frac{r_1 + r_2 + \dots + r_{k_a}}{k_a}
+\end{equation}
+Actions can then be selected by for example $\epsilon$-greedy or softmax. In $\epsilon$-greedy action selection, the action with the highest $Q_t(a)$ is selected with probability $1-\epsilon$ and a random action otherwise.\\
+Softmax chooses an action $a$ at time step $t$ with the following probability:
+\begin{equation}
+p_t(a) = \frac{e^{Q_t(a)/\tau}}{\sum_{b=1}^n e^{Q_t(b)/\tau}}
+\end{equation}
+Where $\tau$ is called the temperature and controls the balance between exploration and exploitation. For low values, the best actions are highly probable. For $\tau \to 1$, the probability distribution becomes uniform.\\
+
+It is also possible to define a value for taking an action in a certain state, which is the action-value function $Q(s,a)$. $Q^\pi(s,a)$ is the expected return after taking action $a$ in state $s$:
+\begin{equation}
+Q^\pi(s,a) = E_\pi\{R_t|s_t=s,a_t=a\}=E_\pi\big \{ \sum_{k=0}^{\infty}\gamma^k r_{t+k+1} | s_t=s,a_t=a\big \}
+\end{equation}
+Similarly as with $V^*(s)$, $Q^*(s,a)$ is the action-value function we have when applying the optimal policy.
 
 %Chapter 4
 \subsection{Dynamic programming}
@@ -52,7 +61,7 @@ V_{k+1}(s) &= E_{\pi}\{r_{t+1} + \gamma V_k(s_{t+1}) \vert s_t=s\}\\
 &= \sum_a \pi(s,a) \sum_{s'}\mathcal{P}^a_{ss'} [\mathcal{R}^a_{ss'} + \gamma V_k(s')]
 \end{align}
 This iteration stops when this state-value function has converged. As can be seen, every possible next states is used in the computation instead of just a sample. Because of this, this kind of updates is called a full backup.\\
-The optimal state-value function $V*(s)$ and state-action-value function $Q*(s,a)$ can be calculated using the following formulas:
+The optimal state-value function $V^*(s)$ and state-action-value function $Q*(s,a)$ can be calculated using the following formulas:
 \begin{align}
 V^{*}(s) &= \max_a E\{r_{t+1} + \gamma V^{*}(s_{t+1}) \vert s_t = s, a_t = a\}\\
 &= \max_a \sum_{s'} \mathcal{P}^a_{ss'} [\mathcal{R}^a_{ss'}+\gamma V^{*}(s')]\\
@@ -209,7 +218,7 @@ Another interesting distribution is the on-policy distribution, which describes 
 %Minimizing the MSE may not lead to finding the best predictions. However, we have no alternative yet.\\
 For simple function approximators such as linear ones, the best MSE we find might also be the global optimum. This is however rarely possible for more complex ones, e.g. kernel based methods or artificial neural networks, and they may stop at a local optimum. For many cases of interest in reinforcement learning, convergence to an optimum, i.e. achieving the highest possible reward, does not occur.\\
 
-One of the most widely used function approximation methods is based on gradient descent. Here, the parameter vector is a column vector with a fixed number of real valued components, $\overrightarrow{\theta_t} = (\theta_t(1), \theta_t(2), \dots, \theta_t(n)^T$. $V_t(s)$ is a smooth differentiable function of $\overrightarrow{\theta_t}$ for all $s \in S$. At each time step $t$, we observe a new example $s_t \mapsto V^{\pi}(s_t)$. The order of the received states is not assumed to be the same as the order of gathering them from transitions in the environment. Even if we would give the exact $V^{\pi}(s_t)$, the function approximator has only limited resources and would not be able to approximate the function exactly. Thus, it must generalize.\\
+One of the most widely used function approximation methods is based on gradient descent. Here, the parameter vector is a column vector with a fixed number of real valued components, also called a weight vector: $\overrightarrow{\theta_t} = (\theta_t(1), \theta_t(2), \dots, \theta_t(n)^T$. $V_t(s)$ is a smooth differentiable function of $\overrightarrow{\theta_t}$ for all $s \in S$. At each time step $t$, we observe a new example $s_t \mapsto V^{\pi}(s_t)$. The order of the received states is not assumed to be the same as the order of gathering them from transitions in the environment. Even if we would give the exact $V^{\pi}(s_t)$, the function approximator has only limited resources and would not be able to approximate the function exactly. Thus, it must generalize.\\
 Like already discussed, we assume that the states over which we want to minimize the MSE over come from the same distribution $P$ as the from examples. Gradient descent works by reducing the error by adjusting the parameters using the gradient:
 \begin{align}
 \overrightarrow{\theta}_{t+1} &= \overrightarrow{\theta}_t - \frac{1}{2} \alpha \Delta_{\overrightarrow{\theta}_t} \big[ V^{\pi}(s_t) - V_t(s_t) \big]^2\\
@@ -245,9 +254,8 @@ The advantage of this method is that they produce approximate functions that var
 
 %Kanerva coding
 When the states have a high number of attributes, the previous methods can become impractical because of their computational complexity, even if we apply hashing. In the worst case, the complexity of the target function scales with the size of the state space. However, it is possible that some attributes are not useful for the learning algorithm and it would we better if those do not contribute to the complexity. This way, adding dimensions may not lead to an exponential increase in computational complexity.\\
-A way of achieving this is called Kanerva coding, where we choose binary features that correspond to particular prototype states. These are randomly selected from the entire state space. The receptive field of such a feature is all states that are sufficiently close to the prototype. The chosen distance is the hamming distance for a binary state space, which is the number of bits at which two states differ. 
-\todo{Explain how this solves the mentioned problems.}
-Using Kanerva coding, the complexity of the functions depends entirely on the number of used features instead of the dimensionality.\\
+A way of achieving this is called Kanerva coding, where we choose binary features that correspond to particular prototype states. These are randomly selected from the entire state space. The receptive field of such a feature is all states that are sufficiently close to the prototype. This means that there is a feature for every prototype state and it is set to 1 if the state is close to that prototype state and 0 otherwise. The chosen distance is the hamming distance for a binary state space (e.g. in case of a bitwise representation of states), which is the number of bits at which two states differ. 
+Using Kanerva coding, the complexity of the functions depends entirely on the number of used features, i.e. the number of prototype states, instead of the dimensionality. The amount of prototypes can be tuned such that the computational complexity and/or the performance improves.\\
 
 To use function approximation for control, we use the action-value function $Q_t \approx Q^{\pi}$, that is represented as a parametrised functional form with parameter vector $\overrightarrow{\theta}_t$. Instead of only using training examples with $s_t$, they are now of the form $s_t, a_t \mapsto v_t$. The target output $v_t$ can be any approximation of $Q^{\pi}(s_t,a_t)$, including the usual backed-up values such as the full Monte Carlo return $R_t$ or the one-step Sarsa return $r_{t+1} + \gamma Q_t(s_{t+1}, a_{t+1})$. The gradient-descent update is now:
 \begin{equation}
@@ -261,8 +269,7 @@ We can also set the traces of all non-selected actions to zero in the states enc
 Bootstrapping is the updating of a value estimate based on other value estimates. This is done by TD and DP methods, but not by Monte Carlo methods. TD($\lambda$) is a bootstrapping method when $\lambda <1$, but not when $\lambda = 1$. Although the latter involves bootstrapping within an episode, afterwards the effect over a complete episode is the same as the non-bootstrapping Monte Carlo update. Bootstrapping methods such as TD($\lambda$) are harder to combine with function approximation because they only find near-minimal MSE solutions (only for the on-policy distribution) instead of the minimal MSE using for example linear, gradient-descent function approximation for any distribution of training examples, $P$.\\
 The restriction of convergence is especially a problem for off-policy methods such as Q-learning and DP methods because they do not backup states (or state-action pairs) with exactly the same distribution as the distribution of states we encounter when following the policy of which we want to estimate the value function. Off-policy bootstrapping combined with function approximation can even lead to divergence and infinite MSE.\\
 
-\todo{Source for the following paragraph?}
-Bootstrapping looks like a bad idea because non-bootstrapping methods are more easy and reliably used with function approximation and over a broader range of conditions. Non-bootstrapping methods also achieve a lower asymptotic error, even when backups are done according to the on-policy distribution. In practice, however, bootstrapping methods achieve better performance. When $\lambda$ approaches $1$, which is the non-bootstrapping case, the performance becomes much worse.
+Bootstrapping looks like a bad idea because non-bootstrapping methods are more easy and reliably used with function approximation and can be applied over a broader range of conditions. Non-bootstrapping methods also achieve a lower error in approaching the value function, even when backups are done according to the on-policy distribution \citep{ML}. In practice, however, bootstrapping methods achieve better performance. When $\lambda$ approaches $1$, which is the non-bootstrapping case, the performance becomes much worse.
 
 %Chapter 9
 \subsection{Planning and Learning}
@@ -308,8 +315,8 @@ In dynamic programming, we perform sweeps through the entire state(-action) spac
 We could also use the distribution observed when following the current policy. This is easily generated by just starting in the begin state and simulating until the terminal state (in case of an episodic task, otherwise it just keeps simulating). Here we simulate explicit individual trajectories and we perform backups using the state or state-action pairs encountered. This way of generating experience is called \textit{trajectory sampling}.\\
 If we would have an explicit representation of the on-policy distribution, we could sweep through all states, weighting the backup according to this distribution. This however will gives us again a large computational cost. We could also sample and update individual state-action pairs from this distribution, but this would not give a huge benefit over simulating the trajectories. Moreover, computing the on-policy distribution may require itself a big computational cost, as the distribution changes whenever the policy changes.\\
 Focusing on the on-policy distribution may be good because uninteresting parts of the state(-action) space may be ignored. However, it may also result in backing op the same part of the space over and over again. 
-\todo{Source?}
-In experiments it was seen that sampling according to the on-policy distribution results in faster planning (faster change in value of start state) initially and retarded planning in the long run than using the uniform distribution. The effect is stronger with smaller branching factors, as well as when the number of states increased. In the short term, using the on-policy distribution results in performing backups on states that are near descendants of the start state. In the long run, this distribution may be bad for us because we keep focusing on the same states, which already have more or less their correct values. Other states may be more interesting to explore, which is why the exhaustive unfocused approached may be better in this case, at least for small problems (because of the computational cost).\\
+
+In experiments it was seen that sampling according to the on-policy distribution results in faster planning initially and retarded planning in the long run than when using the uniform distribution \citep{ML}. The effect is stronger with smaller branching factors, as well as when the number of states increased. In the short term, using the on-policy distribution results in performing backups on states that are near descendants of the start state. In the long run, this distribution may be bad for us because we keep focusing on the same states, which already have more or less their correct values. Other states may be more interesting to explore, which is why the exhaustive unfocused approached may be better in this case, at least for small problems (because of the computational cost).\\
 
 The idea of heuristic search is to make improved action selections given a value function. As such, it is a part of the policy computation. For a state, it considers a tree of all possible continuations. The approximate value function is applied to the leaf nodes and then backed up (max-backups like for $V^{*}$ and $Q^{*}$) towards the current state at the root. Once these backed-up values are computed, we can choose the best of them and discard the rest. ($\epsilon$-)greedy action selection methods are alike, as they only compute the backup values for all the possible next states (not for the states after those).\\
 By searching deeper, we obtain better action selections. This can eliminate the problem of imperfect action selection and the actions will be near optimal. However, more computation time is needed for deeper searches.\\
@@ -361,6 +368,8 @@ J(\theta) &= E_{\pi_{\theta}}[r]\\
 \nabla_{\theta} J(\theta) &= \sum_{s \in S} d(s) \sum_{a \in A} \pi_{\theta}(s,a) \nabla_{\theta} \log \pi_{\theta}(s,a) R(s,a)\\
 &= E_{\pi_{\theta}} [\nabla_{\theta} \log \pi_{\theta}(s,a)r]
 \end{align}
+%Got it from here: https://pdfs.semanticscholar.org/eb5b/459c8a3e56064158fb3514eeab763486e437.pdf but I interpreted it wrong. However, REINFORCE may do something like , by averaging these gradients over multiple trajectories. So it may be useful to look into it
+\todo{Next part is wrong, see comment}
 When considering multiple trajectories $\tau \sim p_\theta(\tau) = p(\tau \vert \theta)$, we can compute the quality like this:
 \begin{equation}
 J(\theta) = \int_{T} p_{\theta}(\tau \vert \pi)r(\tau) d\tau
@@ -369,7 +378,6 @@ Where $r(\tau) = \sum_{k=0} \gamma^k r_k$. We again have a gradient:
 \begin{equation}
 \nabla_{\theta}J_{\theta} = \nabla_{\theta} \int_{T} p_{\theta}(\tau \vert \pi)r(\tau) d\tau = \int_T \nabla_{\theta} p_{\theta}(\tau \vert \pi) r(\tau) d\tau
 \end{equation}
-\todo{Explain what is K.}
 Using again the $\log$ trick, we get:
 \begin{align}
 \nabla_{\theta}J(\theta) &= \int_T p_{\theta}(\tau \vert \pi) \nabla \log p_{\theta} (\tau \vert \pi) r(\tau) d\tau\\
@@ -461,23 +469,22 @@ In practice, we use the function approximator of the critic function for the val
 \section{Deep learning}
 Review by \cite{LeCun2015DeepLearning}.\\
 
-Before deep learning, raw data had to be transformed into an internal representation using manually crafted features usable for model learners. In deep learning, these features are learned by itself, as it is a representation-learning method. Furthermore, different levels of representation can be used. Each level builds upon the previous one, starting from the input itself, and represents it in a more abstract way. These abstractions are generated as to recognize aspects of the input that are important for the task. Because of this, it is possible that small variations in the input have no influence on the abstraction and output. Because these abstractions are learned automatically, there is no need anymore to create internal representations manually, which require more work as it is different for every kind of task. The generated abstractions may also recognize useful patterns in the data that might not be represented using the hand-crafted features.
+Before deep learning, raw data had to be transformed into an internal representation using manually crafted features usable for model learners. In deep learning, these features are learned by itself, as it is a representation-learning method. Furthermore, different levels of representation can be used. Each level builds upon the previous one, starting from the input itself, and represents it in a more abstract way. These abstractions are generated as to recognize aspects of the input that are important for the task. Because of this, it is possible that small variations in the input have no influence on the abstraction and output. Because these abstractions are learned automatically, there is no need anymore to create internal representations manually, which require more work as it is different for every kind of task. The generated abstractions may also recognize useful patterns in the data that might not be represented using the hand-crafted features.\\
 
-\todo{This is just a basic section about classification. Should be somewhere else in the final paper?}
+
 In supervised learning, our data set contains pairs of an input and the associated right output, also called training examples. The goal is to be able to predict the correct output given the input. When doing classification, the output only has a finite set of possible values. As such, the classification algorithm can output a score for each possible output which signifies its certainty or confidence for that output being the correct one given the input. Because of this, we want the correct output to have the highest score. In order to evaluate and improve the algorithm, we compute the error by calculating the differences between the computed output and the right output. Using this error, the algorithm can then improve its predictions and subsequently reduce the error by adjusting its internal parameters. These parameters, also called weights, influence which output is generated given the input.\\
 
-In order to adjust the weights vector, a gradient is computed. This gradient indicates how the error would change when adjusting each parameter by an infinitely small amount (calculated using derivatives). The weight vector is then adjusted in the opposite direction of the gradient vector as to decrease the error. 
+In order to adjust the weight vector, i.e. the internal parameters, a gradient is computed. This gradient indicates how the error would change when adjusting each parameter by an infinitely small amount, calculated using derivatives. The weight vector is then adjusted in the opposite direction of the gradient vector as to decrease the error. This is only possible if the values of the weight vector are continuous and they are differentiable w.r.t. the error.
 \todo{Something about local minima and that it's not a problem for deep neural networks}
 This process continues until the error can't be reduced further, i.e. when it is in a local and/or global optimum.
-It is possible to calculate this output, error and gradient for every training example and then adjusting the weights using the average of them. \todo{Reference to why we do this (to reduce computational cost)?}
-In practice, however, stochastic gradient descent is used in order to reduce the computational cost.
+It is possible to calculate this output, error and gradient for every training example and then adjusting the weights using the average of them.
+In practice, however, stochastic gradient descent is used in order to reduce the computational cost and to have less chance of being trapped in local optima \citep{ML}.
 Here, one calculates the errors, outputs and average gradient for only a few examples. This is again executed until the error does not decrease anymore. It is stochastic because only a few training examples are used, which results in an average gradient that can be noisy. However this is computationally less expensive than using all the training examples at every iteration.\\
 After training, one can evaluate the trained algorithm on a different kind of data set, called a test set. This contains data that the algorithm has not trained on before. It is a way of seeing how well the algorithm has generalized beyond the given training examples.\\
 
 One of the simplest classifier is one usable for 2 classes and which computes the linear combination of the input and a weight vector. The result is one number of which a threshold can be used to determine to which class the output belongs. This algorithm however can only separate the input in simple regions, namely half-spaces separated by a hyperplane. This lack of granularity and influence of variance in input that is irrelevant for the classification task (e.g. shifted objects in a picture should still be classified correctly) is not suitable for complex tasks like image recognition, unless an adequate feature extractor is applied first. Generic methods like kernel methods can be applied but are not guaranteed to work well for the task. Generally, feature extractors need to be developed manually in order to represent the aspects of the input that are important. This, however, requires more work and requires knowledge about the domain and the task.
 
 In deep learning, the important aspects of the input can be detected automatically by combining different modules in order to get higher abstractions and to eventually generate output.
-\todo{State somewhere that weights are just numerical values.}
 Most of these modules contain weights which can be trained.
 
 As already explained, stochastic gradient descent is used in order to reduce the error. This method requires however gradients to be computed. To do this, we use backpropagation. This requires that there exists a derivative of each computation. First, these are applied to the weights producing the final output (using the directly received error), and then by working backwards and propagating the gradient (using the chain rule) to the weights that directly handle the input.
