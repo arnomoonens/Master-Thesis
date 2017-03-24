@@ -9,15 +9,26 @@
 \usepackage{float}
 \usepackage{amssymb}
 \usepackage[linesnumbered, ruled]{algorithm2e}
+\usepackage{titlesec}
 
+\setcounter{secnumdepth}{4}
+
+\titleformat{\paragraph}
+{\normalfont\normalsize\bfseries}{\theparagraph}{1em}{}
+\titlespacing*{\paragraph}
+{0pt}{3.25ex plus 1ex minus .2ex}{1.5ex plus .2ex}
 \title{Thesis}
 \author{Arno Moonens}
 
 \begin{document}
 \maketitle
+
+\abstract{Abstract}
+
 \tableofcontents
+\section{Introduction}
 \section{Background}
-\subsection{Sutton-Barto book}
+\subsection{Reinforcement learning}
 %\cite{Sutton1998ReinforcementIntroduction.}.
 \subsubsection{Basics}
 In reinforcement learning, one tries to find which action to take in a certain situation in order to maximise a possibly delayed numerical reward. It does not now on beforehand which actions are optimal. As such, this must be discovered by trial-and-error. Subsequently, it can change its policy (denoted with the symbol $\pi$) to increase the achieved rewards. Because feedback in the form of numerical rewards may not be immediate, it must be able to backtrack which actions in certain situation lead to the reward that the reinforcement learning algorithm received.\\
@@ -102,7 +113,7 @@ Eligibility traces are used in order to only influence eligible states or action
 Monte Carlo methods perform a backup for each state based on the entire sequence of observed rewards from that state until the end of the episode. The backup of more simple methods is only based on the next reward of a state, using the state value one step later as a proxy for the remaining rewards. An intermediate method would perform a backup based on an intermediate number of rewards. Then, we use the rewards of the intermediate steps and the estimated value of the last state. A visualization can be seen in Figure \ref{fig:nStepTD}.
 \begin{figure}[H]
 \includegraphics[width=\linewidth]{images/nStepTD.png}
-\caption{Returns each based on a different amount of rewards and by using the state value as a proxy afterwards. This is not needed for Monte Carlo methods as they use all the future rewards.}
+\caption{Returns each based on a different amount of rewards and by using the state value as a proxy afterwards. This is not needed for Monte Carlo methods as they use all the future rewards. Source: \cite{Sutton1998ReinforcementIntroductionb}.}
 \label{fig:nStepTD}
 \end{figure}
 The $n$-step target can be formulated as:
@@ -128,7 +139,7 @@ After a terminal state has been reached, all subsequent $n$-step returns are equ
 In this forward view, we look for each state visited forward in time to all the future rewards and decide how best to combine them. After looking forward from and updating one state, we move to the next and don't work with that state anymore. Future states, however, are viewed and processed repeatedly. This way of thinking is visualized in Figure \ref{fig:TDForwardView}.
 \begin{figure}[H]
 \includegraphics[width=\linewidth]{images/TDForwardView.png}
-\caption{The forward view, where each state value is updated by looking forward to the states and their rewards that follow.}
+\caption{The forward view, where each state value is updated by looking forward to the states and their rewards that follow. Source: \cite{Sutton1998ReinforcementIntroductionb}.}
 \label{fig:TDForwardView}
 \end{figure}
 
@@ -144,7 +155,7 @@ Here we have an additional memory variable associated with each state, the eligi
 Here we work backwards and update backward to each prior state according to the state's eligibility trace at that time. This is visualized in Figure \ref{fig:TDBackwardView}.
 \begin{figure}[H]
 \includegraphics[width=\linewidth]{images/TDBackwardView.png}
-\caption{The backward view, where the value of visited states are updated based on their eligibility values.}
+\caption{The backward view, where the value of visited states are updated based on their eligibility values. Source: \cite{Sutton1998ReinforcementIntroductionb}.}
 \label{fig:TDBackwardView}
 \end{figure}
 If we set $\lambda = 0$, then we only update the trace for $s_t$, thus getting TD(0). For larger values, with $\lambda < 1$, more of the preceding states are changed. The more distant states are changed by a smaller amount because the eligibility trace is smaller. This way, they are blamed less for the TD error.\\
@@ -246,6 +257,7 @@ The gradient with respect to $\overrightarrow{\theta}_t$ is then:
 As can be seen, this update is rather simple. Furthermore, there is only one optimum (or several one which are equally good), $\overrightarrow{\theta}^{*}$. As a result, if a method is guaranteed to converge to or near a local optimum.\\
 Note that this linear form doesn't allow for the representation of interactions between features, for example when the presence of a certain features is good only if another feature is absent. For this, we need to introduce features that are combinations of feature values.\\
 
+\paragraph{Coarse coding}
 Coarse coding is the representation of a state with features that overlap, for example a binary feature that is $1$ when the coordinate given by a $x$ and $y$ feature lies in a circle. If 2 points \textit{A} and \textit{B} have circles "in common", there will be some generalization between them, as the features for both points for those circles will be 1. The more in common, the greater this effect. If the circles are small or large, generalization will be over respectively a short or large distance. The nature of the generalization is also affected by the shape of the features. The fineness of discrimination is however only determined by the total number of features.\\
 In tile encoding, a form of coarse encoding, the fields of the features are grouped into exhaustive partitions of the input space, called tilings. These tilings are defined by ranges of values for state attributes that they cover. For one specific tiling, the state can only lie in the ranges of 1 tile. As such, maximally one feature is active in each tiling and the total number of features present is always the same as the number of tilings. This allows us to set the step-size parameter $\alpha$ (used in formula \ref{eq:backview1}) in an easy, intuitive way. We can for example choose $\alpha = \frac{1}{m}$, where $m$ is the number of tilings. This results in exact one-trial learning. When the example $s_t \mapsto v_t$ is received, then the new value will be $V_{t+1}(s_t) = v_t$, whatever the prior value $V_t(s_t)$ was. For a slower change using for example $\alpha=\frac{1}{10m}$, one would move one-tenth of the way to the target in one update.\\
 The weighted sum to make up the approximate value function is almost trivial to compute, as in tile coding only binary features are used. Instead of performing $n$ multiplications and additions, we compute the indices of the $m<<n$ present features and then add up the $m$ corresponding components of the parameter vector. The eligibility trace computation is also easier because the components of the gradient $\nabla_{\overrightarrow{\theta}} V_t(s_t)$ are either $0$ or $1$.\\
@@ -257,10 +269,12 @@ Radial basis functions are a generalization of coarse coding that allows for con
 The advantage of this method is that they produce approximate functions that vary smoothly and are differentiable. The disadvantage is that $\sigma_i$ and $c_i$ must be tuned manually and that non-linear RBF networks are computationally complex.\\
 
 %Kanerva coding
+\paragraph{Kanerva coding}
 When the states have a high number of attributes, the previous methods can become impractical because of their computational complexity, even if we apply hashing. In the worst case, the complexity of the target function scales with the size of the state space. However, it is possible that some attributes are not useful for the learning algorithm and it would we better if those do not contribute to the complexity. This way, adding dimensions may not lead to an exponential increase in computational complexity.\\
 A way of achieving this is called Kanerva coding, where we choose binary features that correspond to particular prototype states. These are randomly selected from the entire state space. The receptive field of such a feature is all states that are sufficiently close to the prototype. This means that there is a feature for every prototype state and it is set to 1 if the state is close to that prototype state and 0 otherwise. The chosen distance is the hamming distance for a binary state space (e.g. in case of a bitwise representation of states), which is the number of bits at which two states differ. 
 Using Kanerva coding, the complexity of the functions depends entirely on the number of used features, i.e. the number of prototype states, instead of the dimensionality. The amount of prototypes can be tuned such that the computational complexity and/or the performance improves.\\
 
+\paragraph{Function approximation for control}
 To use function approximation for control, we use the action-value function $Q_t \approx Q^{\pi}$, that is represented as a parametrised functional form with parameter vector $\overrightarrow{\theta}_t$. Instead of only using training examples with $s_t$, they are now of the form $s_t, a_t \mapsto v_t$. The target output $v_t$ can be any approximation of $Q^{\pi}(s_t,a_t)$, including the usual backed-up values such as the full Monte Carlo return $R_t$ or the one-step Sarsa return $r_{t+1} + \gamma Q_t(s_{t+1}, a_{t+1})$. The gradient-descent update is now:
 \begin{equation}
 \overrightarrow{\theta}_{t+1} = \overrightarrow{\theta}_t + \alpha \big[ v_t - Q_t(s_t,a_t) \big] \nabla_{\overrightarrow{\theta}_t} Q_t(s_t,a_t)
@@ -270,6 +284,7 @@ To use traces along with function approximation methods, we cannot set the trace
 We can also set the traces of all non-selected actions to zero in the states encountered. To do this, for each state encountered, we first clear the traces of all features for the state and the actions not selected and then we set to 1 the traces of the features for the state and the action that was selected.\\
 
 %Off-policy bootstrapping
+\paragraph{Bootstrapping}
 Bootstrapping is the updating of a value estimate based on other value estimates. This is done by TD and DP methods, but not by Monte Carlo methods. TD($\lambda$) is a bootstrapping method when $\lambda <1$, but not when $\lambda = 1$. Although the latter involves bootstrapping within an episode, afterwards the effect over a complete episode is the same as the non-bootstrapping Monte Carlo update. Bootstrapping methods such as TD($\lambda$) are harder to combine with function approximation because they only find near-minimal MSE solutions (only for the on-policy distribution) instead of the minimal MSE using for example linear, gradient-descent function approximation for any distribution of training examples, $P$.\\
 The restriction of convergence is especially a problem for off-policy methods such as Q-learning and DP methods because they do not backup states (or state-action pairs) with exactly the same distribution as the distribution of states we encounter when following the policy of which we want to estimate the value function. Off-policy bootstrapping combined with function approximation can even lead to divergence and infinite MSE.\\
 
@@ -292,7 +307,7 @@ Dyna-Q is an algorithm that combines planning, acting, model-learning and direct
 Without planning, each episode adds only one additional step to the policy. With planning, also only one step is added during the first episode, but during the second one, an extensive planning policy can be applied that reaches back almost to the start state. The result of this is shown in Figure \ref{fig:withwithoutplanning}.
 \begin{figure}[H]
 \includegraphics[width=\linewidth]{images/withwithoutplanning.png}
-\caption{Difference in computed optimal actions when using no planning method and when using one.}
+\caption{Difference in computed optimal actions when using no planning method and when using one. Source: \cite{Sutton1998ReinforcementIntroductionb}.}
 \label{fig:withwithoutplanning}
 \end{figure}
 
@@ -310,7 +325,7 @@ When using stochastic environments, the only difference is that we need to do a 
 The computation of (one-step) backups can differ in 3 possible ways: The first is the binary difference of whether they backup state values or action values. The second one is whether they estimate the value for the optimal policy or for an arbitrary given policy. The last one is whether the backups are full backups or just sample backups. This results in 8 cases, of which 7 result in useful kind of backups. These are shown in Figure \ref{fig:backuptypes}.
 \begin{figure}[H]
 \includegraphics[width=\linewidth]{images/backuptypes.png}
-\caption{Different kind of backups, depending on what value they backup and whether they do full backups or sample backups.}
+\caption{Different kind of backups, depending on what value they backup and whether they do full backups or sample backups. Source: \cite{Sutton1998ReinforcementIntroductionb}.}
 \label{fig:backuptypes}
 \end{figure}
 Full backups are only possible when we know the transition distribution ($\mathcal{P}^a_{ss'}$) and reward distribution ($\mathcal{R}^a_{ss'}$). Otherwise, we have to do sample backups using sample transitions from the environment or from a sample model. Full backups may give a better estimate because they are uncorrupted by the sample error, but they also require more computation because they need to do a lot more backups: they consider all the possible next states ($b$, the branching factor) instead of just one next state. This is probably not feasible to use with planning when there is not a lot of time available.\\
@@ -392,7 +407,7 @@ The Policy Gradient theorem states that we can use this for multi-step MDP's \ci
 \begin{equation}
 E_{\pi_{\theta}} [\nabla_{\theta} \log \pi_{\theta}(s,a)Q^{\pi_{\theta}}(s,a)]
 \end{equation}
-Monte-Carlo policy gradients use this policy gradient theorem and update parameters using stochastic gradient descent. For this, a return $v_t$ is used as an unbiased sample of $Q^{\pi_{\theta}}(s,a)$. The resulting algorithm is called \texttt{REINFORCE}:
+Monte-Carlo policy gradients use this policy gradient theorem and update parameters using stochastic gradient descent. For this, a return $v_t$ is used as an unbiased sample of $Q^{\pi_{\theta}}(s,a)$. The resulting algorithm is called \texttt{REINFORCE}:\\
 \begin{algorithm}[H]
 \DontPrintSemicolon
 Initialize $\theta$ arbitrarily\;
@@ -410,7 +425,7 @@ The problem with the Monte-Carlo policy gradient is that it has a high variance.
 \nabla_{\theta}J(\theta) &\approx E_{\pi_{\theta}}[\nabla_{\theta} \log \pi_{\theta}(s,a) Q_w(s,a)]\\
 \Delta \theta &= \alpha \nabla_{\theta} \log \pi_{\theta}(s,a) Q_w(s,a)
 \end{align}
-The critic function can be seen of a way of evaluating how good the policy is for the current $\theta$. A simple way of computing $Q_w(s,a)$ is simply a linear function of $w$ and $\phi(s,a)$: $Q_w(s,a) = \phi(s,a)^T w$. The algorithm, named \texttt{QAC} then is:
+The critic function can be seen of a way of evaluating how good the policy is for the current $\theta$. A simple way of computing $Q_w(s,a)$ is simply a linear function of $w$ and $\phi(s,a)$: $Q_w(s,a) = \phi(s,a)^T w$. The algorithm, named \texttt{QAC} then is:\\
 \begin{algorithm}[H]
 \DontPrintSemicolon
 Initialize $s,\theta$\;
@@ -515,7 +530,7 @@ An example of a convolutional neural network is ConvNet, a convolutional network
 Recurrent neural networks (RNNs) are used to process sequential data such as speech and language. Here, an input sequence is processed one element at a time. The first RNNs used a state vector in their units that contains history about the past elements in the sequence. This is visualized in Figure \ref{fig:rnnunrolled}.
 \begin{figure}[H]
 \includegraphics[width=\linewidth]{images/RNN-unrolled.jpg} %source: http://www.wildml.com/2015/09/recurrent-neural-networks-tutorial-part-1-introduction-to-rnns/
-\caption{A recurrent neural network in which each state (hidden unit) is passed to the next one. $x_t$ and $o_t$ are respectively the input and output at time step $t$. $s_t$ is the output of a hidden layer and depends on the input and the hidden unit at the previous time step: $s_t = U*x_t + W*s_{t-1}$. Note that the same weights $U$, $V$ and $W$ are used at each time step.}
+\caption{A recurrent neural network in which each state (hidden unit) is passed to the next one. $x_t$ and $o_t$ are respectively the input and output at time step $t$. $s_t$ is the output of a hidden layer and depends on the input and the hidden unit at the previous time step: $s_t = U*x_t + W*s_{t-1}$. Note that the same weights $U$, $V$ and $W$ are used at each time step. Source: \cite{LeCun2015DeepLearning}.}
 \label{fig:rnnunrolled}
 \end{figure}
 %The above diagram has outputs at each time step, but depending on the task this may not be necessary. For example, when predicting the sentiment of a sentence we may only care about the final output, not the sentiment after each word. Similarly, we may not need inputs at each time step. The main feature of an RNN is its hidden state, which captures some information about a sequence.
@@ -564,7 +579,7 @@ In deep learning there are usually millions of these weights which can each be a
 \subsection{DQN}
 %Original paper by \cite{Mnih2015Human-levelLearning}.\\
 
-Here, a deep convolutional network is applied on the pixels of a game to approximate an action-value function $Q^{*}(s,a)$ by using a parametrised action-value function $Q(s;a;\theta_i$). It uses experience replay and periodically updated target value functions to reduce the instability caused by using a nonlinear function to approximate the action-value function. This instability is caused by the correlation between subsequent observations. Small changes in the $Q$ value can lead to a big change in the policy and because of that the data distribution and the correlations between the action-values $Q(s,a)$ and the target values $r+\gamma \max_{a'} Q(s',a')$ can also change a lot. The action that is selected determines which states that will be observed next.
+In an algorithm used by \cite{mnih2013playing}, a deep convolutional network is applied on the pixels of a game to approximate an action-value function $Q^{*}(s,a)$ by using a parametrised action-value function $Q(s;a;\theta_i)$. It uses experience replay and periodically updated target value functions to reduce the instability caused by using a nonlinear function to approximate the action-value function. This instability is caused by the correlation between subsequent observations. Small changes in the $Q$ value can lead to a big change in the policy and because of that the data distribution and the correlations between the action-values $Q(s,a)$ and the target values $r+\gamma \max_{a'} Q(s',a')$ can also change a lot. The action that is selected determines which states that will be observed next.
 
 Experience replay solves the problem of having correlated subsequent observations and changing data distributions by randomizing used mini-batches of the data on which is learned. In each iteration, these random mini-batches of saved experiences are used for applying Q-learning updates. Experiences can be used multiple times, which results in an efficient use of the available data.\\
 For the replay memory, all the encountered experiences can be used or only the $N$ most recent ones. Here, however, it is possible that we forget experiences that may be important. Because we use uniform sampling to determine which experiences to use, we also give no extra importance (i.e. more probability) to more useful experiences.
@@ -587,7 +602,7 @@ All rewards were clipped between -1 and 1 to limit the scale of derivatives and 
 Pseudo code can be seen in figure \ref{fig:dqnpseudo}.
 \begin{figure}[H]
 \includegraphics[width=\linewidth]{images/DQNPseudo.png}
-\caption{Pseudo code of the DQN algorithm}
+\caption{Pseudo code of the DQN algorithm. Source: \cite{mnih2013playing}.}
 \label{fig:dqnpseudo}
 \end{figure}
 
@@ -637,6 +652,12 @@ MeanSquare(w, t) &= \gamma * MeanSquare(w, t-1) + (1 - \gamma) * f'(\theta_t)^2 
 v_{t+1} &= \frac{\alpha}{\sqrt{MeanSquare(w,t)}}f'(\theta_t)
 \end{align}
 Where $f'(\theta_t)$ is the gradient, $\alpha$ is the learning rate and $v_{t+1}$ is the eventual update.
+
+\section{Proposed algorithm}
+\section{Experimental setup}
+\section{Results}
+\section{Conclusion}
+
 \bibliographystyle{apalike}
 \bibliography{Mendeley.bib}
 \end{document}
