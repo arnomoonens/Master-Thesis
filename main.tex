@@ -12,18 +12,28 @@
 \usepackage{titlesec}
 
 \setcounter{secnumdepth}{4}
+\providecommand{\keywords}[1]{\textbf{\textit{Index terms---}} #1}
 
 \titleformat{\paragraph}
 {\normalfont\normalsize\bfseries}{\theparagraph}{1em}{}
 \titlespacing*{\paragraph}
 {0pt}{3.25ex plus 1ex minus .2ex}{1.5ex plus .2ex}
 \title{Thesis}
-\author{Arno Moonens}
+\author{
+	\textbf{Arno Moonens}\\
+    Vrije Universiteit Brussel\\
+    \texttt{arno.moonens@vub.be}\\
+\and
+	\textbf{Peter Vrancx}\\
+    Vrije Universiteit Brussel\\
+    \texttt{pvrancx@vub.ac.be}\\
+}
 
 \begin{document}
 \maketitle
 
 \abstract{Abstract}
+%\keywords{reinforcement learning, knowledge transfer}
 
 \tableofcontents
 \section{Introduction}
