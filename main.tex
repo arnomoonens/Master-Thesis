@@ -667,7 +667,7 @@ Where $f'(\theta_t)$ is the gradient, $\alpha$ is the learning rate and $v_{t+1}
 Our approach only uses a latent basis over the policy space instead of using one over the policy space and another one over the descriptor space like is done by \cite{Isele2016UsingLearning}. Again, for a task $(t)$, we can reconstruct the policy using the shared basis $L$ and the sparse coefficients over this basis for that specific task $s^{(t)}$: $\theta^{(t)} = Ls^{(t)}$, with $\theta^{(t)} \in \mathbb{R}^d$, $L \in \mathbb{R}^{d \times k}$ and $s^{(t)} \in \mathbb{R}^k$.\\
 
 The first set of tasks can be learned in two ways. One can either learn these tasks sequentially or asynchronous. In the sequential way, we collect trajectories and calculate the gradients for every task after another. Once this is done, we sum and apply the gradients of every task. The learning process for this set of tasks then stops when a certain number of updates have been applied.\\
-In the asynchronous way, learning is executed in parallel. Trajectories are collected for each task continuously and its gradients are applied immediately after they are calculated. This means that they are not first summed as in the sequential method.\\
+In the asynchronous way, learning is executed in parallel and for each task, a number of updates are executed on its own. Trajectories are collected for each task continuously and its gradients are applied immediately after they are calculated. This means that they are not first summed as in the sequential method.\\
 Afterwards, we learn the new task separately for a certain number of updates.
 
 \section{Experimental setup}
