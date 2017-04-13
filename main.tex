@@ -664,9 +664,20 @@ v_{t+1} &= \frac{\alpha}{\sqrt{MeanSquare(w,t)}}f'(\theta_t)
 Where $f'(\theta_t)$ is the gradient, $\alpha$ is the learning rate and $v_{t+1}$ is the eventual update.
 
 \section{Proposed algorithm}
-Our approach only uses a latent basis over the policy space instead of using one over the policy space and another one over the descriptor space like is done by \cite{Isele2016UsingLearning}. Again, for a task $(t)$, we can reconstruct the policy using the shared basis $L$ and the sparse coefficients over this basis for that specific task $s^{(t)}$: $\theta^{(t)} = Ls^{(t)}$, with $\theta^{(t)} \in \mathbb{R}^d$, $L \in \mathbb{R}^{d \times k}$ and $s^{(t)} \in \mathbb{R}^k$.
+Our approach only uses a latent basis over the policy space instead of using one over the policy space and another one over the descriptor space like is done by \cite{Isele2016UsingLearning}. Again, for a task $(t)$, we can reconstruct the policy using the shared basis $L$ and the sparse coefficients over this basis for that specific task $s^{(t)}$: $\theta^{(t)} = Ls^{(t)}$, with $\theta^{(t)} \in \mathbb{R}^d$, $L \in \mathbb{R}^{d \times k}$ and $s^{(t)} \in \mathbb{R}^k$.\\
+
+The first set of tasks can be learned in two ways. One can either learn these tasks sequentially or asynchronous. In the sequential way, we collect trajectories and calculate the gradients for every task after another. Once this is done, we sum and apply the gradients of every task. The learning process for this set of tasks then stops when a certain number of updates have been applied.\\
+In the asynchronous way, learning is executed in parallel. Trajectories are collected for each task continuously and its gradients are applied immediately after they are calculated. This means that they are not first summed as in the sequential method.\\
+Afterwards, we learn the new task separately for a certain number of updates.
+
 \section{Experimental setup}
-First a number of tasks were learned that can update both the shared knowledge base and their own sparse representation. After a number of epochs, i.e. updates to these variables, we stop with learning these tasks. Instead, we learn to solve a new task for which we hadn't learned its sparse representation. Here however, only the sparse representation can be updated and not the shared knowledge base.
+First, a number of environments are randomly generated. The environment for each task can differ for a predefined number of attributes, of which the values can each be in a certain range. For a cart-pole task, this can be the length and the mass of the pole.\\
+Then a number of tasks were learned that can update both the shared knowledge base and their own sparse representation. After a number of epochs, i.e. updates to these variables, we stop with learning these tasks. Instead, we learn to solve a new task for which we hadn't learned its sparse representation. Here however, only the sparse representation can be updated and not the shared knowledge base.\\
+This learning process is repeated 20 times with the same set of environments. However it is possible that the attributes of each environment may be similar and thus knowledge transfer may be trivial. Because of this, we generate 10 times a new set of environments and execute 20 runs with them as explained before.\\
+Afterwards the rewards are averaged over all the runs and results of different environment sets.\\
+Trajectories for both sets of tasks contained of maximally 200 steps. This could be less in case the environment was in an end state. In case of the cart-pole environment, this can mean for example that the cart tried to cross the left or right border or that the pole fell down.\\
+The reward in case of the cart-pole environment is the number of steps that were executed with the environment.\\
+Hyperparameters, such as the learning rate of neural networks, were chosen by iteratively executing the previously mentioned experiment. Possible values for each hyperparameter were chosen manually.
 \section{Results}
 \section{Conclusion}
 
