@@ -244,7 +244,10 @@ Another interesting distribution is the on-policy distribution, which describes 
 For simple function approximators such as linear ones, the best MSE we find might also be the global optimum. This is however rarely possible for more complex ones, e.g. kernel based methods or artificial neural networks, and they may stop at a local optimum. For many cases of interest in reinforcement learning, convergence to an optimum, i.e. achieving the highest possible reward, does not occur.\\
 
 One of the most widely used function approximation methods is based on gradient descent. Here, the parameter vector is a column vector with a fixed number of real valued components, also called a weight vector: $\overrightarrow{\theta_t} = (\theta_t(1), \theta_t(2), \dots, \theta_t(n)^T$. $V_t(s)$ is a smooth differentiable function of $\overrightarrow{\theta_t}$ for all $s \in S$. At each time step $t$, we observe a new example $s_t \mapsto V^{\pi}(s_t)$. The order of the received states is not assumed to be the same as the order of gathering them from transitions in the environment. Even if we would give the exact $V^{\pi}(s_t)$, the function approximator has only limited resources and would not be able to approximate the function exactly. Thus, it must generalize.\\
-Like already discussed, we assume that the states over which we want to minimize the MSE over come from the same distribution $P$ as the from examples. Gradient descent works by reducing the error by adjusting the parameters using the gradient:
+Like already discussed, we assume that the states over which we want to minimize the MSE over come from the same distribution $P$ as the from examples. 
+%Found following definition on: https://en.wikipedia.org/wiki/Score_(statistics)
+\todo{Gradient: vector of partial derivatives. Find citation for this.}
+Gradient descent works by reducing the error by adjusting the parameters using the gradient:
 \begin{align}
 \overrightarrow{\theta}_{t+1} &= \overrightarrow{\theta}_t - \frac{1}{2} \alpha \Delta_{\overrightarrow{\theta}_t} \big[ V^{\pi}(s_t) - V_t(s_t) \big]^2\\
 &= \overrightarrow{\theta}_t + \alpha \big[ V^{\pi}(s_t) - V_t(s_t) \big] \Delta_{\overrightarrow{\theta}_t} V_t(s_t)
@@ -372,7 +375,17 @@ As such, we need to find the parameters $\theta$ that maximize $J(\theta)$. This
 \end{equation}
 where $u_k$ is a one-hot vector with a value of $1$ in dimension $k$ and $0$ elsewhere. This kind of gradient is called a Finite Difference gradient. It is a simple, black-box way that works for every policy (because we don't need the derivative), but it is inaccurate and inefficient. We also need to determine the value of $\epsilon$ ourselves, which influences the accuracy.\\
 
-Instead, we will solve the problem analytically. We assume that the policy is differentiable when it is non-zero and that we know the gradient. Likelihood ratios use the following identity:
+Instead, we will solve the problem analytically. We assume that the policy is differentiable when it is non-zero and that we know the gradient. 
+
+%What is likelihood?
+% Likelihood is a funny concept. It’s not a probability, but it is proportional to a probability. The likelihood of a hypothesis (H) given some data (D) is proportional to the probability of obtaining D given that H is true, multiplied by an arbitrary positive constant (K). In other words, L(H|D) = K · P(D|H). Since a likelihood isn’t actually a probability it doesn’t obey various rules of probability. For example, likelihood need not sum to 1.
+
+% A critical difference between probability and likelihood is in the interpretation of what is fixed and what can vary. In the case of a conditional probability, P(D|H), the hypothesis is fixed and the data are free to vary. Likelihood, however, is the opposite. The likelihood of a hypothesis, L(H|D), conditions on the data as if they are fixed while allowing the hypotheses to vary.
+
+% The distinction is subtle, so I’ll say it again. For conditional probability, the hypothesis is treated as a given and the data are free to vary. For likelihood, the data are a given and the hypotheses vary.
+% Source (with more explanation): https://alexanderetz.com/2015/04/15/understanding-bayes-a-look-at-the-likelihood/
+\todo{Explain likelihood}
+Likelihood ratios use the following identity:
 \begin{align}
 \nabla_{\theta}\pi_{\theta}(s,a) &= \pi_{\theta}(s,a) \frac{\nabla_{\theta}\pi_{\theta}(s,a)}{\pi_{\theta}(s,a)}\\
 &= \pi_{\theta}(s,a) \nabla_{\theta} \log \pi_{\theta}(s,a)
