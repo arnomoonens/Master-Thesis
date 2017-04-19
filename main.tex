@@ -37,11 +37,10 @@
 
 \tableofcontents
 \section{Introduction}
-\section{Background}
-\subsection{Reinforcement learning}
+\section{Reinforcement learning}
 %\cite{Sutton1998ReinforcementIntroduction.}.
-\subsubsection{Basics}
-In reinforcement learning, one tries to find which action to take in a certain situation in order to maximise a possibly delayed numerical reward. It does not now on beforehand which actions are optimal. As such, this must be discovered by trial-and-error. Subsequently, it can change its policy (denoted with the symbol $\pi$) to increase the achieved rewards. Because feedback in the form of numerical rewards may not be immediate, it must be able to backtrack which actions in certain situation lead to the reward that the reinforcement learning algorithm received.\\
+\subsection{Basics}
+In reinforcement learning, one tries to find which action to take in a certain situation in order to maximise a possibly delayed numerical reward. It does not know on beforehand which actions are optimal. As such, this must be discovered by trial-and-error. Subsequently, it can change its policy (denoted with the symbol $\pi$) to increase the achieved rewards. Because feedback in the form of numerical rewards may not be immediate, it must be able to backtrack which actions in certain situation lead to the reward that the reinforcement learning algorithm received.\\
 Reinforcement learning problems can be formulated in the form of a Markov Decision Process (MDP). This is four-tuple $(\mathcal{S}, \mathcal{A}, \mathcal{P}, \mathcal{R})$. $\mathcal{S}$ is the state space and contains all the possible states of the environment. The action space, $\mathcal{A}$, denotes all the possible actions that the agent can take in the environment. $\mathcal{P}: \mathcal{S} \times \mathcal{A} \to \mathcal{S}$ is the transition function and defines the probabilities for being in next state given a state and an action. $\mathcal{R}: \mathcal{S} \times \mathcal{A} \to \mathcal{R}$ gives probabilities for rewards when taking an action in a certain state.\\
 
 As was already stated, the reinforcement learning algorithm needs to devise a policy $\pi$. This is a mapping from each state $s$ and action $a$ to the probability $\pi(s,a)$ of taking action $a$ when in state $s$: $\pi_t(s,a) = P(a_t = a | s_t = s)$.\\
@@ -70,7 +69,7 @@ Q^\pi(s,a) = E_\pi\{R_t|s_t=s,a_t=a\}=E_\pi\big \{ \sum_{k=0}^{\infty}\gamma^k r
 Similarly as with $V^*(s)$, $Q^*(s,a)$ is the action-value function we have when applying the optimal policy.
 
 %Chapter 4
-\subsubsection{Dynamic programming}
+\subsection{Dynamic programming}
 In Dynamic programming, the whole model of the problem is known. A such, we have the complete probability distribution of all the possible transitions. For example, to evaluate a policy $\pi$:
 \begin{align}
 V^{\pi}(s) &= E_{\pi} \{r_{t+1} + \gamma r_{t+2} + \gamma^2r_{t+3}+\dots \mid s_t=s\}\\
@@ -92,7 +91,7 @@ Q^{*}(s,a) &= E\{r_{t+1} + \gamma \max_{a'} Q^{*}(s_{t+1},a') \vert s_t=s, a_t=a
 &= \sum_{s'} \mathcal{P}^a_{ss'} [\mathcal{R}^a_{ss'}+\gamma \max_{a'} Q^{*}(s',a')]
 \end{align}
 
-\subsubsection{Monte Carlo and Temporal-Difference}
+\subsection{Monte Carlo and Temporal-Difference}
 Unlike dynamic programming, model-free methods don't require complete knowledge of the environment. Instead, only sample transitions are needed. This way, 2 problems with dynamic programming can be solved. First, the model may be large, which makes it infeasible to use for computing for example an optimal policy. Second, in real world problems, a complete model of the problem may not be available. It may for example be unknown what is the probability of ending in a certain state when taking a certain action from a start state.\\
 Monte Carlo methods collect sample returns and average them in order to approximate a value function. The incremental implementation for approximating $V$ is as follows:
 \begin{equation}
@@ -117,7 +116,7 @@ Q(s_t,a_t) \leftarrow Q(s_t,a_t) + \alpha \big[ r_{t+1} + \gamma \max_{a} Q(s_{t
 Note that the policy still can influence which state-action pairs are visited and updated. To guarantee finding the optimal behaviour, it is required that all pairs continue to be updated.\\
 
 %Chapter 7
-\subsubsection{Eligibility traces}
+\subsection{Eligibility traces}
 Eligibility traces are used in order to only influence eligible states or actions when a certain action is taken.\\
 %$n$-Step TD prediction
 Monte Carlo methods perform a backup for each state based on the entire sequence of observed rewards from that state until the end of the episode. The backup of more simple methods is only based on the next reward of a state, using the state value one step later as a proxy for the remaining rewards. An intermediate method would perform a backup based on an intermediate number of rewards. Then, we use the rewards of the intermediate steps and the estimated value of the last state. A visualization can be seen in Figure \ref{fig:nStepTD}.
@@ -233,7 +232,7 @@ e_t(s,a) = \begin{cases}
 Another possible improvement if set correctly is a variable $\lambda$, which can be different at each time step $t$. It can for example depend on the current state: $\lambda_t = \lambda(s_t)$. It can be set to zero when we are sure about the estimate of the state $s_t$, so we don't have to use estimates of following states anymore. By setting it to $1$, we can achieve the opposite.
 
 %Chapter 8
-\subsubsection{Generalization and function approximation}
+\subsection{Generalization and function approximation}
 Normally, if there are a lot of possible states, it will take a long time to learn the estimates of all states. It is even possible that, after some time, previously unseen states will be encountered. This problem is possible when using continuous variables, images, \dots To solve this, we generalize states. As such, we can apply information of seen states to related states that haven't been visited yet. To do this, we combine standard reinforcement learning methods with generalization methods. A well known kind of generalization methods is called function approximation: it takes examples of a desired function and tries to approximate it. This is supervised learning (the input is the original value and the output to predict is the generalized value). The used supervised learning algorithm needs to be able to handle non-stationary target functions, as learning must be able to occur on-line. The error for the algorithm to minimize is the mean-squared error (MSE) between the true value of the state and the approximated one:
 \begin{equation}
 MSE(\overrightarrow{\theta_t}) = \sum_{s \in S} P(s) \big[ V^{\pi}(s) - V_t(s) \big]^2 
@@ -247,7 +246,7 @@ One of the most widely used function approximation methods is based on gradient 
 Like already discussed, we assume that the states over which we want to minimize the MSE over come from the same distribution $P$ as the from examples. 
 %Found following definition on: https://en.wikipedia.org/wiki/Score_(statistics)
 \todo{Gradient: vector of partial derivatives. Find citation for this.}
-Gradient descent works by reducing the error by adjusting the parameters using the gradient:
+Gradient descent works by reducing the error by adjusting the parameters using the gradient, which is a vector of partial derivatives:
 \begin{align}
 \overrightarrow{\theta}_{t+1} &= \overrightarrow{\theta}_t - \frac{1}{2} \alpha \Delta_{\overrightarrow{\theta}_t} \big[ V^{\pi}(s_t) - V_t(s_t) \big]^2\\
 &= \overrightarrow{\theta}_t + \alpha \big[ V^{\pi}(s_t) - V_t(s_t) \big] \Delta_{\overrightarrow{\theta}_t} V_t(s_t)
@@ -267,10 +266,10 @@ The gradient with respect to $\overrightarrow{\theta}_t$ is then:
 \begin{equation}
 \nabla_{\overrightarrow{\theta}_t} V_t(s) = \overrightarrow{\phi}_s
 \end{equation}
-As can be seen, this update is rather simple. Furthermore, there is only one optimum (or several one which are equally good), $\overrightarrow{\theta}^{*}$. As a result, if a method is guaranteed to converge to or near a local optimum.\\
+As can be seen, this update is rather simple. Furthermore, there is only one optimum (or several ones which are equally good), $\overrightarrow{\theta}^{*}$. As a result, if a method is guaranteed to converge to or near a local optimum.\\
 Note that this linear form doesn't allow for the representation of interactions between features, for example when the presence of a certain features is good only if another feature is absent. For this, we need to introduce features that are combinations of feature values.\\
 
-\paragraph{Coarse coding}
+\subsubsection{Coarse coding}
 Coarse coding is the representation of a state with features that overlap, for example a binary feature that is $1$ when the coordinate given by a $x$ and $y$ feature lies in a circle. If 2 points \textit{A} and \textit{B} have circles "in common", there will be some generalization between them, as the features for both points for those circles will be 1. The more in common, the greater this effect. If the circles are small or large, generalization will be over respectively a short or large distance. The nature of the generalization is also affected by the shape of the features. The fineness of discrimination is however only determined by the total number of features.\\
 In tile encoding, a form of coarse encoding, the fields of the features are grouped into exhaustive partitions of the input space, called tilings. These tilings are defined by ranges of values for state attributes that they cover. For one specific tiling, the state can only lie in the ranges of 1 tile. As such, maximally one feature is active in each tiling and the total number of features present is always the same as the number of tilings. This allows us to set the step-size parameter $\alpha$ (used in formula \ref{eq:backview1}) in an easy, intuitive way. We can for example choose $\alpha = \frac{1}{m}$, where $m$ is the number of tilings. This results in exact one-trial learning. When the example $s_t \mapsto v_t$ is received, then the new value will be $V_{t+1}(s_t) = v_t$, whatever the prior value $V_t(s_t)$ was. For a slower change using for example $\alpha=\frac{1}{10m}$, one would move one-tenth of the way to the target in one update.\\
 The weighted sum to make up the approximate value function is almost trivial to compute, as in tile coding only binary features are used. Instead of performing $n$ multiplications and additions, we compute the indices of the $m<<n$ present features and then add up the $m$ corresponding components of the parameter vector. The eligibility trace computation is also easier because the components of the gradient $\nabla_{\overrightarrow{\theta}} V_t(s_t)$ are either $0$ or $1$.\\
@@ -282,12 +281,12 @@ Radial basis functions are a generalization of coarse coding that allows for con
 The advantage of this method is that they produce approximate functions that vary smoothly and are differentiable. The disadvantage is that $\sigma_i$ and $c_i$ must be tuned manually and that non-linear RBF networks are computationally complex.\\
 
 %Kanerva coding
-\paragraph{Kanerva coding}
+\subsubsection{Kanerva coding}
 When the states have a high number of attributes, the previous methods can become impractical because of their computational complexity, even if we apply hashing. In the worst case, the complexity of the target function scales with the size of the state space. However, it is possible that some attributes are not useful for the learning algorithm and it would we better if those do not contribute to the complexity. This way, adding dimensions may not lead to an exponential increase in computational complexity.\\
 A way of achieving this is called Kanerva coding, where we choose binary features that correspond to particular prototype states. These are randomly selected from the entire state space. The receptive field of such a feature is all states that are sufficiently close to the prototype. This means that there is a feature for every prototype state and it is set to 1 if the state is close to that prototype state and 0 otherwise. The chosen distance is the hamming distance for a binary state space (e.g. in case of a bitwise representation of states), which is the number of bits at which two states differ. 
 Using Kanerva coding, the complexity of the functions depends entirely on the number of used features, i.e. the number of prototype states, instead of the dimensionality. The amount of prototypes can be tuned such that the computational complexity and/or the performance improves.\\
 
-\paragraph{Function approximation for control}
+\subsubsection{Function approximation for control}
 To use function approximation for control, we use the action-value function $Q_t \approx Q^{\pi}$, that is represented as a parametrised functional form with parameter vector $\overrightarrow{\theta}_t$. Instead of only using training examples with $s_t$, they are now of the form $s_t, a_t \mapsto v_t$. The target output $v_t$ can be any approximation of $Q^{\pi}(s_t,a_t)$, including the usual backed-up values such as the full Monte Carlo return $R_t$ or the one-step Sarsa return $r_{t+1} + \gamma Q_t(s_{t+1}, a_{t+1})$. The gradient-descent update is now:
 \begin{equation}
 \overrightarrow{\theta}_{t+1} = \overrightarrow{\theta}_t + \alpha \big[ v_t - Q_t(s_t,a_t) \big] \nabla_{\overrightarrow{\theta}_t} Q_t(s_t,a_t)
@@ -297,14 +296,14 @@ To use traces along with function approximation methods, we cannot set the trace
 We can also set the traces of all non-selected actions to zero in the states encountered. To do this, for each state encountered, we first clear the traces of all features for the state and the actions not selected and then we set to 1 the traces of the features for the state and the action that was selected.\\
 
 %Off-policy bootstrapping
-\paragraph{Bootstrapping}
+\subsubsection{Bootstrapping}
 Bootstrapping is the updating of a value estimate based on other value estimates. This is done by TD and DP methods, but not by Monte Carlo methods. TD($\lambda$) is a bootstrapping method when $\lambda <1$, but not when $\lambda = 1$. Although the latter involves bootstrapping within an episode, afterwards the effect over a complete episode is the same as the non-bootstrapping Monte Carlo update. Bootstrapping methods such as TD($\lambda$) are harder to combine with function approximation because they only find near-minimal MSE solutions (only for the on-policy distribution) instead of the minimal MSE using for example linear, gradient-descent function approximation for any distribution of training examples, $P$.\\
 The restriction of convergence is especially a problem for off-policy methods such as Q-learning and DP methods because they do not backup states (or state-action pairs) with exactly the same distribution as the distribution of states we encounter when following the policy of which we want to estimate the value function. Off-policy bootstrapping combined with function approximation can even lead to divergence and infinite MSE.\\
 
 Bootstrapping looks like a bad idea because non-bootstrapping methods are more easy and reliably used with function approximation and can be applied over a broader range of conditions. Non-bootstrapping methods also achieve a lower error in approaching the value function, even when backups are done according to the on-policy distribution \citep{ML}. In practice, however, bootstrapping methods achieve better performance. When $\lambda$ approaches $1$, which is the non-bootstrapping case, the performance becomes much worse.
 
 %Chapter 9
-\subsubsection{Planning and Learning}
+\subsection{Planning and Learning}
 A model is something that can be used by an agent to predict the resulting state and reward of doing an action in the environment. Distribution models give a probability for each possibility, whereas sample models just return one of the possibilities. The model can be used to simulate experiences because as it can be used to simulate several transitions and as such to simulate entire episodes.\\
 Planning is the computational process of using this model and producing/improving a policy. State-space planning means the search through the state space for an optimal policy or path to a goal. In plan-space planning, we search through the space of plans. This includes evolutionary methods and partial-order planning. In the latter, the ordering of the steps is not fully defined in all the stages of planning.
 \begin{figure}[H]
@@ -508,13 +507,13 @@ In practice, we use the function approximator of the critic function for the val
 \delta_v = r + \gamma V_v(s') - V_v(s)
 \end{equation}
 
-\subsection{Deep learning}
+\section{Deep learning}
 %Review by \cite{LeCun2015DeepLearning}.\\
 
-Before deep learning, raw data had to be transformed into an internal representation using manually crafted features usable for model learners. In deep learning, these features are learned by itself, as it is a representation-learning method. Furthermore, different levels of representation can be used. Each level builds upon the previous one, starting from the input itself, and represents it in a more abstract way. These abstractions are generated as to recognize aspects of the input that are important for the task. Because of this, it is possible that small variations in the input have no influence on the abstraction and output. Because these abstractions are learned automatically, there is no need anymore to create internal representations manually, which require more work as it is different for every kind of task. The generated abstractions may also recognize useful patterns in the data that might not be represented using the hand-crafted features.\\
+Before deep learning, raw data had to be transformed into an internal representation using manually crafted features usable for learners. In deep learning, these features are learned by itself, as it is a representation-learning method. Furthermore, different levels of representation can be used. Each level builds upon the previous one, starting from the input itself, and represents it in a more abstract way. These abstractions are generated as to recognize aspects of the input that are important for the task. Because of this, it is possible that small variations in the input have no influence on the abstraction and output. Because these abstractions are learned automatically, there is no need anymore to create internal representations manually, which require more work as it is different for every kind of task. The generated abstractions may also recognize useful patterns in the data that might not be represented using the hand-crafted features.\\
 
 
-In supervised learning, our data set contains pairs of an input and the associated right output, also called training examples. The goal is to be able to predict the correct output given the input. When doing classification, the output only has a finite set of possible values. As such, the classification algorithm can output a score for each possible output which signifies its certainty or confidence for that output being the correct one given the input. Because of this, we want the correct output to have the highest score. In order to evaluate and improve the algorithm, we compute the error by calculating the differences between the computed output and the right output. Using this error, the algorithm can then improve its predictions and subsequently reduce the error by adjusting its internal parameters. These parameters, also called weights, influence which output is generated given the input.\\
+In supervised learning, our data set contains pairs of an input and the associated correct output, also called training examples. The goal is to be able to predict the correct output given the input. When doing classification, the output only has a finite set of possible values. As such, the classification algorithm can output a score for each possible output which signifies its certainty or confidence for that output being the correct one given the input. Because of this, we want the correct output to have the highest score. In order to evaluate and improve the algorithm, we compute the error by calculating the differences between the computed output and the correct output. Using this error, the algorithm can then improve its predictions and subsequently reduce the error by adjusting its internal parameters. These parameters, also called weights, influence which output is generated given the input.\\
 
 In order to adjust the weight vector, i.e. the internal parameters, a gradient is computed. This gradient indicates how the error would change when adjusting each parameter by an infinitely small amount, calculated using derivatives. The weight vector is then adjusted in the opposite direction of the gradient vector as to decrease the error. This is only possible if the values of the weight vector are continuous and they are differentiable w.r.t. the error.
 %\todo{Something about local minima and that it's not a problem for deep neural networks}
@@ -539,7 +538,7 @@ Layers that are between the input and output units are called hidden layers. The
 Local minima might seem like a problem for neural networks, but in practice they are rarely a problem, according to theoretical and empirical results \citep{choromanska2015loss}.
 Instead, there are more saddle points. Here, the gradient is zero and the surface curves up in most of the dimensions and curves down in the others. Generally a lot of such points are present, but they all have the same value for the objective function (the error).\\
 
-\subsubsection{Convolutional neural networks}
+\subsection{Convolutional neural networks}
 Convolutional neural networks are neural networks that are inspired by the way the visual cortex of an animal works. These networks get as input data in multi-dimensional arrays, such as 2-dimensional images with pixel intensities as the third dimension for example.\\
 A convolutional neural network is structured as a series of stages, which are combinations of layers. In the first stages, convolutional layers and pooling layers are used.
 In a convolutional layer, units are organized in feature maps. Each of these units is connected to a patch in the feature maps of the previous layer through a matrix of weights that is called the filter bank. The filter bank matrix then slides over the feature map, does an element-wise computation of the 2 matrices and sums the results. The filter bank is then moved by a certain amount, called the stride. All units in a specific feature map of a layer use the same filter bank.
@@ -549,7 +548,7 @@ The result of this convolutional operation (which is linear) operation is again 
 These convolutional layers are then combined with pooling layers. Instead of detecting local conjunctions of features from the previous layer, pooling tries to merge semantically similar features into one. This is necessary because the positions of features that form a motif are not exact and can vary somewhat. It may not manner for example that an object is close or far in an image. To detect the motifs more reliably, we course-grain their features. The typical pooling units compute the maximum or average of a local patch of units in one or a few feature maps. The neighbouring pooling units do the same for patches that are shifted by one or more rows and/or columns and as such creating an invariance to small shifts and distortions.\\
 An example of a convolutional neural network is ConvNet, a convolutional network architecture that achieved many successes. Here, two or three of these convolutions, non-linearities and poolings are stacked. Afterwards, a convolutional layer and fully-connected layer follow.\\
 
-\subsubsection{Recurrent Neural Networks}
+\subsection{Recurrent Neural Networks}
 Recurrent neural networks (RNNs) are used to process sequential data such as speech and language. Here, an input sequence is processed one element at a time. The first RNNs used a state vector in their units that contains history about the past elements in the sequence. This is visualized in Figure \ref{fig:rnnunrolled}.
 \begin{figure}[H]
 \includegraphics[width=\linewidth]{images/RNN-unrolled.jpg} %source: http://www.wildml.com/2015/09/recurrent-neural-networks-tutorial-part-1-introduction-to-rnns/
@@ -594,12 +593,13 @@ As we can see, the non-linearity function $tanh$ is only used once here. We also
 Other networks with memory include a Neural Turing Machine, in which a tape-like memory is used from which the network can read or write.\\
 Another kind is a memory network, in which a normal network is augmented by a associative memory.\\
 
-\subsubsection{Dropout}
+\subsection{Dropout}
 Dropout is a way to prevent overfitting. It does so by randomly leaving out some visible or hidden units. As a result, all incoming and outgoing connections to these temporarily removed units are also removed and the algorithm can't rely on these connections. The simplest way of determining if a unit has to be removed is by removing it with a certain probability $p$, e.g. $p=0.5$. This value can also be determined by validation. As each unit can be present or not when using the network, for $n$ units there are $2^n$ possible networks. By learning each time using a possibly different network, we have a way of combining multiple models where each model is trained only a few times and most weights are shared between other models. Dropout is only used when training. In the testing phase, no units are removed. Here, however, we multiple the outgoing weights of each unit by there probability $p$.
 This is done to make sure that the the \textit{expected} output for any hidden unit is the same as the actual output at test time.
 
 In deep learning there are usually millions of these weights which can each be adjusted and can influence the output.
-\subsection{DQN}
+
+\section{DQN}
 %Original paper by \cite{Mnih2015Human-levelLearning}.\\
 
 In an algorithm used by \cite{mnih2013playing}, a deep convolutional network is applied on the pixels of a game to approximate an action-value function $Q^{*}(s,a)$ by using a parametrised action-value function $Q(s;a;\theta_i)$. It uses experience replay and periodically updated target value functions to reduce the instability caused by using a nonlinear function to approximate the action-value function. This instability is caused by the correlation between subsequent observations. Small changes in the $Q$ value can lead to a big change in the policy and because of that the data distribution and the correlations between the action-values $Q(s,a)$ and the target values $r+\gamma \max_{a'} Q(s',a')$ can also change a lot. The action that is selected determines which states that will be observed next.
@@ -649,12 +649,12 @@ Instead of just copying the weights to the target value network every $C$ steps,
 Most of the games have different scales for their state values. Possible solutions are to change the hyperparameters for each game individually or to scale the states manually. However, it is also possible to use a more general solution called batch normalization. Here, we scale normalize each dimension across the samples in a minibatch in order to have unit mean and variance. This minimizes the covariance shift during training.
 To have more exploration, noise is added to the actor policy. This noise is generated using the Ornstein-Uhlenbeck process.
 
-\subsection{Asynchronous Methods for Deep Reinforcement Learning}
+\section{Asynchronous Methods for Deep Reinforcement Learning}
 %By \cite{Mnih2016AsynchronousLearning}.
-In a paper by \cite{Mnih2016AsynchronousLearning} experience replay isn't used because of memory and computation usage and because it is off-policy, which means that it learns from data generated by a policy that may already be outdated. Instead, we use multiple agents (that use well-known reinforcement algorithms) that run in parallel but each running on a separate instance of the same type of environment. These all run on a multi-core CPU (i.e. on only one computer). Each of the agents use the same parameters $\theta$, but by using certain exploration policies, they are able to each explore a possibly different part of the state space. It is possible to use a different exploration policy for each agent as to maximize the exploration of different states. Each agent also calculates a gradient w.r.t. the parameters $\theta$ depending on its experience. These gradients are accumulated and after a certain number of steps they are applied to the parameters $\theta$. Because they are global, this update has an effect on all agents. After an amount (possibly the same amount as for the gradient update) of steps, the target network parameters $\theta^{-}$ can also be updated using the current parameters $\theta$.\\
+In \cite{Mnih2016AsynchronousLearning} experience replay isn't used because of memory and computation usage and because it is off-policy, which means that it learns from data generated by a policy that may already be outdated. Instead, we use multiple agents (that use well-known reinforcement algorithms) that run in parallel but each running on a separate instance of the same type of environment. These all run on a multi-core CPU (i.e. on only one computer). Each of the agents use the same parameters $\theta$, but by using certain exploration policies, they are able to each explore a possibly different part of the state space. It is possible to use a different exploration policy for each agent as to maximize the exploration of different states. Each agent also calculates a gradient w.r.t. the parameters $\theta$ depending on its experience. These gradients are accumulated and after a certain number of steps they are applied to the parameters $\theta$. Because they are global, this update has an effect on all agents. After an amount (possibly the same amount as for the gradient update) of steps, the target network parameters $\theta^{-}$ can also be updated using the current parameters $\theta$.\\
 In $n$-step Q-learning and advantage actor-critic, a forward-view is used instead of the more commonly used backward view (which uses eligibility traces). Forward view was found to be easier when training neural networks with momentum-based methods and backpropagation through time. To do this, we first compute a certain number of steps (or until the episode is over). Then, the gradients are computed for each state-action pair encountered since the last update. Each n-step update uses the longest possible n-step return resulting in a one-step update for the last state, a two-step update for the second last state, and so on for a total of up to the previously determined number of maximum allowed steps. These accumulated gradients are then immediately applied to $\theta$.
 
-\subsection{Using Task Features for Zero-Shot Knowledge Transfer in Lifelong Learning}
+\section{Using Task Features for Zero-Shot Knowledge Transfer in Lifelong Learning}
 An extra problem is to learn multiple variations of environment instead of just one. This means that for each of these tasks the transition function is slightly different, while keeping the same action space and state space.
 A paper by \cite{Isele2016UsingLearning} presents a method to learn these task simultaneously by using a predefined description for each task. When a new task arrives along with its features, obtained from its task descriptor, a policy can be generated that immediately results in a good performance, even though the algorithm was not applied on that task before and the task descriptor, task order and task distribution was not known on beforehand. This way, knowledge transfer can take place without the need of training data to identify relationships across tasks. For each subsequent task, the policy and feature vector are iteratively improved.\\
 %factorization: ontbinding in factoren: bijv. 15=3*5
@@ -662,9 +662,10 @@ First, it is assumed that the policy parameters for every task $t$ can be factor
 The features of the task are obtained by (possibly non-linear) feature extractors applied on the descriptor of the task: $\phi(m^{(t)}) \in \mathbb{R}^{d_m}$. These features can also be linearly factorized using another shared knowledge base $D \in \mathbb{R}^{d_m \times k}$: $\phi(m^{(t)}) = Ds^{(t)}$, where the same sparse representation is used as the one used to compute the policy. Both knowledge bases provide information about the task and because of this they share the same coefficient vectors $S$. We then used coupled dictionary optimization techniques from the sparse coding literature to optimize these dictionaries. They are updated iteratively based on trajectories samples from the current task.\\
 When a new task arrives, with its task descriptor, we search for the coefficients $s^{(t_{new})}$ that minimize the difference between the extracted features and the reconstruction of it using the shared knowledge base $D$. Using these coefficients, we can compute the policy parameters using $\theta = Ls^{(t_{new})}$. Afterwards, we can iterate again to improve $s$ and the knowledge bases.
 
-\subsection{Optimization techniques}
+\section{Optimization techniques}
 Optimization techniques are ways of changing weights of a neural network using gradients for those weights. Some of these techniques may be better at avoiding getting stuck in local minima and may be faster. Here we discuss a few of these techniques.
-\subsubsection{RMSProp}
+
+\subsection{RMSProp}
 %By \cite{Tieleman2012LectureMagnitude.}.
 
 In RMSProp, we only use the sign of the gradient to update the weights. This allows us the escape from plateaus more quickly. This is combined with a step size, used to control how much of the gradient to apply to the weight, that is adapted for each weight separately. For example, we can multiply the step-size of a certain weight by a factor greater than one if its last 2 gradients agreed on the sign, and multiply the step-size by a value less than 1 otherwise. This means that, when the gradients agree on the direction, we give them more influence. If the are not consistent and disagree in subsequent steps, we decrease the influence. We can also put a limit on the step-size as to not let it grow to excessively low or high amounts.\\
