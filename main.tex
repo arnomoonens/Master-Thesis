@@ -40,10 +40,11 @@
 \section{Reinforcement learning}
 %\cite{Sutton1998ReinforcementIntroduction.}.
 \subsection{Basics}
-In reinforcement learning, one tries to find which action to take in a certain situation in order to maximise a possibly delayed numerical reward. It does not know on beforehand which actions are optimal. As such, this must be discovered by trial-and-error. Subsequently, it can change its policy (denoted with the symbol $\pi$) to increase the achieved rewards. Because feedback in the form of numerical rewards may not be immediate, it must be able to backtrack which actions in certain situation lead to the reward that the reinforcement learning algorithm received.\\
+In reinforcement learning, one tries to find which action to take in a certain state of the environment in order to maximise a possibly delayed numerical reward.\\
 Reinforcement learning problems can be formulated in the form of a Markov Decision Process (MDP). This is four-tuple $(\mathcal{S}, \mathcal{A}, \mathcal{P}, \mathcal{R})$. $\mathcal{S}$ is the state space and contains all the possible states of the environment. The action space, $\mathcal{A}$, denotes all the possible actions that the agent can take in the environment. $\mathcal{P}: \mathcal{S} \times \mathcal{A} \to \mathcal{S}$ is the transition function and defines the probabilities for being in next state given a state and an action. $\mathcal{R}: \mathcal{S} \times \mathcal{A} \to \mathcal{R}$ gives probabilities for rewards when taking an action in a certain state.\\
+It does not know on beforehand which actions are optimal. As such, this must be discovered by trial-and-error. Subsequently, it can change its policy to increase the achieved rewards. This policy, denoted by $\pi$, defines for each state and action a probability $\pi(s,a)$, which denotes the probability of taking action $a$ when in state $s$: $\pi_t(s,a) = P(a_t = a | s_t = s)$. Note that exactly one action has to be taken in a state and that the action probabilities for one state sum to $1$: $\sum_{a\in \mathcal{A}}\pi_t(s,a)=1$.\\
+Because feedback in the form of numerical rewards may not be immediate, a reinforcement learning algorithm must be able to backtrack which actions in certain situation lead to the reward that the reinforcement learning algorithm received.\\
 
-As was already stated, the reinforcement learning algorithm needs to devise a policy $\pi$. This is a mapping from each state $s$ and action $a$ to the probability $\pi(s,a)$ of taking action $a$ when in state $s$: $\pi_t(s,a) = P(a_t = a | s_t = s)$.\\
 Reinforcement learning algorithms often use a state-value function $V(s)$. This function says how good it is to be in a certain state $s$ by stating the expected return in the future starting from state $s$, where the return is the discounted rewards. This expected value when starting in state $s$ and following a specific policy $\pi$ is denoted as $V^\pi(s)$:
 \begin{equation}
 \label{eq:vpolicy}
@@ -51,22 +52,22 @@ V^\pi(s) = E_\pi\{R_t|s_t=s\}=E_\pi\big \{ \sum_{k=0}^{\infty}\gamma^k r_{t+k+1}
 \end{equation}
 Where $\gamma$ is a discount applied over time to past rewards. The optimal policy $\pi$ is the one that leads to the highest $V^\pi(s)$ for all $s \in \mathcal{S}$. The resulting state-value function is $V^*(s) = \max_\pi V^\pi(s)$ for all $s \in \mathcal{S}$.
 
-Like for states, it is also possible to use the value of an action $Q_t(a)$ at time step $t$. Which can be calculated by averaging the rewards obtained by applying action $a$ to time step $t$:
-\begin{equation}
-Q_t(a) = \frac{r_1 + r_2 + \dots + r_{k_a}}{k_a}
-\end{equation}
-Actions can then be selected by for example $\epsilon$-greedy or softmax. In $\epsilon$-greedy action selection, the action with the highest $Q_t(a)$ is selected with probability $1-\epsilon$ and a random action otherwise.\\
-Softmax chooses an action $a$ at time step $t$ with the following probability:
-\begin{equation}
-p_t(a) = \frac{e^{Q_t(a)/\tau}}{\sum_{b=1}^n e^{Q_t(b)/\tau}}
-\end{equation}
-Where $\tau$ is called the temperature and controls the balance between exploration and exploitation. For low values, the best actions are highly probable. For $\tau \to 1$, the probability distribution becomes uniform.\\
+% Like for states, it is also possible to use the value of an action $Q_t(a)$ at time step $t$. Which can be calculated by averaging the rewards obtained by applying action $a$ to time step $t$:
+% \begin{equation}
+% Q_t(a) = \frac{r_1 + r_2 + \dots + r_{k_a}}{k_a}
+% \end{equation}
 
 It is also possible to define a value for taking an action in a certain state, which is the action-value function $Q(s,a)$. $Q^\pi(s,a)$ is the expected return after taking action $a$ in state $s$:
 \begin{equation}
 Q^\pi(s,a) = E_\pi\{R_t|s_t=s,a_t=a\}=E_\pi\big \{ \sum_{k=0}^{\infty}\gamma^k r_{t+k+1} | s_t=s,a_t=a\big \}
 \end{equation}
-Similarly as with $V^*(s)$, $Q^*(s,a)$ is the action-value function we have when applying the optimal policy.
+Similarly as with $V^*(s)$, $Q^*(s,a)$ is the action-value function we have when applying the optimal policy.\\
+Actions can be selected by for example $\epsilon$-greedy or softmax. In $\epsilon$-greedy action selection, the action with the highest $Q(s,a)$ is selected with probability $1-\epsilon$ and a random action otherwise.\\
+Softmax chooses an action $a$ when in state $s$ with the following probability:
+\begin{equation}
+p(s,a) = \frac{e^{Q(s,a)/\tau}}{\sum_{b=1}^n e^{Q(s,b)/\tau}}
+\end{equation}
+Where $\tau$ is called the temperature and controls the balance between exploration and exploitation. For low values, the best actions are highly probable. For $\tau \to 1$, the probability distribution becomes uniform.\\
 
 %Chapter 4
 \subsection{Dynamic programming}
@@ -187,7 +188,27 @@ e_t(s,a) = \begin{cases}
 \end{cases}
 \qquad \text{for all $s,a$}
 \end{equation}
-
+This results in the following algorithm:\\
+\begin{algorithm}[H]
+\DontPrintSemicolon
+Initialize $Q(s,a)$ arbitrarily\;
+$e(s,a) = 0$ for all $s,a$\;
+\For{each episode} {
+	Initialize s,a\;
+	\Repeat{$s$ is terminal} {
+    	Take action $a$, observe reward $r$ and new state $s'$\;
+        Choose action $a'$ from $s'$ with action selection policy using $Q$\;
+        $\delta = r + \gamma Q(s',a') - Q_t(s,a)$\;
+        $e(s,a) = e(s,a) + 1$\;
+        \For{all $s,a$} {
+        	$Q(s,a) \gets Q(s,a) + \alpha \delta e(s,a)$\;
+            $e(s,a) \gets \gamma \lambda e(s,a)$\;
+        }
+        $s \gets s'$; $a \gets a'$\;
+    }
+}
+\caption{Sarsa($\lambda$). Source: \cite{Sutton1998ReinforcementIntroduction}}
+\end{algorithm}
 Two methods exist to combine TD($\lambda$) and Q-learning and thus getting Q($\lambda$): There exists 2 different methods: Watkins's Q($\lambda$) and Peng's Q($\lambda$).\\
 Here, we must cut off the look ahead until the first exploratory action instead of the episode's end. This is done because this exploratory action doesn't have any relationship with the greedy policy. Recall that Q-learning is an off-policy method and the policy learned about is not necessarily the same as the one used to select actions. As such, it can learn about the greedy policy while following a policy involving exploratory (suboptimal) actions.
 
