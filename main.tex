@@ -14,6 +14,8 @@
 \setcounter{secnumdepth}{4}
 \providecommand{\keywords}[1]{\textbf{\textit{Index terms---}} #1}
 
+\DeclareMathOperator*{\argmax}{arg\,max}
+
 \titleformat{\paragraph}
 {\normalfont\normalsize\bfseries}{\theparagraph}{1em}{}
 \titlespacing*{\paragraph}
@@ -192,14 +194,14 @@ This results in the following algorithm:\\
 \begin{algorithm}[H]
 \DontPrintSemicolon
 Initialize $Q(s,a)$ arbitrarily\;
-$e(s,a) = 0$ for all $s,a$\;
+$e(s,a) \gets 0$ for all $s,a$\;
 \For{each episode} {
 	Initialize s,a\;
 	\Repeat{$s$ is terminal} {
     	Take action $a$, observe reward $r$ and new state $s'$\;
         Choose action $a'$ from $s'$ with action selection policy using $Q$\;
         $\delta = r + \gamma Q(s',a') - Q_t(s,a)$\;
-        $e(s,a) = e(s,a) + 1$\;
+        $e(s,a) \gets e(s,a) + 1$\;
         \For{all $s,a$} {
         	$Q(s,a) \gets Q(s,a) + \alpha \delta e(s,a)$\;
             $e(s,a) \gets \gamma \lambda e(s,a)$\;
@@ -232,7 +234,37 @@ Where
 \begin{equation}
 \delta_t = r_{t+1} + \gamma \max_{a'} Q_t(s_{t+1}, a') - Q_t(s_t,a_t)
 \end{equation}
-Because exploratory actions happen often, backups won't be long and so eligibility traces won't have a lot of advantage anymore. Peng's Q($\lambda$) tries to solve this, being a hybrid of Sarsa($\lambda$) and Watkin's Q($\lambda$). Its component backups are neither off- nor on-policy. The earlier transitions are each on-policy and the last transition uses the greedy policy. As such, all but the last uses the actual experiences. Because of this, for a fixed non-greedy policy, $Q_t$ converges to neither $Q^{\pi}$ nor $Q^{*}$, but some hybrid between the 2. If the policy is more greedy, the method may still converge to $Q^{*}$.\\
+This results in the following pseudo-code:\\
+\begin{algorithm}[H]
+\DontPrintSemicolon
+Initialize $Q(s,a)$ arbitrarily\;
+$e(s,a) \gets 0$ for all $s,a$\;
+\For{each episode} {
+	Initialize s,a\;
+	\Repeat{$s$ is terminal} {
+    	Take action $a$, observe reward $r$ and new state $s'$\;
+        Choose action $a'$ from $s'$ with action selection policy using $Q$\;
+        $a^* \gets \argmax_b Q(s',b)$\;
+        \If{$a^* = a'$} {
+        	$a^* \gets a'$\;
+        }
+        $\delta = r + \gamma Q(s',a^*) - Q_t(s,a)$\;
+        $e(s,a) \gets e(s,a) + 1$\;
+        \For{all $s,a$} {
+        	$Q(s,a) \gets Q(s,a) + \alpha \delta e(s,a)$\;
+            \eIf{$a^* = a'$} {
+            	$e(s,a) \gets \gamma \lambda e(s,a)$\;
+            }{
+            	$e(s,a) \gets 0$\;
+            }
+        }
+        $s \gets s'$; $a \gets a'$\;
+    }
+}
+\caption{Watkins's Q($\lambda$). Source: \cite{Sutton1998ReinforcementIntroduction}}
+\end{algorithm}
+Because exploratory actions happen often, backups won't be long and so eligibility traces won't have a lot of advantage anymore.\\
+Peng's Q($\lambda$) tries to solve this, being a hybrid of Sarsa($\lambda$) and Watkin's Q($\lambda$). Its component backups are neither off- nor on-policy. The earlier transitions are each on-policy and the last transition uses the greedy policy. As such, all but the last uses the actual experiences. Because of this, for a fixed non-greedy policy, $Q_t$ converges to neither $Q^{\pi}$ nor $Q^{*}$, but some hybrid between the 2. If the policy is more greedy, the method may still converge to $Q^{*}$.\\
 
 Replacing traces are a modified kind of eligibility traces that can yield a slightly better performance. With the traditional kind of traces (accumulating traces), the trace of a state is augmented by 1 when visiting it. With replacing traces, however, they are set to 1. Thus, we get the following update:
 \begin{equation}
@@ -266,7 +298,6 @@ For simple function approximators such as linear ones, the best MSE we find migh
 One of the most widely used function approximation methods is based on gradient descent. Here, the parameter vector is a column vector with a fixed number of real valued components, also called a weight vector: $\overrightarrow{\theta_t} = (\theta_t(1), \theta_t(2), \dots, \theta_t(n)^T$. $V_t(s)$ is a smooth differentiable function of $\overrightarrow{\theta_t}$ for all $s \in S$. At each time step $t$, we observe a new example $s_t \mapsto V^{\pi}(s_t)$. The order of the received states is not assumed to be the same as the order of gathering them from transitions in the environment. Even if we would give the exact $V^{\pi}(s_t)$, the function approximator has only limited resources and would not be able to approximate the function exactly. Thus, it must generalize.\\
 Like already discussed, we assume that the states over which we want to minimize the MSE over come from the same distribution $P$ as the from examples. 
 %Found following definition on: https://en.wikipedia.org/wiki/Score_(statistics)
-\todo{Gradient: vector of partial derivatives. Find citation for this.}
 Gradient descent works by reducing the error by adjusting the parameters using the gradient, which is a vector of partial derivatives:
 \begin{align}
 \overrightarrow{\theta}_{t+1} &= \overrightarrow{\theta}_t - \frac{1}{2} \alpha \Delta_{\overrightarrow{\theta}_t} \big[ V^{\pi}(s_t) - V_t(s_t) \big]^2\\
@@ -641,14 +672,35 @@ The deep convolutional neural network gets as input the pixels and has an output
 To select an action, we can use the classic action selection policies such as $\epsilon$-greedy and softmax. Using these policies, we can learn off-policy because we don't always choose the action with the highest action-value. The value of respectively $\epsilon$ or $\tau$ in these mentioned policies can change over time to get closer to on-policy.\\
 Instead of stochastic gradient descent, RMSProp is used here.\\
 
-All rewards were clipped between -1 and 1 to limit the scale of derivatives and as such the amount of change of the weights. It also allows for using the same learning rate for multiple games.
-
-Pseudo code can be seen in figure \ref{fig:dqnpseudo}.
-\begin{figure}[H]
-\includegraphics[width=\linewidth]{images/DQNPseudo.png}
-\caption{Pseudo code of the DQN algorithm. Source: \cite{mnih2013playing}.}
-\label{fig:dqnpseudo}
-\end{figure}
+All rewards were clipped between -1 and 1 to limit the scale of derivatives and as such the amount of change of the weights. It also allows for using the same learning rate for multiple games.\\
+\todo{Better explain gradient descent step?}
+This results in the following pseudo-code:\\
+\begin{algorithm}[H]
+\DontPrintSemicolon
+Initialize replay memory D to capacity N\;
+Initialize action-value function $Q$ with random weights $\theta$\;
+Initialize target action-value function $\hat{Q}$ with weights $\theta^- = \theta$\;
+\For{episode = 1, M} {
+	Initialize sequence $s_1 = \{x_1\}$ and preprocessed sequence $\phi_1 = \phi(s_1)$\;
+    \For{$t=1,T$} {
+    	With probability $\epsilon$ select a random action $a_t$\;
+        otherwise select $a_t = \argmax_a Q(\phi(s_t),a;\theta)$\;
+        Take action $a_t$ and observe reward $r_t$ and new image $x_{t+1}$\;
+        $s_{t+1} \gets s_t,a_t,x_{t+1}$\;
+        Preprocess $\phi_{t+1} \gets \phi(s_{t+1})$\;
+        Store transition $(\phi_t,a_t,r_t,\phi_{t+1})$ in $D$\;
+        Sample random minibatch of transitions $(\phi_j,a_j,r_j,\phi_{j+1})$ from $D$\;
+        \eIf{episode terminates at step $j+1$} {
+        	$y_j \gets r_j$\;
+        }{
+        	$y_j \gets r_j + \gamma \max_{a'} \hat{Q}(\phi_{j+1},a';\theta^-)$\;	
+        }
+        Perform a gradient descent step on $(y_j - Q(\phi_j,a_j;\theta))^2$ with respect to the network parameters $\theta$\;
+        Every $C$ steps reset $\hat{Q} \gets Q$\;
+    }
+}
+\caption{Deep Q-learning with experience replay. Source: \cite{mnih2013playing}.}
+\end{algorithm}
 
 \subsection{Continuous control with deep reinforcement learning}
 It is also possible to use an Actor-critic algorithm along with a replay buffer like in the DQN algorithm \citep{Mnih2015Human-levelLearning}. This idea is presented by \cite{Lillicrap2015ContinuousLearning}
@@ -673,7 +725,37 @@ To have more exploration, noise is added to the actor policy. This noise is gene
 \section{Asynchronous Methods for Deep Reinforcement Learning}
 %By \cite{Mnih2016AsynchronousLearning}.
 In \cite{Mnih2016AsynchronousLearning} experience replay isn't used because of memory and computation usage and because it is off-policy, which means that it learns from data generated by a policy that may already be outdated. Instead, we use multiple agents (that use well-known reinforcement algorithms) that run in parallel but each running on a separate instance of the same type of environment. These all run on a multi-core CPU (i.e. on only one computer). Each of the agents use the same parameters $\theta$, but by using certain exploration policies, they are able to each explore a possibly different part of the state space. It is possible to use a different exploration policy for each agent as to maximize the exploration of different states. Each agent also calculates a gradient w.r.t. the parameters $\theta$ depending on its experience. These gradients are accumulated and after a certain number of steps they are applied to the parameters $\theta$. Because they are global, this update has an effect on all agents. After an amount (possibly the same amount as for the gradient update) of steps, the target network parameters $\theta^{-}$ can also be updated using the current parameters $\theta$.\\
-In $n$-step Q-learning and advantage actor-critic, a forward-view is used instead of the more commonly used backward view (which uses eligibility traces). Forward view was found to be easier when training neural networks with momentum-based methods and backpropagation through time. To do this, we first compute a certain number of steps (or until the episode is over). Then, the gradients are computed for each state-action pair encountered since the last update. Each n-step update uses the longest possible n-step return resulting in a one-step update for the last state, a two-step update for the second last state, and so on for a total of up to the previously determined number of maximum allowed steps. These accumulated gradients are then immediately applied to $\theta$.
+In $n$-step Q-learning and advantage actor-critic, a forward-view is used instead of the more commonly used backward view (which uses eligibility traces). Forward view was found to be easier when training neural networks with momentum-based methods and backpropagation through time. To do this, we first compute a certain number of steps (or until the episode is over). Then, the gradients are computed for each state-action pair encountered since the last update. Each n-step update uses the longest possible n-step return resulting in a one-step update for the last state, a two-step update for the second last state, and so on for a total of up to the previously determined number of maximum allowed steps. These accumulated gradients are then immediately applied to $\theta$. This results in the following pseudo-code:\\
+\begin{algorithm}[H]
+\DontPrintSemicolon
+\emph{// Assume global shared parameter vectors $\theta$ and $\theta_v$ and global shared counter $T=0$}\;
+\emph{// Assume thread-specific parameter vectors $\theta'$ and $\theta'_v$}\;
+Initialize thread step counter $t\gets 1$\;
+\Repeat{$T > T_{max}$}{
+	Reset gradients: $d\theta \gets 0$ and $d\theta_v \gets 0$\;
+    Synchronize agent-specific parameters  $\theta'=\theta$ and $\theta'_v=\theta_v$\;
+    $t_{start} \gets t$\;
+    Initialize state $s_t$\;
+    \Repeat{terminal $s_t$ \textbf{or} $t-t_{start}==t_{max}$}{
+    	Perform $a_t$ according to policy $\pi (a_t|s_t;\theta')$\;
+		Receive reward $r_t$ and new state $s_{t+1}$\;
+        $t \gets t + 1$\;
+        $T \gets T + 1$\;
+        }
+        $R =
+    \left\{
+    \begin{array}{l l}
+      0  \quad & \text{if $s_t$ is terminal}\\
+        V(s_t,\theta'_v) \quad & \text{otherwise // Bootstrap from last state}
+    \end{array}\right.$
+    \For {$i \in \{t-1,\ldots,t_{start} \}$} {
+    	Accumulate gradients w.r.t. $\theta'$: $d\theta \gets d\theta + \nabla_{\theta'} \log\pi(a_i|s_i;\theta') (R - V(s_i;\theta'_v))$\;
+        Accumulate gradients w.r.t. $\theta'_v$: $d\theta_v \gets d\theta_v + {\partial\left(R - V(s_i;\theta'_v)\right)^2}/{\partial \theta'_v}$\;
+    }
+    Perform asynchronous update of $\theta$ using $d\theta$ and of $\theta_v$ using $d\theta_v$\;
+}
+\caption{Asynchronous Advantage Actor Critic (A3C). Source: \cite{Mnih2016AsynchronousLearning}.}
+\end{algorithm}
 
 \section{Transfer learning}
 \cite{Taylor2009TransferSurvey}.
