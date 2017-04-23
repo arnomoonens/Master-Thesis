@@ -105,7 +105,7 @@ Monte Carlo methods collect sample returns and average them in order to approxim
 V(s_t) \leftarrow V(s_t) + \alpha\big[R_t - V(s_t)\big]
 \end{equation}
 Where $R_t$ is the actual return of an action and $\alpha$ is a constant step-size parameter. As was shown in equation \ref{eq:vpolicy}, to compute $R_t$ we need all the future rewards until the end of the episode.\\
-Temporal-Difference (TD) learning tries to solve this by bootstrapping techniques like in dynamic programming. To do this, in the update we replace the full return using the observed reward and the estimate of the value of the next state. This is known as TD(0): 
+Temporal-Difference (TD) learning tries to solve this by bootstrapping techniques like in dynamic programming. To do this, in the update we replace the full return using the observed reward and the estimate of the value of the next state. This is known as TD(0):
 \begin{equation}
 V(s_t) \leftarrow V(s_t) + \alpha\big[r_{t+1}+\gamma V(s_{t+1}) - V(s_t)\big]
 \end{equation}
@@ -292,7 +292,7 @@ Another possible improvement if set correctly is a variable $\lambda$, which can
 \subsection{Generalization and function approximation}
 Normally, if there are a lot of possible states, it will take a long time to learn the estimates of all states. It is even possible that, after some time, previously unseen states will be encountered. This problem is possible when using continuous variables, images, \dots To solve this, we generalize states. As such, we can apply information of seen states to related states that haven't been visited yet. To do this, we combine standard reinforcement learning methods with generalization methods. A well known kind of generalization methods is called function approximation: it takes examples of a desired function and tries to approximate it. This is supervised learning (the input is the original value and the output to predict is the generalized value). The used supervised learning algorithm needs to be able to handle non-stationary target functions, as learning must be able to occur on-line. The error for the algorithm to minimize is the mean-squared error (MSE) between the true value of the state and the approximated one:
 \begin{equation}
-MSE(\overrightarrow{\theta_t}) = \sum_{s \in S} P(s) \big[ V^{\pi}(s) - V_t(s) \big]^2 
+MSE(\overrightarrow{\theta_t}) = \sum_{s \in S} P(s) \big[ V^{\pi}(s) - V_t(s) \big]^2
 \end{equation}
 Where $\theta_t$ is a component of the model that the algorithm generated and $P$ is a distribution weighting the errors of different states. As there are less components $\overrightarrow{\theta_t}$ than states, the flexibility for approximation is limited. Because of this, we use $P$ to define the trade-offs of focusing on improving the approximation of some states at the expense of others. Usually, this distribution $P$ is the same as the one from which the states in the training examples are drawn from and thus the distribution of states at which backups are done. For minimizing the error over a certain distribution of states, it is of course preferred that the training examples come from the same distribution.\\
 Another interesting distribution is the on-policy distribution, which describes the frequency with which states are encountered while the agent is interacting with the environment and selecting actions according to policy $\pi$. Minimizing the error over this distribution, we concentrate on states that actually occur while following the policy and ignoring others. Training examples for this distribution are also the easiest to get using Monte Carlo or TD methods because they generate backups from sample experience using the policy $\pi$.\\
@@ -300,7 +300,7 @@ Another interesting distribution is the on-policy distribution, which describes 
 For simple function approximators such as linear ones, the best MSE we find might also be the global optimum. This is however rarely possible for more complex ones, e.g. kernel based methods or artificial neural networks, and they may stop at a local optimum. For many cases of interest in reinforcement learning, convergence to an optimum, i.e. achieving the highest possible reward, does not occur.\\
 
 One of the most widely used function approximation methods is based on gradient descent. Here, the parameter vector is a column vector with a fixed number of real valued components, also called a weight vector: $\overrightarrow{\theta_t} = (\theta_t(1), \theta_t(2), \dots, \theta_t(n)^T$. $V_t(s)$ is a smooth differentiable function of $\overrightarrow{\theta_t}$ for all $s \in S$. At each time step $t$, we observe a new example $s_t \mapsto V^{\pi}(s_t)$. The order of the received states is not assumed to be the same as the order of gathering them from transitions in the environment. Even if we would give the exact $V^{\pi}(s_t)$, the function approximator has only limited resources and would not be able to approximate the function exactly. Thus, it must generalize.\\
-Like already discussed, we assume that the states over which we want to minimize the MSE over come from the same distribution $P$ as the from examples. 
+Like already discussed, we assume that the states over which we want to minimize the MSE over come from the same distribution $P$ as the from examples.
 %Found following definition on: https://en.wikipedia.org/wiki/Score_(statistics)
 Gradient descent works by reducing the error by adjusting the parameters using the gradient, which is a vector of partial derivatives:
 \begin{align}
@@ -322,7 +322,7 @@ The gradient with respect to $\overrightarrow{\theta}_t$ is then:
 \begin{equation}
 \nabla_{\overrightarrow{\theta}_t} V_t(s) = \overrightarrow{\phi}_s
 \end{equation}
-As can be seen, this update is rather simple. Furthermore, there is only one optimum (or several ones which are equally good), $\overrightarrow{\theta}^{*}$. As a result, if a method is guaranteed to converge to or near a local optimum.\\
+As can be seen, this update is rather simple. Furthermore, there is only one optimum (or several ones which are equally good), $\overrightarrow{\theta}^{*}$. As a result, the method is guaranteed to converge to or near a local optimum.\\
 Note that this linear form doesn't allow for the representation of interactions between features, for example when the presence of a certain features is good only if another feature is absent. For this, we need to introduce features that are combinations of feature values.\\
 
 \subsubsection{Coarse coding}
@@ -339,7 +339,7 @@ The advantage of this method is that they produce approximate functions that var
 %Kanerva coding
 \subsubsection{Kanerva coding}
 When the states have a high number of attributes, the previous methods can become impractical because of their computational complexity, even if we apply hashing. In the worst case, the complexity of the target function scales with the size of the state space. However, it is possible that some attributes are not useful for the learning algorithm and it would we better if those do not contribute to the complexity. This way, adding dimensions may not lead to an exponential increase in computational complexity.\\
-A way of achieving this is called Kanerva coding, where we choose binary features that correspond to particular prototype states. These are randomly selected from the entire state space. The receptive field of such a feature is all states that are sufficiently close to the prototype. This means that there is a feature for every prototype state and it is set to 1 if the state is close to that prototype state and 0 otherwise. The chosen distance is the hamming distance for a binary state space (e.g. in case of a bitwise representation of states), which is the number of bits at which two states differ. 
+A way of achieving this is called Kanerva coding, where we choose binary features that correspond to particular prototype states. These are randomly selected from the entire state space. The receptive field of such a feature is all states that are sufficiently close to the prototype. This means that there is a feature for every prototype state and it is set to 1 if the state is close to that prototype state and 0 otherwise. The chosen distance is the hamming distance for a binary state space (e.g. in case of a bitwise representation of states), which is the number of bits at which two states differ.
 Using Kanerva coding, the complexity of the functions depends entirely on the number of used features, i.e. the number of prototype states, instead of the dimensionality. The amount of prototypes can be tuned such that the computational complexity and/or the performance improves.\\
 
 \subsubsection{Function approximation for control}
@@ -401,7 +401,7 @@ Full backups are only possible when we know the transition distribution ($\mathc
 In dynamic programming, we perform sweeps through the entire state(-action) space. As we already said, this may take a lot of time. In many tasks, some states may be irrelevant as they are only visited with a low probability and/or using very poor policies. The second possibility is to sample from the state(-action) space according to a distribution. If we would sample uniformly, we would have the same problems as the already explained exhaustive sweep.\\
 We could also use the distribution observed when following the current policy. This is easily generated by just starting in the begin state and simulating until the terminal state (in case of an episodic task, otherwise it just keeps simulating). Here we simulate explicit individual trajectories and we perform backups using the state or state-action pairs encountered. This way of generating experience is called \textit{trajectory sampling}.\\
 If we would have an explicit representation of the on-policy distribution, we could sweep through all states, weighting the backup according to this distribution. This however will gives us again a large computational cost. We could also sample and update individual state-action pairs from this distribution, but this would not give a huge benefit over simulating the trajectories. Moreover, computing the on-policy distribution may require itself a big computational cost, as the distribution changes whenever the policy changes.\\
-Focusing on the on-policy distribution may be good because uninteresting parts of the state(-action) space may be ignored. However, it may also result in backing op the same part of the space over and over again. 
+Focusing on the on-policy distribution may be good because uninteresting parts of the state(-action) space may be ignored. However, it may also result in backing op the same part of the space over and over again.
 
 In experiments it was seen that sampling according to the on-policy distribution results in faster planning initially and retarded planning in the long run than when using the uniform distribution \citep{ML}. The effect is stronger with smaller branching factors, as well as when the number of states increased. In the short term, using the on-policy distribution results in performing backups on states that are near descendants of the start state. In the long run, this distribution may be bad for us because we keep focusing on the same states, which already have more or less their correct values. Other states may be more interesting to explore, which is why the exhaustive unfocused approached may be better in this case, at least for small problems (because of the computational cost).\\
 
@@ -414,7 +414,7 @@ Much of the effectiveness of heuristic search is due to its search tree being ti
 %By David Silver.\\
 
 Here, we parametrise the policy instead of the state value or state-action value function.
-Methods that parametrise the policy tend to have better convergence properties \citep{Sutton1999PolicyApproximation}. 
+Methods that parametrise the policy tend to have better convergence properties \citep{Sutton1999PolicyApproximation}.
 No value must be stored for every specific state and action. This is useful in problems where the state and/or action space is high-dimensional and/or continuous. Last, they can also learn policies where a probability is provided for every action.
 However, policy gradient methods also come with a few disadvantages. They typically converge to a local optimum instead of a global optimum. It is also rather hard to evaluate a policy and it can have a high variance.\\
 The policy gradient has the form of $\pi_{\theta}(s,a)$. The way of measuring the quality of a policy (i.e. how well it performs in an environment) depends on the type of environment:
@@ -430,7 +430,7 @@ As such, we need to find the parameters $\theta$ that maximize $J(\theta)$. This
 \end{equation}
 where $u_k$ is a one-hot vector with a value of $1$ in dimension $k$ and $0$ elsewhere. This kind of gradient is called a Finite Difference gradient. It is a simple, black-box way that works for every policy (because we don't need the derivative), but it is inaccurate and inefficient. We also need to determine the value of $\epsilon$ ourselves, which influences the accuracy.\\
 
-Instead, we will solve the problem analytically. We assume that the policy is differentiable when it is non-zero and that we know the gradient. 
+Instead, we will solve the problem analytically. We assume that the policy is differentiable when it is non-zero and that we know the gradient.
 
 %What is likelihood?
 % Likelihood is a funny concept. It’s not a probability, but it is proportional to a probability. The likelihood of a hypothesis (H) given some data (D) is proportional to the probability of obtaining D given that H is true, multiplied by an arbitrary positive constant (K). In other words, L(H|D) = K · P(D|H). Since a likelihood isn’t actually a probability it doesn’t obey various rules of probability. For example, likelihood need not sum to 1.
@@ -622,7 +622,7 @@ To learn RNNs, we also need to change the backpropagation algorithm in order to 
 We see that training can be hard when the sequences are long, because we need to propagate back through the first time step.\\
 
 For the \textit{tanh} and \textit{sigmoid} function, the derivative is $0$ at both ends. This means that the gradients in other layers will also go towards zero and for small values in the matrix multiplications the gradient values are shrinking exponentially fast and become nearly zero after a few time steps. Because of this, steps far away won't contribute much to what you're currently computing, and as such the long-term dependencies are small. If the values of the partial derivatives are high however, we could get exploding gradients. These are however easier to detect and solve, because the value of the gradients will be too high to be presented by a variable in the programming language. The problem can also easily be solved by restricting the value in a certain range.\\ %source: http://www.jmlr.org/proceedings/papers/v28/pascanu13.pdf
-The problem of vanishing gradients can be solved by a better initialization of the weights, by regularization and by another non-linear function, namely the already explained \textit{ReLU}. 
+The problem of vanishing gradients can be solved by a better initialization of the weights, by regularization and by another non-linear function, namely the already explained \textit{ReLU}.
 For this function, the derivative is either 0 (when $z<0$) or 1 ($\frac{\partial z}{\partial z} = 1$).\\
 
 A way of solving this is using a long short-term memory. This is a combination of different units and has an explicit memory. One of the units has a connection with itself and is used to accumulate or forget the stored information. It can be learned using another unit to know when to forget something and when to remember past information.\\
@@ -697,7 +697,7 @@ Initialize target action-value function $\hat{Q}$ with weights $\theta^- = \thet
         \eIf{episode terminates at step $j+1$} {
         	$y_j \gets r_j$\;
         }{
-        	$y_j \gets r_j + \gamma \max_{a'} \hat{Q}(\phi_{j+1},a';\theta^-)$\;	
+        	$y_j \gets r_j + \gamma \max_{a'} \hat{Q}(\phi_{j+1},a';\theta^-)$\;
         }
         Perform a gradient descent step on $(y_j - Q(\phi_j,a_j;\theta))^2$ with respect to the network parameters $\theta$\;
         Every $C$ steps reset $\hat{Q} \gets Q$\;
