@@ -780,9 +780,18 @@ Initialize thread step counter $t\gets 1$\;
 \end{algorithm}
 
 \section{Transfer learning}
-\cite{Taylor2009TransferSurvey}.
+%\cite{Taylor2009TransferSurvey}.
+\todo{Say somewhere that a task is simply an Markov Decision Process}
+Transfer learning involves the use of experience gained when learning one task to improve the performance on a different but related task. Here, we discuss a framework for transfer methods that can be used for reinforcement learning, closely following \cite{Taylor2009TransferSurvey}.\\
 
-\section{Using Task Features for Zero-Shot Knowledge Transfer in Lifelong Learning}
+The transfer of knowledge always happens between one or more source tasks. First, an appropriate set of tasks must be selected. Afterwards, the transfer learning algorithm must learn how these source tasks are related to the target task.\\
+
+To be able to transfer knowledge, some assumptions must be made about differences between the source tasks and the target task. This can be for example in the underlying dynamics of the environment, which can make the task harder or easier to solve, or different sets of possible actions at certain states. These differences define between which type of source and target tasks knowledge can be transferred.
+
+\subsection{Metrics}
+To evaluate transfer learning algorithms, several metrics exist.
+
+\subsection{Using Task Features for Zero-Shot Knowledge Transfer in Lifelong Learning}
 An extra problem is to learn multiple variations of environment instead of just one. This means that for each of these tasks the transition function is slightly different, while keeping the same action space and state space.
 A paper by \cite{Isele2016UsingLearning} presents a method to learn these task simultaneously by using a predefined description for each task. When a new task arrives along with its features, obtained from its task descriptor, a policy can be generated that immediately results in a good performance, even though the algorithm was not applied on that task before and the task descriptor, task order and task distribution was not known on beforehand. This way, knowledge transfer can take place without the need of training data to identify relationships across tasks. For each subsequent task, the policy and feature vector are iteratively improved.\\
 %factorization: ontbinding in factoren: bijv. 15=3*5
