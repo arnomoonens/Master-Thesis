@@ -673,6 +673,21 @@ This is done to make sure that the the \textit{expected} output for any hidden u
 
 In deep learning there are usually millions of these weights which can each be adjusted and can influence the output.
 
+\subsection{Optimization techniques}
+Optimization techniques are ways of changing weights of a neural network using gradients for those weights. Some of these techniques may be better at avoiding getting stuck in local minima and may be faster. Here we discuss a few of these techniques.
+
+\subsubsection{RMSProp}
+%By \cite{Tieleman2012LectureMagnitude.}.
+
+In RMSProp, we only use the sign of the gradient to update the weights. This allows us the escape from plateaus more quickly. This is combined with a step size, used to control how much of the gradient to apply to the weight, that is adapted for each weight separately. For example, we can multiply the step-size of a certain weight by a factor greater than one if its last 2 gradients agreed on the sign, and multiply the step-size by a value less than 1 otherwise. This means that, when the gradients agree on the direction, we give them more influence. If the are not consistent and disagree in subsequent steps, we decrease the influence. We can also put a limit on the step-size as to not let it grow to excessively low or high amounts.\\
+By just using this, we would however have a problem of weights growing too high in unwanted situations. For example, when a gradient is for 9 times a small positive amount (e.g. $0.1$) and once a large negative amount (e.g. $-0.9$), we don't want to change the weights a lot because they balance each other out. Using the current algorithm however, the step-size and so the weights would become too high because we only look at the signs and not the magnitude of the gradients.\\
+Notice that, right know, we are dividing by the size of the gradient in order to just get $+1$ or $-1$ depending on the sign. It is however better to divide each weight by a moving average of the squared weight using the gradients of the past steps:
+\begin{align}
+MeanSquare(w, t) &= \gamma * MeanSquare(w, t-1) + (1 - \gamma) * f'(\theta_t)^2 \\
+v_{t+1} &= \frac{\alpha}{\sqrt{MeanSquare(w,t)}}f'(\theta_t)
+\end{align}
+Where $f'(\theta_t)$ is the gradient, $\alpha$ is the learning rate and $v_{t+1}$ is the eventual update.
+
 \section{DQN}
 %Original paper by \cite{Mnih2015Human-levelLearning}.\\
 A deep Q-network, presented in \cite{Mnih2015Human-levelLearning}, aims to combine deep learning with reinforcement learning. It applies a convolutional neural network to high-dimensional sensory inputs such as the pixels of a game screen in order to approximate an action-value function $Q^{*}(s,a)$. This is parametrised by the weights of the convolutional neural network, thus being $Q(s;a;\theta_i)$. Past experiences are also reused and the Q value function used to select action is only periodically updated to the most recently learned one in order to reduce instability.\\
@@ -803,26 +818,11 @@ To evaluate transfer learning algorithms, several metrics exist.
 
 \subsection{Using Task Features for Zero-Shot Knowledge Transfer in Lifelong Learning}
 An extra problem is to learn multiple variations of environment instead of just one. This means that for each of these tasks the transition function is slightly different, while keeping the same action space and state space.
-A paper by \cite{Isele2016UsingLearning} presents a method to learn these task simultaneously by using a predefined description for each task. When a new task arrives along with its features, obtained from its task descriptor, a policy can be generated that immediately results in a good performance, even though the algorithm was not applied on that task before and the task descriptor, task order and task distribution was not known on beforehand. This way, knowledge transfer can take place without the need of training data to identify relationships across tasks. For each subsequent task, the policy and feature vector are iteratively improved.\\
+In \cite{Isele2016UsingLearning}, a method is presented that learns these task simultaneously by using a predefined description for each task. When a new task arrives along with its features, obtained from its task descriptor, a policy can be generated that immediately results in a good performance, even though the algorithm was not applied on that task before and the task descriptor, task order and task distribution was not known on beforehand. This way, knowledge transfer can take place without the need of training data to identify relationships across tasks. For each subsequent task, the policy and feature vector are iteratively improved.\\
 %factorization: ontbinding in factoren: bijv. 15=3*5
 First, it is assumed that the policy parameters for every task $t$ can be factorized using a shared knowledge base $L \in \mathbb{R}^{d \times k}$: $\theta^{(t)} = Ls^{(t)}$. $s^{(t)} \in \mathbb{R}^{(k)}$ are the sparse coefficients over the basis, i.e. the latent representation of the policy's parameters for task $t$. $L$ is able to capture relationships among policies as this is used to compute every policy, whereas there is a sparse representation for computed for each task separately.\\
 The features of the task are obtained by (possibly non-linear) feature extractors applied on the descriptor of the task: $\phi(m^{(t)}) \in \mathbb{R}^{d_m}$. These features can also be linearly factorized using another shared knowledge base $D \in \mathbb{R}^{d_m \times k}$: $\phi(m^{(t)}) = Ds^{(t)}$, where the same sparse representation is used as the one used to compute the policy. Both knowledge bases provide information about the task and because of this they share the same coefficient vectors $S$. We then used coupled dictionary optimization techniques from the sparse coding literature to optimize these dictionaries. They are updated iteratively based on trajectories samples from the current task.\\
 When a new task arrives, with its task descriptor, we search for the coefficients $s^{(t_{new})}$ that minimize the difference between the extracted features and the reconstruction of it using the shared knowledge base $D$. Using these coefficients, we can compute the policy parameters using $\theta = Ls^{(t_{new})}$. Afterwards, we can iterate again to improve $s$ and the knowledge bases.
-
-\section{Optimization techniques}
-Optimization techniques are ways of changing weights of a neural network using gradients for those weights. Some of these techniques may be better at avoiding getting stuck in local minima and may be faster. Here we discuss a few of these techniques.
-
-\subsection{RMSProp}
-%By \cite{Tieleman2012LectureMagnitude.}.
-
-In RMSProp, we only use the sign of the gradient to update the weights. This allows us the escape from plateaus more quickly. This is combined with a step size, used to control how much of the gradient to apply to the weight, that is adapted for each weight separately. For example, we can multiply the step-size of a certain weight by a factor greater than one if its last 2 gradients agreed on the sign, and multiply the step-size by a value less than 1 otherwise. This means that, when the gradients agree on the direction, we give them more influence. If the are not consistent and disagree in subsequent steps, we decrease the influence. We can also put a limit on the step-size as to not let it grow to excessively low or high amounts.\\
-By just using this, we would however have a problem of weights growing too high in unwanted situations. For example, when a gradient is for 9 times a small positive amount (e.g. $0.1$) and once a large negative amount (e.g. $-0.9$), we don't want to change the weights a lot because they balance each other out. Using the current algorithm however, the step-size and so the weights would become too high because we only look at the signs and not the magnitude of the gradients.\\
-Notice that, right know, we are dividing by the size of the gradient in order to just get $+1$ or $-1$ depending on the sign. It is however better to divide each weight by a moving average of the squared weight using the gradients of the past steps:
-\begin{align}
-MeanSquare(w, t) &= \gamma * MeanSquare(w, t-1) + (1 - \gamma) * f'(\theta_t)^2 \\
-v_{t+1} &= \frac{\alpha}{\sqrt{MeanSquare(w,t)}}f'(\theta_t)
-\end{align}
-Where $f'(\theta_t)$ is the gradient, $\alpha$ is the learning rate and $v_{t+1}$ is the eventual update.
 
 \section{Proposed algorithm}
 Our approach only uses a latent basis over the policy space instead of using one over the policy space and another one over the descriptor space like is done by \cite{Isele2016UsingLearning}. Again, for a task $(t)$, we can reconstruct the policy using the shared basis $L$ and the sparse coefficients over this basis for that specific task $s^{(t)}$: $\theta^{(t)} = Ls^{(t)}$, with $\theta^{(t)} \in \mathbb{R}^d$, $L \in \mathbb{R}^{d \times k}$ and $s^{(t)} \in \mathbb{R}^k$.\\
