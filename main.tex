@@ -825,7 +825,13 @@ Here we will list the most popular ones:
     \item \textit{Transfer ratio}: This is the ratio of the total reward improvement that the transfer learning algorithm has over the other algorithm. Because it uses the \textit{total reward} metric, it suffers from the same issues. Furthermore, it is also influenced by the reward structure. For example, an agent always receiving a reward of $+1$ at the end of the episode may result in a different ratio.
     \item \textit{Time to threshold}: This measures the time needed to reach a pre-defined performance. A transfer leraning may need less time to reach this threshold. The threshold needs to be defined manually and depends on the task domain and learning method.
 \end{itemize}
-
+A graph with 3 of the 5 metrics is shown in Figure~\ref{fig:TLmetrics}.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{images/tlmetrics.png}
+    \caption{A graph comparing the \textit{jumpstart}, \textit{time to threshold} and \textit{asymptotic performance} metrics between the algorithm that uses knowledge transfer and the one that doesn't. Note that here the transfer learning algorithm performs better on all three metrics. It can also be seen that the total reward is higher. Source: \cite{Taylor2009TransferSurvey}.}
+    \label{fig:TLmetrics}
+\end{figure}
 Instead of comparing the transfer learning algorithm with a algorithm that doesn't use knowledge transfer, it is also possible to compare the algorithm with the performance of humans (by averaging their performances). However, metrics must be chosen carefully such that they don't favor the algorithm or the human and they can be abused.
 \subsection{Using Task Features for Zero-Shot Knowledge Transfer in Lifelong Learning}
 An extra problem is to learn multiple variations of environment instead of just one. This means that for each of these tasks the transition function is slightly different, while keeping the same action space and state space.
