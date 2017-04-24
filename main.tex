@@ -848,11 +848,57 @@ The first set of tasks can be learned in two ways. One can either learn these ta
 Once this is done, we sum and apply the gradients of every task. The learning process for this set of tasks then stops when a certain number of updates have been applied.\\
 In the asynchronous way, learning is executed in parallel and for each task, a number of updates are executed on its own. Trajectories are collected for each task continuously and its gradients are applied immediately after they are calculated. This means that they are not first summed as in the sequential method.\\
 Afterwards, we learn the new task separately for a certain number of updates.\\
+This results in the following pseudo code for the source tasks:\\
 \begin{algorithm}[H]
 \DontPrintSemicolon
-// \emph{Fill with actual algorithm}\;
-\caption{Asynchronous knowledge transfer agent}
+\emph{// Assume global shared parameter vector $\theta_g$ and global shared counter $T \gets 0$}\;
+\emph{// Assume thread-specific parameter vector $\theta_g'$}\;
+Initialize thread-specific paramter vector $\theta^{(t)}$\;
+Initialize thread step counter $t\gets 1$\;
+\Repeat{$T > T_{max}$}{
+    Reset gradients: $d\theta_g \gets 0$\;
+    Synchronize agent-specific parameters  $\theta_g' \gets \theta_g$\;
+    $t_{start} \gets t$\;
+    Initialize state $s_t$\;
+    \Repeat{terminal $s_t$ \textbf{or} $t-t_{start} == t_{max}$}{
+        Perform $a_t$ according to policy $\pi(a_t|s_t;\theta' \cup \theta^{(t)})$\;
+        Receive reward $r_t$ and new state $s_{t+1}$\;
+        $t \gets t + 1$\;
+        $T \gets T + 1$\;
+        }
+    \For {$i \in \{t-1,\dots,t_{start} \}$} {
+        %Accumulate gradients w.r.t. $\theta'$: $d\theta \gets d\theta + \nabla_{\theta'} \log\pi(a_i|s_i;\theta') (R - V(s_i;\theta'_v))$\;
+        Accumulate gradients w.r.t. $\theta' \cup \theta^{(t)}$: $\theta \gets \theta + \alpha \nabla_{\theta \cup \theta^{(t)}} \log \pi_{\theta \cup \theta^{(t)}}(s_t,a_t)v_t$\;
+    }
+    Perform asynchronous update of $\theta$ using $d\theta$ and of $\theta_v$ using $d\theta_v$\;
+}
+\caption{Asynchronous knowledge transfer agent for source task}
 \end{algorithm}
+For the target task, the pseudo code is the following:\\
+\begin{algorithm}[H]
+\DontPrintSemicolon
+\emph{// Assume global shared parameter vector $\theta_g$ and global shared counter $T \gets 0$}\;
+\emph{// Assume thread-specific parameter vector $\theta_g'$}\;
+Initialize thread-specific paramter vector $\theta^{(t)}$\;
+Initialize thread step counter $t\gets 1$\;
+\Repeat{$T > T_{max}$}{
+    $t_{start} \gets t$\;
+    Initialize state $s_t$\;
+    \Repeat{terminal $s_t$ \textbf{or} $t-t_{start} == t_{max}$}{
+        Perform $a_t$ according to policy $\pi(a_t|s_t;\theta_g \cup \theta^{(t)})$\;
+        Receive reward $r_t$ and new state $s_{t+1}$\;
+        $t \gets t + 1$\;
+        $T \gets T + 1$\;
+        }
+    \For {$i \in \{t-1,\dots,t_{start} \}$} {
+        %Accumulate gradients w.r.t. $\theta'$: $d\theta \gets d\theta + \nabla_{\theta'} \log\pi(a_i|s_i;\theta') (R - V(s_i;\theta'_v))$\;
+        Accumulate gradients w.r.t. $\theta^{(t)}$: $\theta \gets \theta^{(t)} + \alpha \nabla_{\theta^{(t)}} \log \pi_{\theta^{(t)}}(s_t,a_t)v_t$\;
+    }
+    Perform asynchronous update of $\theta$ using $d\theta$ and of $\theta_v$ using $d\theta_v$\;
+}
+\caption{Knowledge transfer agent for target task}
+\end{algorithm}
+
 \section{Experimental setup}
 Experiments were executed on variations of the cart-pole environment.
 In this 2-dimensional environment, a pole is placed vertically on a cart. The goal in this environment is to keep the pole balanced vertically (i.e. keep the angle of the pole between thresholds) and to keep the cart between 2 borders. The state is defined by 4 continuous-valued attributes: the position of the cart, the velocity of the cart, the angle of the pole and the angular velocity of the pole. A discrete value of $1$ is given as a reward each time the pole is balanced and the cart is between bounds. If this isn't the case, the episode ends. An agent can either move left or right. It can't stay at its current position. For the experiments, an implementation by \cite{Brockman2016OpenAIGym} was used.\\
