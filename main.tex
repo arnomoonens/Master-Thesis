@@ -49,7 +49,7 @@
 \subsection{Basics}
 In reinforcement learning, one tries to find which action to take in a certain state of the environment in order to maximise a possibly delayed numerical reward.\\
 Reinforcement learning problems can be formulated in the form of a Markov Decision Process (MDP). This is four-tuple $(\mathcal{S}, \mathcal{A}, \mathcal{P}, \mathcal{R})$. $\mathcal{S}$ is the state space and contains all the possible states of the environment. The action space, $\mathcal{A}$, denotes all the possible actions that the agent can take in the environment. $\mathcal{P}: \mathcal{S} \times \mathcal{A} \to \mathcal{S}$ is the transition function and defines the probabilities for being in next state given a state and an action. $\mathcal{R}: \mathcal{S} \times \mathcal{A} \to \mathcal{R}$ gives probabilities for rewards when taking an action in a certain state.\\
-It does not know on beforehand which actions are optimal. As such, this must be discovered by trial-and-error. Subsequently, it can change its policy to increase the achieved rewards. This policy, denoted by $\pi$, defines for each state and action a probability $\pi(s,a)$, which denotes the probability of taking action $a$ when in state $s$: $\pi_t(s,a) = P(a_t = a | s_t = s)$. Note that exactly one action has to be taken in a state and that the action probabilities for one state sum to $1$: $\sum_{a\in \mathcal{A}}\pi_t(s,a)=1$.\\
+It does not know on beforehand which actions are optimal. As such, this must be discovered by trial-and-error. Subsequently, it can change its policy to increase the achieved rewards. This policy, denoted by $\pi$, defines for each state and action a probability $\pi(s,a)$, which denotes the probability of taking action $a$ when in state $s$: $\pi_t(s,a) = P(a_t = a \vert s_t = s)$. Note that exactly one action has to be taken in a state and that the action probabilities for one state sum to $1$: $\sum_{a\in \mathcal{A}}\pi_t(s,a)=1$.\\
 Because feedback in the form of numerical rewards may not be immediate, a reinforcement learning algorithm must be able to backtrack which actions in certain situation lead to the reward that the reinforcement learning algorithm received.\\
 
 Reinforcement learning algorithms often use a state-value function $V(s)$. This function says how good it is to be in a certain state $s$ by stating the expected return in the future starting from state $s$, where the return is the discounted rewards. This expected value when starting in state $s$ and following a specific policy $\pi$ is denoted as $V^\pi(s)$:
@@ -456,7 +456,7 @@ Instead, we will solve the problem analytically. We assume that the policy is di
 
 % The distinction is subtle, so I’ll say it again. For conditional probability, the hypothesis is treated as a given and the data are free to vary. For likelihood, the data are a given and the hypotheses vary.
 % Source (with more explanation): https://alexanderetz.com/2015/04/15/understanding-bayes-a-look-at-the-likelihood/
-\todo{Explain likelihood}
+\todo{Explain likelihood?}
 Likelihood ratios use the following identity:
 \begin{align}
 \nabla_{\theta}\pi_{\theta}(s,a) &= \pi_{\theta}(s,a) \frac{\nabla_{\theta}\pi_{\theta}(s,a)}{\pi_{\theta}(s,a)}\\
@@ -909,6 +909,13 @@ This learning process is repeated 20 times with the same set of environments. Ho
 Afterwards the rewards are averaged over all the runs and results of different environment sets.\\
 Trajectories for both sets of tasks contained of maximally 200 steps. This could be less in case the environment was in an end state. In case of the cart-pole environment, this can mean for example that the cart tried to cross the left or right border or that the pole fell down.\\
 Hyperparameters, such as the learning rate of neural networks, were chosen by iteratively executing the previously mentioned experiment. Possible values for each hyperparameter were chosen manually.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\linewidth]{images/knowledge_transfer.png}
+    \caption{Artificial neural network architecture.}
+    \label{fig:algonn}
+\end{figure}
 \section{Results}
 \section{Conclusion}
 \subsubsection*{Acknowledgments}
