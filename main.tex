@@ -216,10 +216,10 @@ $e(s,a) \gets 0$ for all $s,a$\;
 }
 \caption{Sarsa($\lambda$). Source: \cite{Sutton1998ReinforcementIntroduction}}
 \end{algorithm}
-Two methods exist to combine TD($\lambda$) and Q-learning and thus getting Q($\lambda$): There exists 2 different methods: Watkins's Q($\lambda$) and Peng's Q($\lambda$).\\
+Two methods exist to combine TD($\lambda$) and Q-learning and thus getting Q($\lambda$): There exists 2 different methods: Watkins' Q($\lambda$) and Peng's Q($\lambda$).\\
 Here, we must cut off the look ahead until the first exploratory action instead of the episode's end. This is done because this exploratory action doesn't have any relationship with the greedy policy. Recall that Q-learning is an off-policy method and the policy learned about is not necessarily the same as the one used to select actions. As such, it can learn about the greedy policy while following a policy involving exploratory (suboptimal) actions.
 
-For Watkins's Q($\lambda$), if $a_{t+n}$ is the first exploratory action, the longest backup is toward:
+For Watkins' Q($\lambda$), if $a_{t+n}$ is the first exploratory action, the longest backup is toward:
 \begin{equation}
 r_{t+1} + \gamma r_{t+2} + \dots + \gamma^{n-1} r_{t+n} + \gamma^n \max_a Q_t(s_{t+n},a)
 \end{equation}
@@ -266,7 +266,7 @@ $e(s,a) \gets 0$ for all $s,a$\;
         $s \gets s'$; $a \gets a'$\;
     }
 }
-\caption{Watkins's Q($\lambda$). Source: \cite{Sutton1998ReinforcementIntroduction}}
+\caption{Watkins' Q($\lambda$). Source: \cite{Sutton1998ReinforcementIntroduction}}
 \end{algorithm}
 Because exploratory actions happen often, backups won't be long and so eligibility traces won't have a lot of advantage anymore.\\
 Peng's Q($\lambda$) tries to solve this, being a hybrid of Sarsa($\lambda$) and Watkin's Q($\lambda$). Its component backups are neither off- nor on-policy. The earlier transitions are each on-policy and the last transition uses the greedy policy. As such, all but the last uses the actual experiences. Because of this, for a fixed non-greedy policy, $Q_t$ converges to neither $Q^{\pi}$ nor $Q^{*}$, but some hybrid between the 2. If the policy is more greedy, the method may still converge to $Q^{*}$.\\
@@ -840,6 +840,11 @@ In \cite{Isele2016UsingLearning}, a method is presented that learns these task s
 First, it is assumed that the policy parameters for every task $t$ can be factorized using a shared knowledge base $L \in \mathbb{R}^{d \times k}$: $\theta^{(t)} = Ls^{(t)}$. $s^{(t)} \in \mathbb{R}^{(k)}$ are the sparse coefficients over the basis, i.e. the latent representation of the policy's parameters for task $t$. $L$ is able to capture relationships among policies as this is used to compute every policy, whereas there is a sparse representation for computed for each task separately.\\
 The features of the task are obtained by (possibly non-linear) feature extractors applied on the descriptor of the task: $\phi(m^{(t)}) \in \mathbb{R}^{d_m}$. These features can also be linearly factorized using another shared knowledge base $D \in \mathbb{R}^{d_m \times k}$: $\phi(m^{(t)}) = Ds^{(t)}$, where the same sparse representation is used as the one used to compute the policy. Both knowledge bases provide information about the task and because of this they share the same coefficient vectors $S$. We then used coupled dictionary optimization techniques from the sparse coding literature to optimize these dictionaries. They are updated iteratively based on trajectories samples from the current task.\\
 When a new task arrives, with its task descriptor, we search for the coefficients $s^{(t_{new})}$ that minimize the difference between the extracted features and the reconstruction of it using the shared knowledge base $D$. Using these coefficients, we can compute the policy parameters using $\theta = Ls^{(t_{new})}$. Afterwards, we can iterate again to improve $s$ and the knowledge bases.
+
+\section{Related work}
+% Types of knowledge that is transferred: Value functions, features extracted from value functions, heuristics, policies
+% Different representation types: Graphs, relational representation, tables
+In of the earliest works of transfer learning used for reinforcement learning , the transition function was gradually changed as to make the task harder. A cart pole task was used where the pole was long and light at first, but was made shorter and heavier over time. The total time spent learning on the sequence of gradually modified tasks was shorter than when trying to solve the hardest task directly.
 
 \section{Proposed algorithm}
 Our approach only uses a latent basis over the policy space instead of using one over the policy space and another one over the descriptor space like is done by \cite{Isele2016UsingLearning}. Again, for a task $(t)$, we can reconstruct the policy using the shared basis $L$ and the sparse coefficients over this basis for that specific task $s^{(t)}$: $\theta^{(t)} = Ls^{(t)}$, with $\theta^{(t)} \in \mathbb{R}^d$, $L \in \mathbb{R}^{d \times k}$ and $s^{(t)} \in \mathbb{R}^k$.\\
