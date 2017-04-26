@@ -833,6 +833,7 @@ A graph with 3 of the 5 metrics is shown in Figure~\ref{fig:TLmetrics}.
     \label{fig:TLmetrics}
 \end{figure}
 Instead of comparing the transfer learning algorithm with a algorithm that doesn't use knowledge transfer, it is also possible to compare the algorithm with the performance of humans (by averaging their performances). However, metrics must be chosen carefully such that they don't favor the algorithm or the human and they can be abused.
+
 \subsection{Using Task Features for Zero-Shot Knowledge Transfer in Lifelong Learning}
 An extra problem is to learn multiple variations of environment instead of just one. This means that for each of these tasks the transition function is slightly different, while keeping the same action space and state space.
 In \cite{Isele2016UsingLearning}, a method is presented that learns these task simultaneously by using a predefined description for each task. When a new task arrives along with its features, obtained from its task descriptor, a policy can be generated that immediately results in a good performance, even though the algorithm was not applied on that task before and the task descriptor, task order and task distribution was not known on beforehand. This way, knowledge transfer can take place without the need of training data to identify relationships across tasks. For each subsequent task, the policy and feature vector are iteratively improved.\\
@@ -858,7 +859,24 @@ Transfer learning methods for reinforcement learning can first be divided into 2
 
 \subsection{Methods that don't use task mappings} % (fold)
 \label{sub:methods_that_don_t_use_task_mappings}
-In of the earliest works of transfer learning used for reinforcement learning \citep{conf/ijcai/SelfridgeSB85}, the transition function was gradually changed as to make the task harder. A cart pole task was used where the pole was long and light at first, but was made shorter and heavier over time. The total time spent learning on the sequence of gradually modified tasks was shorter than when trying to solve the hardest task directly.
+%Also put this in one of the subdivisions below or not?
+In of the earliest works of transfer learning used for reinforcement learning \citep{conf/ijcai/SelfridgeSB85}, the transition function was gradually changed as to make the task harder. A cart pole task was used where the pole was long and light at first, but was made shorter and heavier over time. The total time spent learning on the sequence of gradually modified tasks was shorter than when trying to solve the hardest task directly.\\
+
+Earlier work was generally focused on transferring from one source task to a target task, while in recent research, most of the times a more general scenario with possibly multiple sources is considered.
+%Say something about further grouping of methods
+
+%Here something about source-to-task
+\subsubsection{Single source} % (fold)
+\label{ssub:single_source}
+
+% subsubsection single_source (end)
+
+%Here something about sources-to-task
+\subsubsection{Multiple sources} % (fold)
+\label{ssub:multiple_sources}
+One approach, presented in , is to transfer transitions (also called \textit{instances} or \textit{samples}) gather from the source tasks to the target task.
+% subsubsection multiple_sources (end)
+
 % subsection methods_that_don_t_use_task_mappings (end)
 
 \subsection{Methods that use task mappings} % (fold)
