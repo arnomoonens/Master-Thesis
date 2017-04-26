@@ -690,7 +690,7 @@ Where $f'(\theta_t)$ is the gradient, $\alpha$ is the learning rate and $v_{t+1}
 
 \section{DQN}
 %Original paper by \cite{Mnih2015Human-levelLearning}.\\
-A deep Q-network, presented in \cite{Mnih2015Human-levelLearning}, aims to combine deep learning with reinforcement learning. It applies a convolutional neural network to high-dimensional sensory inputs such as the pixels of a game screen in order to approximate an action-value function $Q^{*}(s,a)$. This is parametrised by the weights of the convolutional neural network, thus being $Q(s;a;\theta_i)$. Past experiences are also reused and the Q value function used to select action is only periodically updated to the most recently learned one in order to reduce instability.\\
+A deep Q-network (DQN), presented in \cite{Mnih2015Human-levelLearning}, aims to combine deep learning with reinforcement learning. It applies a convolutional neural network to high-dimensional sensory inputs such as the pixels of a game screen in order to approximate an action-value function $Q^{*}(s,a)$. This is parametrised by the weights of the convolutional neural network, thus being $Q(s;a;\theta_i)$. Past experiences are also reused and the Q value function used to select action is only periodically updated to the most recently learned one in order to reduce instability.\\
 
 This instability is caused by using a nonlinear function to approximate the action-value function and by the correlation between subsequent observations. Small changes in the $Q$ value can lead to big changes in the policy and because of that the data distribution and the correlations between the action-values $Q(s,a)$ and the target values $r+\gamma \max_{a'} Q(s',a')$ can also change a lot. The action that is selected determines which states that will be observed next.
 
@@ -807,7 +807,7 @@ Multi-task learning is a special kind of task learning where the problems for th
 As was stated, first the set of source tasks needs to be selected. Again, this can be done by a human in case of a human-guided scenario. However, the selection may also be done by the agent itself. It can learn multiple source task and then use them all for transfer. Another possibility is to select the source tasks that are the most relevant and lead to highest performance for the target task. The agent may also just aim to avoid negative transfer, which means that the specific selection of source tasks leads to worse learning performance for the target task.
 The agent could also modify the source task such that the knowledge transfer is the most useful in the target task.\\
 
-Instead of just knowing that tasks are related, many methods also need to know how tasks are related, using a task mappings. This is necessary to make the knowledge gained on the source tasks useful for the target task. Tasks may differ in state and action variables and the in the semantic meaning of them. In the mountain car environment, one can have a task where the goal is on the opposite side. As such, taking the action \texttt{Left} has a different meaning for these tasks. Actions in the two tasks must be mapped such that their effects are similar.\\
+Instead of just knowing that tasks are related, many methods also need to know how tasks are related, using task mappings. This is necessary to make the knowledge gained on the source tasks useful for the target task. Tasks may differ in state and action variables and the in the semantic meaning of them. In the mountain car environment, one can have a task where the goal is on the opposite side. As such, taking the action \texttt{Left} has a different meaning for these tasks. Actions in the two tasks must be mapped such that their effects are similar.\\
 Again, these mappings can be provided by a human or they can be learned by the agent. Note that these mappings may be partial and not every action in the source task is mapped to an action in the target task or vice-versa. For states, it is also possible to map the states themselves instead of the state variables.\\
 In multi-task learning, states and variables are the same and have the same meaning. Because of this, no task mapping is necessary in multi-task learning.\\
 
@@ -844,15 +844,37 @@ When a new task arrives, with its task descriptor, we search for the coefficient
 \section{Related work}
 % Types of knowledge that is transferred: Value functions, features extracted from value functions, heuristics, policies
 % Different representation types: Graphs, relational representation, tables
-In of the earliest works of transfer learning used for reinforcement learning , the transition function was gradually changed as to make the task harder. A cart pole task was used where the pole was long and light at first, but was made shorter and heavier over time. The total time spent learning on the sequence of gradually modified tasks was shorter than when trying to solve the hardest task directly.
+
+% Representation transfer
+    % options
+
+% separation in subtasks
+
+% Relational RL
+
+% transferring instances
+% transferring advice/preferences
+Transfer learning methods for reinforcement learning can first be divided into 2 groups: methods that use task mappings and methods that don't. Will will first discuss methods that don't use task mappings. Afterwards we will only briefly discuss methods that use task mappings, as these are less related to our proposed method.
+
+\subsection{Methods that don't use task mappings} % (fold)
+\label{sub:methods_that_don_t_use_task_mappings}
+In of the earliest works of transfer learning used for reinforcement learning \citep{conf/ijcai/SelfridgeSB85}, the transition function was gradually changed as to make the task harder. A cart pole task was used where the pole was long and light at first, but was made shorter and heavier over time. The total time spent learning on the sequence of gradually modified tasks was shorter than when trying to solve the hardest task directly.
+% subsection methods_that_don_t_use_task_mappings (end)
+
+\subsection{Methods that use task mappings} % (fold)
+\label{sub:methods_that_use_task_mappings}
+
+% subsection methods_that_use_task_mappings (end)
 
 \section{Proposed algorithm}
+\label{sec:proposed_algorithm} % (fold)
 Our approach only uses a latent basis over the policy space instead of using one over the policy space and another one over the descriptor space like is done by \cite{Isele2016UsingLearning}. Again, for a task $(t)$, we can reconstruct the policy using the shared basis $L$ and the sparse coefficients over this basis for that specific task $s^{(t)}$: $\theta^{(t)} = Ls^{(t)}$, with $\theta^{(t)} \in \mathbb{R}^d$, $L \in \mathbb{R}^{d \times k}$ and $s^{(t)} \in \mathbb{R}^k$.\\
 
 The first set of tasks can be learned in two ways. One can either learn these tasks sequentially or asynchronous. In the sequential way, we collect trajectories and calculate the gradients for every task after another. This is calculated for every episode of a task like in the \texttt{REINFORCE} algorithm, i.e. with likelihood ratios using discounted rewards as a sample for the $Q$ values of the policy.\\
 Once this is done, we sum and apply the gradients of every task. The learning process for this set of tasks then stops when a certain number of updates have been applied.\\
 In the asynchronous way, learning is executed in parallel and for each task, a number of updates are executed on its own. Trajectories are collected for each task continuously and its gradients are applied immediately after they are calculated. This means that they are not first summed as in the sequential method.\\
 Afterwards, we learn the new task separately for a certain number of updates.\\
+\todo{Use ref instead}
 This results in the following pseudo code for the source tasks:\\
 \begin{algorithm}[H]
 \DontPrintSemicolon
@@ -903,6 +925,7 @@ Initialize thread step counter $t\gets 1$\;
 }
 \caption{Knowledge transfer agent for target task}
 \end{algorithm}
+% section proposed_algorithm (end)
 
 \section{Experimental setup}
 Experiments were executed on variations of the cart-pole environment.
