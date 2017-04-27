@@ -1,0 +1,144 @@
+\ProvidesPackage{vub}
+\RequirePackage{color}
+\RequirePackage{ifxetex}
+\RequirePackage{tikz}
+\RequirePackage{adjustbox}
+% VUB is in Belgium, we use A4
+% Additionally, we use `geometry` to play with margins on the title page
+\RequirePackage[a4paper]{geometry}
+%\RequirePackage[T1]{fontenc}
+
+% Avoid hyphenation in title and subtitle
+\usepackage{hyphenat}
+
+\RequirePackage{kvoptions}
+\DeclareBoolOption[false]{spotcolors}
+\DeclareComplementaryOption{nospotcolors}{spotcolors}
+\ProcessKeyvalOptions*{}
+
+\ifvub@spotcolors
+\RequirePackage[spotcolors]{vubprivate}
+\else
+\RequirePackage{vubprivate}
+\fi
+
+\newcommand\@faculty{Set a faculty using \textbackslash faculty\{\textit{Engineering Sciences}\}}
+\newcommand\@subtitle{}
+\newcommand\@reason{Graduation thesis submitted in partial fulfillment of the requirements for the degree of [degree]}
+\newcommand\@promotortitle{Promotor:}
+\newcommand\@advisortitle{Advisor:}
+\newcommand\@promotor{}
+\newcommand\@advisor{}
+
+%%% Faculty
+\@ifundefined{faculty}{%
+    \newcommand{\faculty}[1]{%
+        \makeatletter%
+        \renewcommand\@faculty{#1}%
+        \makeatother%
+    }%
+}
+
+%%% Subtitle
+\@ifundefined{subtitle}{%
+    \newcommand{\subtitle}[1]{%
+        \makeatletter%
+        \renewcommand\@subtitle{#1}%
+        \makeatother%
+    }%
+}
+
+%%% Reason
+\@ifundefined{reason}{%
+    \newcommand{\reason}[1]{%
+        \makeatletter%
+        \renewcommand\@reason{#1}%
+        \makeatother%
+    }%
+}
+
+%%% Promotor Title
+\@ifundefined{promotortitle}{%
+    \newcommand{\promotortitle}[1]{%
+        \makeatletter%
+        \renewcommand\@promotortitle{#1}%
+        \makeatother%
+    }%
+}
+
+%%% Promotor
+\@ifundefined{promotor}{%
+    \newcommand{\promotor}[1]{%
+        \makeatletter%
+        \renewcommand\@promotor{#1}%
+        \makeatother%
+    }%
+}
+
+%%% Advisortitle
+\@ifundefined{advisortitle}{%
+    \newcommand{\advisortitle}[1]{%
+        \makeatletter%
+        \renewcommand\@advisortitle{#1}%
+        \makeatother%
+    }%
+}
+
+%%% Advisor
+\@ifundefined{advisor}{%
+    \newcommand{\advisor}[1]{%
+        \makeatletter%
+        \renewcommand\@advisor{#1}%
+        \makeatother%
+    }%
+}
+
+\renewcommand\maketitle{
+\begin{titlepage}
+    \newgeometry{left=18mm,top=20mm,right=10mm}
+    \raisebox{\dimexpr \triangleH-\height\relax}
+    {\includegraphics[width=5.66cm]{vub_logo_cmyk}}%
+    \hfill%
+    \vubtriangle
+
+    \vfill
+
+    \hspace{25mm}\begin{minipage}{
+        \dimexpr\textwidth-58mm}
+        
+        {\color{vuboranje}\vubfont{\@reason}}
+        
+        \vspace{5mm}
+        
+        \vubfontbf{\color{vubbleu}\MakeUppercase{\Huge\@title}}
+
+        \vspace{5mm}
+
+        {\color{vubbleu} \LARGE\vubfont\@subtitle}
+
+        \vspace{3cm}
+
+        {\color{vuboranje} \large\vubfont\@author}
+
+        \vspace{5mm}
+
+        {\color{vubbleu} \large\vubfont\@date}
+    \end{minipage}
+
+    \vfill
+
+    \hspace{25mm}\begin{minipage}{
+        \dimexpr\textwidth-58mm}
+        \begin{tabular}{rl}
+            \vubfont{\color{vuboranje} \@promotortitle} & \vubfont{\color{vuboranje}\@promotor}\\
+            \vubfont{\color{vuboranje} \@advisortitle} & \vubfont{\color{vuboranje}\@advisor}\\
+        \end{tabular}\\
+        \vubfontbf{\color{vubbleu} \@faculty}
+    \end{minipage}
+    \restoregeometry
+\end{titlepage}
+}
+
+\endinput
+
+

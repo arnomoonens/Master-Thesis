@@ -10,8 +10,8 @@
 \usepackage{caption} % Change width of figure captions
 \usepackage{amssymb}
 \usepackage[linesnumbered, ruled]{algorithm2e}
-\usepackage{titlesec}
-
+\usepackage{vub}
+\hypersetup{pageanchor=false}
 %Restrict width of algorithm to width of a line
 \usepackage{xpatch}
 \xpretocmd{\algorithm}{\hsize=\linewidth}{}{}
@@ -21,20 +21,14 @@
 
 \DeclareMathOperator*{\argmax}{arg\,max}
 
-\titleformat{\paragraph}
-{\normalfont\normalsize\bfseries}{\theparagraph}{1em}{}
-\titlespacing*{\paragraph}
-{0pt}{3.25ex plus 1ex minus .2ex}{1.5ex plus .2ex}
+\reason{Graduation thesis submitted in partial fulfillment of the requirements for the degree of Master of Science in Applied Science and Engineering: Computer Science}
 \title{Thesis}
-\author{
-	\textbf{Arno Moonens}\\
-    Vrije Universiteit Brussel\\
-    \texttt{arno.moonens@vub.be}\\
-\and
-	\textbf{Peter Vrancx}\\
-    Vrije Universiteit Brussel\\
-    \texttt{pvrancx@vub.ac.be}\\
-}
+%\subtitle{[Subtitle]}
+\author{Arno Moonens}
+\date{Academic Year: 2016-2017}
+\promotor{Dr. Peter Vrancx}
+%\advisor{Dr. Michael Spranger}
+\faculty{Science and Bio-Engineering Sciences}
 
 \begin{document}
 \maketitle
@@ -878,6 +872,8 @@ One approach, presented in \cite{lazaric2008transfer}, is to transfer transition
 
 Another possibility is to transfer a representation. In this case, characteristics are inferred from multiple source tasks.
 In \cite{Bernstein99reusingold}, policies are averaged and can be applied for $n$ time steps on all states. This combination policy, time steps and states is called an option. The reasoning is that actions that are used a lot in a state in source tasks may also be useful in the target task. In \cite{perkins1999using}, these options are provided on beforehand. The agent then learn a single action-value function over these options using all the source tasks. These options along with the action-value function can then be used for the target task.
+
+\cite{journals/ml/FosterD02} tries to extract sub-tasks across multiple source task
 % subsubsection multiple_sources (end)
 
 % subsection methods_that_don_t_use_task_mappings (end)
