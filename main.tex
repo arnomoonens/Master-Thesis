@@ -805,7 +805,7 @@ Instead of just knowing that tasks are related, many methods also need to know h
 Again, these mappings can be provided by a human or they can be learned by the agent. Note that these mappings may be partial and not every action in the source task is mapped to an action in the target task or vice-versa. For states, it is also possible to map the states themselves instead of the state variables.\\
 In multi-task learning, states and variables are the same and have the same meaning. Because of this, no task mapping is necessary in multi-task learning.\\
 
-Task learning methods can also differ in the type of knowledge that is transferred between source and target tasks. This knowledge can be for example an action-value function, transitions or policy gradient parameters. For tasks that are closely related, detailed knowledge may be useful. Otherwise, high-level information may result in a better learning performance. The type of knowledge that is tranferred can also depend on the type of source and target tasks and on the task mappings.\\
+Task learning methods can also differ in the type of knowledge that is transferred between source and target tasks. This knowledge can be for example an action-value function, transitions or policy gradient parameters. For tasks that are closely related, detailed knowledge may be useful. Otherwise, high-level information may result in a better learning performance. The type of knowledge that is transferred can also depend on the type of source and target tasks and on the task mappings.\\
 
 Last, the task learning method may also restrict which reinforcement learning algorithms that can be used. It is possible for example that only a class of reinforcement learning algorithms or only one specific reinforcement learning algorithm can be used with the task learning method or that the algorithm is the same for both the source and target tasks. Ideally, the reinforcement learning algorithms can be chosen freely and may be selected based on the characteristics of the task.\\
 
@@ -817,7 +817,7 @@ Here we will list the most popular ones:
     \item \textit{Asymptotic performance}: This is the opposite of \textit{jumpstart} performance and measures the performance improvement after having learned the target task. However, this is hard to measure because one has to know when the task learning algorithm converged. Furthermore, the task learning algorithm and the algorithm that doesn't use knowledge transfer may require a different training time in order to converge.
     \item \textit{Total reward}: This is the total reward that the algorithm has accumulated during learning, i.e. the area under the learning curve. In case of improvement, this area is bigger than when transfer learning isn't used. This can be achieved when the transfer learning algorithm has a higher learning rate. However, convergence is again an issue here. An algorithm that learns slower and thus takes more time to converge may accumulate a higher total reward than a faster algorithm that may even reach a higher performance. This metric is only useful for task that always have the same duration.
     \item \textit{Transfer ratio}: This is the ratio of the total reward improvement that the transfer learning algorithm has over the other algorithm. Because it uses the \textit{total reward} metric, it suffers from the same issues. Furthermore, it is also influenced by the reward structure. For example, an agent always receiving a reward of $+1$ at the end of the episode may result in a different ratio.
-    \item \textit{Time to threshold}: This measures the time needed to reach a pre-defined performance. A transfer leraning may need less time to reach this threshold. The threshold needs to be defined manually and depends on the task domain and learning method.
+    \item \textit{Time to threshold}: This measures the time needed to reach a pre-defined performance. A transfer learning algorithm may need less time to reach this threshold. The threshold needs to be defined manually and depends on the task domain and learning method.
 \end{itemize}
 A graph with 3 of the 5 metrics is shown in Figure~\ref{fig:TLmetrics}.
 \begin{figure}[H]
@@ -872,9 +872,16 @@ One approach, presented in \cite{lazaric2008transfer}, is to transfer transition
 
 Another possibility is to transfer a representation. In this case, characteristics are inferred from multiple source tasks.
 In \cite{Bernstein99reusingold}, policies are averaged and can be applied for $n$ time steps on all states. This combination policy, time steps and states is called an option. The reasoning is that actions that are used a lot in a state in source tasks may also be useful in the target task. In \cite{perkins1999using}, these options are provided on beforehand. The agent then learn a single action-value function over these options using all the source tasks. These options along with the action-value function can then be used for the target task.\\
-Another possiblity, presented in \cite{fernandez2006probabilistic}, is to collect a library of policies and select one to use probabilistically, depending on the expected reward. At every time step, it can choose to use one of the source task policies, use the current best target task policy or to randomly explore. As the probabilities depend on the gained rewards, after some time more useful policies are exploited more often. This method only works however for tasks where only the goal state in a maze is different.
+Another possibility, presented in \cite{fernandez2006probabilistic}, is to collect a library of policies and select one to use probabilistically, depending on the expected reward. At every time step, it can choose to use one of the source task policies, use the current best target task policy or to randomly explore. As the probabilities depend on the gained rewards, after some time more useful policies are exploited more often. This method only works however for tasks where only the goal state in a maze is different.
 
-\cite{journals/ml/FosterD02} tries to extract sub-tasks across multiple source tasks. Optimal policies are then learned for each of these sub-tasks and pieced together. In this case, the environment was a maze and tasks differ in their goal in the maze. Value functions can then be learned on parts of the maze. Less learning for the target task is then required because most of the already learned sub-tasks can also be used for the target task.
+Instead of selecting a policy from which to transfer information, \cite{conf/cira/TanakaY03} uses statistics of all the source tasks. More specifically, the average and standard deviation of each state-action pair are calculated. In the target task, the action-value function for each state-action pair is then instantiated to the average for that pair for the source tasks. The standard deviation is used in order to prioritize updates for state-action pairs that are far from the average. Besides this, states-action pairs that fluctuate often within an episode are also prioritized.
+
+\cite{journals/ml/FosterD02} tries to extract sub-tasks across multiple source tasks. Optimal policies are then learned for each of these sub-tasks and pieced together. In this case, the environment was a maze and tasks differ in their goal in the maze. Value functions can then be learned on parts of the maze. Less learning for the target task is then required because most of the already learned sub-tasks can also be used for the target task.\\
+
+Previous methods can only be applied on problems with a discrete state and action space. However, other methods exist that can be applied on problems with a continuous state and action space. Here, function approximation is always required. \cite{walsh2006transferring} group states encountered in the source tasks and treat them as being one and the same state. This abstraction along with the value function learned on this abstraction can then be transferred and used for learning the target task.\\
+\cite{lazaric2008knowledge} also groups states of the source tasks, but does this by adjusting parameters of a function approximator to build features. Only a small set of features are searched while still being able to learn useful value functions. The learning process for the tasks is executed in parallel. Again, after learning the source tasks, the parameters of the function approximator and the value functions are transferred.
+
+2 other approaches use a hierarchical Bayesian model. They use this to find parameters that make up the dynamics and reward function of a problem. In Sunmola, instances of the  source tasks are used as a prior in order to find parameters.
 % subsubsection multiple_sources (end)
 
 % subsection methods_that_don_t_use_task_mappings (end)
@@ -898,7 +905,7 @@ This results in the following pseudo code for the source tasks:\\
 \DontPrintSemicolon
 \emph{// Assume global shared parameter vector $\theta_g$ and global shared counter $T \gets 0$}\;
 \emph{// Assume thread-specific parameter vector $\theta_g'$}\;
-Initialize thread-specific paramter vector $\theta^{(t)}$\;
+Initialize thread-specific parameter vector $\theta^{(t)}$\;
 Initialize thread step counter $t\gets 1$\;
 \Repeat{$T > T_{max}$}{
     Reset gradients: $d\theta_g \gets 0$\;
@@ -924,7 +931,7 @@ For the target task, the pseudo code is the following:\\
 \DontPrintSemicolon
 \emph{// Assume global shared parameter vector $\theta_g$ and global shared counter $T \gets 0$}\;
 \emph{// Assume thread-specific parameter vector $\theta_g'$}\;
-Initialize thread-specific paramter vector $\theta^{(t)}$\;
+Initialize thread-specific parameter vector $\theta^{(t)}$\;
 Initialize thread step counter $t\gets 1$\;
 \Repeat{$T > T_{max}$}{
     $t_{start} \gets t$\;
