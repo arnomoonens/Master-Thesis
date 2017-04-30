@@ -496,7 +496,7 @@ The Policy Gradient theorem states that we can use this for multi-step MDP's \ci
 \begin{equation}
 E_{\pi_{\theta}} [\nabla_{\theta} \log \pi_{\theta}(s,a)Q^{\pi_{\theta}}(s,a)]
 \end{equation}
-Monte-Carlo policy gradients use this policy gradient theorem and update parameters using stochastic gradient descent. For this, a return $v_t$ is used as an unbiased sample of $Q^{\pi_{\theta}}(s,a)$. The resulting algorithm is called \texttt{REINFORCE}:\\
+Monte-Carlo policy gradients use this policy gradient theorem and update parameters using stochastic gradient descent. For this, a return $v_t$ is used as an unbiased sample of $Q^{\pi_{\theta}}(s,a)$. The resulting algorithm is called \texttt{REINFORCE} \citep{williams1992simple}:\\
 \begin{algorithm}[H]
 \DontPrintSemicolon
 Initialize $\theta$ arbitrarily\;
@@ -506,7 +506,7 @@ Initialize $\theta$ arbitrarily\;
     }
 }
 \Return $\theta$
-\caption{REINFORCE}
+\caption{REINFORCE algorithm. Source: \cite{Sutton1998ReinforcementIntroduction}}
 \end{algorithm}
 
 The problem with the Monte-Carlo policy gradient is that it has a high variance. This can be solved by using an actor-critic method. The critic is used to update the state-action value function parameters $w$, such that $Q_w(s,a) \approx Q^{\pi_{\theta}}(s,a)$, while the actor updates the policy parameters $\theta$ in the direction suggested by the critic. These actor-critic algorithms follow an approximate policy gradient:
@@ -883,6 +883,14 @@ Previous methods can only be applied on problems with a discrete state and actio
 
 2 other approaches use a hierarchical Bayesian model. They use this to find parameters that make up the dynamics and reward function of a problem. In \cite{sunmola2006model}, transitions of source tasks are used as a prior to find parameters for models. After getting transitions from the target task, the most probable model for the target task transitions is transferred and used.\\
 \cite{conf/icml/WilsonFRT07} use a similar approach, but they don't make a distinction between source and target tasks. Instead, problems (MDPs) are executed sequentially and models are built using an already acquired set of transitions and models of previous tasks.
+
+% Parisotto: DQN
+\cite{DBLP:journals/corr/ParisottoBS15}
+
+\cite{conf/icml/Bou-AmmarERT14}
+
+\cite{Jaderberg2016Reinforcement}
+
 % subsubsection multiple_sources (end)
 
 % subsection methods_that_don_t_use_task_mappings (end)
