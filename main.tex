@@ -128,7 +128,7 @@ Note that the policy still can influence which state-action pairs are visited an
 Eligibility traces are used in order to only influence eligible states or actions when a certain action is taken.\\
 %$n$-Step TD prediction
 Monte Carlo methods perform a backup for each state based on the entire sequence of observed rewards from that state until the end of the episode. The backup of more simple methods is only based on the next reward of a state, using the state value one step later as a proxy for the remaining rewards. An intermediate method would perform a backup based on an intermediate number of rewards. Then, we use the rewards of the intermediate steps and the estimated value of the last state. A visualization can be seen in Figure \ref{fig:nStepTD}.
-\begin{figure}[H]
+\begin{figure}[htb]
 \includegraphics[width=\linewidth]{images/nStepTD.png}
 \caption{Returns each based on a different amount of rewards and by using the state value as a proxy afterwards. This is not needed for Monte Carlo methods as they use all the future rewards. Source: \cite{Sutton1998ReinforcementIntroductionb}.}
 \label{fig:nStepTD}
@@ -154,7 +154,7 @@ After a terminal state has been reached, all subsequent $n$-step returns are equ
 \Delta V_t(s_t) = \alpha \big[ R_t^{\lambda} - V_t(s_t) \big]
 \end{equation}
 In this forward view, we look for each state visited forward in time to all the future rewards and decide how best to combine them. After looking forward from and updating one state, we move to the next and don't work with that state anymore. Future states, however, are viewed and processed repeatedly. This way of thinking is visualized in Figure \ref{fig:TDForwardView}.
-\begin{figure}[H]
+\begin{figure}[htb]
 \includegraphics[width=\linewidth]{images/TDForwardView.png}
 \caption{The forward view, where each state value is updated by looking forward to the states and their rewards that follow. Source: \cite{Sutton1998ReinforcementIntroductionb}.}
 \label{fig:TDForwardView}
@@ -170,7 +170,7 @@ Here we have an additional memory variable associated with each state, the eligi
 \end{align}
 \end{subequations}
 Here we work backwards and update backward to each prior state according to the state's eligibility trace at that time. This is visualized in Figure \ref{fig:TDBackwardView}.
-\begin{figure}[H]
+\begin{figure}[htb]
 \includegraphics[width=\linewidth]{images/TDBackwardView.png}
 \caption{The backward view, where the value of visited states are updated based on their eligibility values. Source: \cite{Sutton1998ReinforcementIntroductionb}.}
 \label{fig:TDBackwardView}
@@ -328,7 +328,7 @@ Note that this linear form doesn't allow for the representation of interactions 
 
 \subsubsection{Coarse coding}
 Coarse coding is the representation of a state with features that overlap, for example a binary feature that is $1$ when the coordinate given by a $x$ and $y$ feature lies in a circle. If 2 points \textit{A} and \textit{B} have circles "in common", there will be some generalization between them, as the features for both points for those circles will be 1. This is shown in Figure~\ref{fig:coarsecoding1}. The more features in common, the greater this effect.
-\begin{figure}[H]
+\begin{figure}[htb]
 \captionsetup{width=0.8\textwidth}
 \centering
 \includegraphics[width=0.5\linewidth]{images/coarsecoding1.png}
@@ -336,7 +336,7 @@ Coarse coding is the representation of a state with features that overlap, for e
 \label{fig:coarsecoding1}
 \end{figure}
 If the circles are small or large, generalization will be over respectively a short or large distance. The nature of the generalization is also affected by the shape of the features' receptive fields.  This can be seen in Figure~\ref{fig:coarsecoding2}. The fineness of discrimination is however only determined by the total number of features.
-\begin{figure}[H]
+\begin{figure}[htb]
 \captionsetup{width=0.8\textwidth}
 \centering
 \includegraphics[width=0.8\linewidth]{images/coarsecoding2.png}
@@ -379,7 +379,7 @@ Bootstrapping looks like a bad idea because non-bootstrapping methods are more e
 \subsection{Planning and Learning}
 A model is something that can be used by an agent to predict the resulting state and reward of doing an action in the environment. Distribution models give a probability for each possibility, whereas sample models just return one of the possibilities. The model can be used to simulate experiences because as it can be used to simulate several transitions and as such to simulate entire episodes.\\
 Planning is the computational process of using this model and producing/improving a policy. State-space planning means the search through the state space for an optimal policy or path to a goal. In plan-space planning, we search through the space of plans. This includes evolutionary methods and partial-order planning. In the latter, the ordering of the steps is not fully defined in all the stages of planning.
-\begin{figure}[H]
+\begin{figure}[htb]
 \includegraphics[width=\linewidth]{images/modelplanning.png}
 \label{fig:modelplanning}
 \end{figure}
@@ -390,7 +390,7 @@ Real experience can be used by a planning agent in two ways: for improving the m
 Dyna-Q is an algorithm that combines planning, acting, model-learning and direct-RL. The planning method is a random-sample on-step tabular Q-planning method. The direct RL method is one-step tabular Q-learning. The model-learning method is also table-based and assumes the world is deterministic. This means that it doesn't use probabilities and just returns the previously experienced state and reward that was received after the queried state-action pair. The Q-planning algorithm only samples randomly from state-action pairs that have already been experienced, so the model is never queried with unknown pairs. Typically, as in Dyna-Q, the same reinforcement learning method is used both for learning from real experience and for planning from simulated experience.
 
 Without planning, each episode adds only one additional step to the policy. With planning, also only one step is added during the first episode, but during the second one, an extensive planning policy can be applied that reaches back almost to the start state. The result of this is shown in Figure \ref{fig:withwithoutplanning}.
-\begin{figure}[H]
+\begin{figure}[htb]
 \includegraphics[width=\linewidth]{images/withwithoutplanning.png}
 \caption{Difference in computed optimal actions when using no planning method and when using one. Source: \cite{Sutton1998ReinforcementIntroductionb}.}
 \label{fig:withwithoutplanning}
@@ -408,7 +408,7 @@ The mentioned algorithms have the problem of relying on the fact that states are
 When using stochastic environments, the only difference is that we need to do a full backup and take into account all the possible next states along with their possibilities, instead of doing a sample backup.\\
 
 The computation of (one-step) backups can differ in 3 possible ways: The first is the binary difference of whether they backup state values or action values. The second one is whether they estimate the value for the optimal policy or for an arbitrary given policy. The last one is whether the backups are full backups or just sample backups. This results in 8 cases, of which 7 result in useful kind of backups. These are shown in Figure \ref{fig:backuptypes}.
-\begin{figure}[H]
+\begin{figure}[htb]
 \includegraphics[width=\linewidth]{images/backuptypes.png}
 \caption{Different kind of backups, depending on what value they backup and whether they do full backups or sample backups. Source: \cite{Sutton1998ReinforcementIntroductionb}.}
 \label{fig:backuptypes}
@@ -623,7 +623,7 @@ An example of a convolutional neural network is ConvNet, a convolutional network
 
 \subsection{Recurrent Neural Networks}
 Recurrent neural networks (RNNs) are used to process sequential data such as speech and language. Here, an input sequence is processed one element at a time. The first RNNs used a state vector in their units that contains history about the past elements in the sequence. This is visualized in Figure \ref{fig:rnnunrolled}.
-\begin{figure}[H]
+\begin{figure}[htb]
 \centering
 \includegraphics[width=0.8\linewidth]{images/RNN-unrolled.jpg} %source: http://www.wildml.com/2015/09/recurrent-neural-networks-tutorial-part-1-introduction-to-rnns/
 \caption{A recurrent neural network in which each state (hidden unit) is passed to the next one. $x_t$ and $o_t$ are respectively the input and output at time step $t$. $s_t$ is the output of a hidden layer and depends on the input and the hidden unit at the previous time step: $s_t = U*x_t + W*s_{t-1}$. Note that the same weights $U$, $V$ and $W$ are used at each time step. Source: \cite{LeCun2015DeepLearning}.}
@@ -826,7 +826,7 @@ Here we will list the most popular ones:
     \item \textit{Time to threshold}: This measures the time needed to reach a pre-defined performance. A transfer learning algorithm may need less time to reach this threshold. The threshold needs to be defined manually and depends on the task domain and learning method.
 \end{itemize}
 A graph with 3 of the 5 metrics is shown in Figure~\ref{fig:TLmetrics}.
-\begin{figure}[H]
+\begin{figure}[htb]
     \centering
     \includegraphics[width=\linewidth]{images/tlmetrics.png}
     \caption{A graph comparing the \textit{jumpstart}, \textit{time to threshold} and \textit{asymptotic performance} metrics between the algorithm that uses knowledge transfer and the one that doesn't. Note that here the transfer learning algorithm performs better on all three metrics. It can also be seen that the total reward is higher. Source: \cite{Taylor2009TransferSurvey}.}
@@ -978,7 +978,7 @@ Afterwards the rewards are averaged over all the runs and results of different e
 Trajectories for both sets of tasks contained of maximally 200 steps. This could be less in case the environment was in an end state. In case of the cart-pole environment, this can mean for example that the cart tried to cross the left or right border or that the pole fell down.\\
 Hyperparameters, such as the learning rate of neural networks, were chosen by iteratively executing the previously mentioned experiment. Possible values for each hyperparameter were chosen manually.
 
-\begin{figure}[H]
+\begin{figure}[htb]
     \centering
     \includegraphics[width=\linewidth]{images/knowledge_transfer.png}
     \caption{Artificial neural network architecture.}
