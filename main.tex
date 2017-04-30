@@ -11,6 +11,7 @@
 \usepackage{amssymb}
 \usepackage[linesnumbered, ruled]{algorithm2e}
 \usepackage{titlesec}
+\usepackage{pdfpages}
 
 %Restrict width of algorithm to width of a line
 \usepackage{xpatch}
@@ -25,20 +26,9 @@
 {\normalfont\normalsize\bfseries}{\theparagraph}{1em}{}
 \titlespacing*{\paragraph}
 {0pt}{3.25ex plus 1ex minus .2ex}{1.5ex plus .2ex}
-\title{Thesis}
-\author{
-    \textbf{Arno Moonens}\\
-    Vrije Universiteit Brussel\\
-    \texttt{arno.moonens@vub.be}\\
-\and
-    \textbf{Peter Vrancx}\\
-    Vrije Universiteit Brussel\\
-    \texttt{pvrancx@vub.ac.be}\\
-}
 
 \begin{document}
-\maketitle
-\clearpage
+\includepdf[pages={1}]{titlepage.pdf}
 \abstract{Abstract}
 %\keywords{reinforcement learning, knowledge transfer}
 
