@@ -185,7 +185,7 @@ e_t(s,a) = \begin{cases}
 \end{cases}
 \qquad \text{for all $s,a$}
 \end{equation}
-This results in the following algorithm:\\
+The resulting algorithm can be seen in Algorithm~\ref{algo:sarsalambda}:\\
 \begin{algorithm}[H]
 \DontPrintSemicolon
 Initialize $Q(s,a)$ arbitrarily\;
@@ -205,6 +205,7 @@ $e(s,a) \gets 0$ for all $s,a$\;
     }
 }
 \caption{Sarsa($\lambda$). Source: \cite{Sutton1998ReinforcementIntroduction}}
+\label{algo:sarsalambda}
 \end{algorithm}
 Two methods exist to combine TD($\lambda$) and Q-learning and thus getting Q($\lambda$): There exists 2 different methods: Watkins' Q($\lambda$) and Peng's Q($\lambda$).\\
 Here, we must cut off the look ahead until the first exploratory action instead of the episode's end. This is done because this exploratory action doesn't have any relationship with the greedy policy. Recall that Q-learning is an off-policy method and the policy learned about is not necessarily the same as the one used to select actions. As such, it can learn about the greedy policy while following a policy involving exploratory (suboptimal) actions.
@@ -229,7 +230,7 @@ Where
 \begin{equation}
 \delta_t = r_{t+1} + \gamma \max_{a'} Q_t(s_{t+1}, a') - Q_t(s_t,a_t)
 \end{equation}
-This results in the following pseudo-code:\\
+The resulting pseudo-code can be seen in Algorithm~\ref{algo:watkinsq}.\\
 \begin{algorithm}[H]
 \DontPrintSemicolon
 Initialize $Q(s,a)$ arbitrarily\;
@@ -257,6 +258,7 @@ $e(s,a) \gets 0$ for all $s,a$\;
     }
 }
 \caption{Watkins' Q($\lambda$). Source: \cite{Sutton1998ReinforcementIntroduction}}
+\label{algo:watkinsq}
 \end{algorithm}
 Because exploratory actions happen often, backups won't be long and so eligibility traces won't have a lot of advantage anymore.\\
 Peng's Q($\lambda$) tries to solve this, being a hybrid of Sarsa($\lambda$) and Watkin's Q($\lambda$). Its component backups are neither off- nor on-policy. The earlier transitions are each on-policy and the last transition uses the greedy policy. As such, all but the last uses the actual experiences. Because of this, for a fixed non-greedy policy, $Q_t$ converges to neither $Q^{\pi}$ nor $Q^{*}$, but some hybrid between the 2. If the policy is more greedy, the method may still converge to $Q^{*}$.\\
@@ -492,7 +494,7 @@ The Policy Gradient theorem states that we can use this for multi-step MDP's \ci
 \begin{equation}
 E_{\pi_{\theta}} [\nabla_{\theta} \log \pi_{\theta}(s,a)Q^{\pi_{\theta}}(s,a)]
 \end{equation}
-Monte-Carlo policy gradients use this policy gradient theorem and update parameters using stochastic gradient descent. For this, a return $v_t$ is used as an unbiased sample of $Q^{\pi_{\theta}}(s,a)$. The resulting algorithm is called \texttt{REINFORCE} \citep{williams1992simple}:\\
+Monte-Carlo policy gradients use this policy gradient theorem and update parameters using stochastic gradient descent. For this, a return $v_t$ is used as an unbiased sample of $Q^{\pi_{\theta}}(s,a)$. The resulting algorithm is called \texttt{REINFORCE} \citep{williams1992simple} and is shown in Algorithm~\ref{algo:reinforce}.\\
 \begin{algorithm}[H]
 \DontPrintSemicolon
 Initialize $\theta$ arbitrarily\;
@@ -503,6 +505,7 @@ Initialize $\theta$ arbitrarily\;
 }
 \Return $\theta$
 \caption{REINFORCE algorithm. Source: \cite{Sutton1998ReinforcementIntroduction}}
+\label{algo:reinforce}
 \end{algorithm}
 
 The problem with the Monte-Carlo policy gradient is that it has a high variance. This can be solved by using an actor-critic method. The critic is used to update the state-action value function parameters $w$, such that $Q_w(s,a) \approx Q^{\pi_{\theta}}(s,a)$, while the actor updates the policy parameters $\theta$ in the direction suggested by the critic. These actor-critic algorithms follow an approximate policy gradient:
@@ -510,7 +513,7 @@ The problem with the Monte-Carlo policy gradient is that it has a high variance.
 \nabla_{\theta}J(\theta) &\approx E_{\pi_{\theta}}[\nabla_{\theta} \log \pi_{\theta}(s,a) Q_w(s,a)]\\
 \Delta \theta &= \alpha \nabla_{\theta} \log \pi_{\theta}(s,a) Q_w(s,a)
 \end{align}
-The critic function can be seen of a way of evaluating how good the policy is for the current $\theta$. A simple way of computing $Q_w(s,a)$ is simply a linear function of $w$ and $\phi(s,a)$: $Q_w(s,a) = \phi(s,a)^T w$. The algorithm, named \texttt{QAC} then is:\\
+The critic function can be seen of a way of evaluating how good the policy is for the current $\theta$. A simple way of computing $Q_w(s,a)$ is simply a linear function of $w$ and $\phi(s,a)$: $Q_w(s,a) = \phi(s,a)^T w$. The algorithm, named \texttt{QAC} is shown in Algorithm~\ref{algo:qac}.\\
 \begin{algorithm}[H]
 \DontPrintSemicolon
 Initialize $s,\theta$\;
@@ -524,6 +527,7 @@ Sample $a \sim \pi_{\theta}$\;
     $a \gets a'$, $s \gets s'$\;
     }
 \caption{QAC}
+\label{algo:qac}
 \end{algorithm}
 For a function approximation to be compatible, it needs to fulfil 2 conditions:
 \begin{itemize}
@@ -701,7 +705,7 @@ To select an action, we can use the classic action selection policies such as $\
 
 All rewards were clipped between -1 and 1 to limit the scale of derivatives and as such the amount of change of the weights. It also allows for using the same learning rate for multiple games.\\
 \todo{Better explain gradient descent step?}
-This results in the following pseudo-code:\\
+The resulting pseudo-code can be seen in Algorithm~\ref{algo:dqn}.\\
 \begin{algorithm}[H]
 \DontPrintSemicolon
 Initialize replay memory D to capacity N\;
@@ -727,6 +731,7 @@ Initialize target action-value function $\hat{Q}$ with weights $\theta^- = \thet
     }
 }
 \caption{Deep Q-learning with experience replay. Source: \cite{mnih2013playing}.}
+\label{algo:dqn}
 \end{algorithm}
 
 \subsection{Continuous control with deep reinforcement learning}
@@ -752,7 +757,7 @@ To have more exploration, noise is added to the actor policy. This noise is gene
 \section{Asynchronous Methods for Deep Reinforcement Learning}
 %By \cite{Mnih2016AsynchronousLearning}.
 In \cite{Mnih2016AsynchronousLearning} experience replay isn't used because of memory and computation usage and because it is off-policy, which means that it learns from data generated by a policy that may already be outdated. Instead, we use multiple agents (that use well-known reinforcement algorithms) that run in parallel but each running on a separate instance of the same type of environment. These all run on a multi-core CPU (i.e. on only one computer). Each of the agents use the same parameters $\theta$, but by using certain exploration policies, they are able to each explore a possibly different part of the state space. It is possible to use a different exploration policy for each agent as to maximize the exploration of different states. Each agent also calculates a gradient w.r.t. the parameters $\theta$ depending on its experience. These gradients are accumulated and after a certain number of steps they are applied to the parameters $\theta$. Because they are global, this update has an effect on all agents. After an amount (possibly the same amount as for the gradient update) of steps, the target network parameters $\theta^{-}$ can also be updated using the current parameters $\theta$.\\
-In $n$-step Q-learning and advantage actor-critic, a forward-view is used instead of the more commonly used backward view (which uses eligibility traces). Forward view was found to be easier when training neural networks with momentum-based methods and backpropagation through time. To do this, we first compute a certain number of steps (or until the episode is over). Then, the gradients are computed for each state-action pair encountered since the last update. Each n-step update uses the longest possible n-step return resulting in a one-step update for the last state, a two-step update for the second last state, and so on for a total of up to the previously determined number of maximum allowed steps. These accumulated gradients are then immediately applied to $\theta$. This results in the following pseudo-code:\\
+In $n$-step Q-learning and advantage actor-critic, a forward-view is used instead of the more commonly used backward view (which uses eligibility traces). Forward view was found to be easier when training neural networks with momentum-based methods and backpropagation through time. To do this, we first compute a certain number of steps (or until the episode is over). Then, the gradients are computed for each state-action pair encountered since the last update. Each n-step update uses the longest possible n-step return resulting in a one-step update for the last state, a two-step update for the second last state, and so on for a total of up to the previously determined number of maximum allowed steps. These accumulated gradients are then immediately applied to $\theta$. This results in the pseudo-code shown in Algorithm~\ref{algo:a3c}.\\
 \begin{algorithm}[H]
 \DontPrintSemicolon
 \emph{// Assume global shared parameter vectors $\theta$ and $\theta_v$ and global shared counter $T=0$}\;
@@ -782,6 +787,7 @@ Initialize thread step counter $t\gets 1$\;
     Perform asynchronous update of $\theta$ using $d\theta$ and of $\theta_v$ using $d\theta_v$\;
 }
 \caption{Asynchronous Advantage Actor Critic (A3C). Source: \cite{Mnih2016AsynchronousLearning}.}
+\label{algo:a3c}
 \end{algorithm}
 
 \section{Transfer learning}
@@ -905,7 +911,7 @@ Once this is done, we sum and apply the gradients of every task. The learning pr
 In the asynchronous way, learning is executed in parallel and for each task, a number of updates are executed on its own. Trajectories are collected for each task continuously and its gradients are applied immediately after they are calculated. This means that they are not first summed as in the sequential method.\\
 Afterwards, we learn the new task separately for a certain number of updates.\\
 \todo{Use ref instead}
-This results in the following pseudo code for the source tasks:\\
+The resulting pseudo code for the source tasks can be seen in Algorithm~\ref{algo:ownsource}.\\
 \begin{algorithm}[H]
 \DontPrintSemicolon
 \emph{// Assume global shared parameter vector $\theta_g$ and global shared counter $T \gets 0$}\;
@@ -930,8 +936,9 @@ Initialize thread step counter $t\gets 1$\;
     Perform asynchronous update of $\theta$ using $d\theta$ and of $\theta_v$ using $d\theta_v$\;
 }
 \caption{Asynchronous knowledge transfer agent for source task}
+\label{algo:ownsource}
 \end{algorithm}
-For the target task, the pseudo code is the following:\\
+For the target task, we then get the pseudo-code of Algorithm~\ref{algo:owntarget}.\\
 \begin{algorithm}[H]
 \DontPrintSemicolon
 \emph{// Assume global shared parameter vector $\theta_g$ and global shared counter $T \gets 0$}\;
@@ -954,6 +961,7 @@ Initialize thread step counter $t\gets 1$\;
     Perform asynchronous update of $\theta$ using $d\theta$ and of $\theta_v$ using $d\theta_v$\;
 }
 \caption{Knowledge transfer agent for target task}
+\label{algo:owntarget}
 \end{algorithm}
 % section proposed_algorithm (end)
 
