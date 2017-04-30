@@ -10,8 +10,8 @@
 \usepackage{caption} % Change width of figure captions
 \usepackage{amssymb}
 \usepackage[linesnumbered, ruled]{algorithm2e}
-\usepackage{vub}
-\hypersetup{pageanchor=false}
+\usepackage{titlesec}
+
 %Restrict width of algorithm to width of a line
 \usepackage{xpatch}
 \xpretocmd{\algorithm}{\hsize=\linewidth}{}{}
@@ -21,18 +21,24 @@
 
 \DeclareMathOperator*{\argmax}{arg\,max}
 
-\reason{Graduation thesis submitted in partial fulfillment of the requirements for the degree of Master of Science in Applied Science and Engineering: Computer Science}
+\titleformat{\paragraph}
+{\normalfont\normalsize\bfseries}{\theparagraph}{1em}{}
+\titlespacing*{\paragraph}
+{0pt}{3.25ex plus 1ex minus .2ex}{1.5ex plus .2ex}
 \title{Thesis}
-%\subtitle{[Subtitle]}
-\author{Arno Moonens}
-\date{Academic Year: 2016-2017}
-\promotor{Dr. Peter Vrancx}
-%\advisor{Dr. Michael Spranger}
-\faculty{Science and Bio-Engineering Sciences}
+\author{
+    \textbf{Arno Moonens}\\
+    Vrije Universiteit Brussel\\
+    \texttt{arno.moonens@vub.be}\\
+\and
+    \textbf{Peter Vrancx}\\
+    Vrije Universiteit Brussel\\
+    \texttt{pvrancx@vub.ac.be}\\
+}
 
 \begin{document}
 \maketitle
-
+\clearpage
 \abstract{Abstract}
 %\keywords{reinforcement learning, knowledge transfer}
 
