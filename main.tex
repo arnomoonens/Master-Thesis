@@ -28,11 +28,24 @@
 {0pt}{3.25ex plus 1ex minus .2ex}{1.5ex plus .2ex}
 
 \begin{document}
+\pagenumbering{roman}
 \includepdf[pages={1}]{titlepage.pdf}
 \abstract{Abstract}
+\clearpage
 %\keywords{reinforcement learning, knowledge transfer}
 
 \tableofcontents
+\clearpage
+
+% the caption command provides the option to define a shorter entry displayed in the list of figures only whereas the text of the required argument will be displayed together with the figure. This applies for the list of table in the same way as it does for the list of figures.
+% \caption[short caption for lof/lot]{long figure/table caption}
+\listoffigures
+\clearpage
+
+\listofalgorithms
+\clearpage
+
+\pagenumbering{arabic}
 \section{Introduction}
 \section{Reinforcement learning}
 %\cite{Sutton1998ReinforcementIntroduction.}.
@@ -120,7 +133,7 @@ Eligibility traces are used in order to only influence eligible states or action
 Monte Carlo methods perform a backup for each state based on the entire sequence of observed rewards from that state until the end of the episode. The backup of more simple methods is only based on the next reward of a state, using the state value one step later as a proxy for the remaining rewards. An intermediate method would perform a backup based on an intermediate number of rewards. Then, we use the rewards of the intermediate steps and the estimated value of the last state. A visualization can be seen in Figure \ref{fig:nStepTD}.
 \begin{figure}[htb]
 \includegraphics[width=\linewidth]{images/nStepTD.png}
-\caption{Returns each based on a different amount of rewards and by using the state value as a proxy afterwards. This is not needed for Monte Carlo methods as they use all the future rewards. Source: \cite{Sutton1998ReinforcementIntroductionb}.}
+\caption[$n$-step returns]{Returns each based on a different amount of rewards and by using the state value as a proxy afterwards. This is not needed for Monte Carlo methods as they use all the future rewards. Source: \cite{Sutton1998ReinforcementIntroduction}.}
 \label{fig:nStepTD}
 \end{figure}
 The $n$-step target can be formulated as:
@@ -146,7 +159,7 @@ After a terminal state has been reached, all subsequent $n$-step returns are equ
 In this forward view, we look for each state visited forward in time to all the future rewards and decide how best to combine them. After looking forward from and updating one state, we move to the next and don't work with that state anymore. Future states, however, are viewed and processed repeatedly. This way of thinking is visualized in Figure \ref{fig:TDForwardView}.
 \begin{figure}[htb]
 \includegraphics[width=\linewidth]{images/TDForwardView.png}
-\caption{The forward view, where each state value is updated by looking forward to the states and their rewards that follow. Source: \cite{Sutton1998ReinforcementIntroductionb}.}
+\caption[TD forward view]{The forward view, where each state value is updated by looking forward to the states and their rewards that follow. Source: \cite{Sutton1998ReinforcementIntroduction}.}
 \label{fig:TDForwardView}
 \end{figure}
 
@@ -162,7 +175,7 @@ Here we have an additional memory variable associated with each state, the eligi
 Here we work backwards and update backward to each prior state according to the state's eligibility trace at that time. This is visualized in Figure \ref{fig:TDBackwardView}.
 \begin{figure}[htb]
 \includegraphics[width=\linewidth]{images/TDBackwardView.png}
-\caption{The backward view, where the value of visited states are updated based on their eligibility values. Source: \cite{Sutton1998ReinforcementIntroductionb}.}
+\caption[TD backward view]{The backward view, where the value of visited states are updated based on their eligibility values. Source: \cite{Sutton1998ReinforcementIntroduction}.}
 \label{fig:TDBackwardView}
 \end{figure}
 If we set $\lambda = 0$, then we only update the trace for $s_t$, thus getting TD(0). For larger values, with $\lambda < 1$, more of the preceding states are changed. The more distant states are changed by a smaller amount because the eligibility trace is smaller. This way, they are blamed less for the TD error.\\
@@ -204,7 +217,7 @@ $e(s,a) \gets 0$ for all $s,a$\;
         $s \gets s'$; $a \gets a'$\;
     }
 }
-\caption{Sarsa($\lambda$). Source: \cite{Sutton1998ReinforcementIntroduction}}
+\caption[Sarsa($\lambda$)]{Sarsa($\lambda$). Source: \cite{Sutton1998ReinforcementIntroduction}}
 \label{algo:sarsalambda}
 \end{algorithm}
 Two methods exist to combine TD($\lambda$) and Q-learning and thus getting Q($\lambda$): There exists 2 different methods: Watkins' Q($\lambda$) and Peng's Q($\lambda$).\\
@@ -257,7 +270,7 @@ $e(s,a) \gets 0$ for all $s,a$\;
         $s \gets s'$; $a \gets a'$\;
     }
 }
-\caption{Watkins' Q($\lambda$). Source: \cite{Sutton1998ReinforcementIntroduction}}
+\caption[Watkins' Q($\lambda$)]{Watkins' Q($\lambda$). Source: \cite{Sutton1998ReinforcementIntroduction}}
 \label{algo:watkinsq}
 \end{algorithm}
 Because exploratory actions happen often, backups won't be long and so eligibility traces won't have a lot of advantage anymore.\\
@@ -324,7 +337,7 @@ Coarse coding is the representation of a state with features that overlap, for e
 \captionsetup{width=0.8\textwidth}
 \centering
 \includegraphics[width=0.5\linewidth]{images/coarsecoding1.png}
-\caption{$X$ and $Y$ share 1 feature, as both points lie in the same receptive field, a circle. Thus, slight generalization from $X$ to $Y$ is possible. Source: \cite{Sutton1998ReinforcementIntroductionb}.}
+\caption[Generalization between points]{$X$ and $Y$ share 1 feature, as both points lie in the same receptive field, a circle. Thus, slight generalization from $X$ to $Y$ is possible. Source: \cite{Sutton1998ReinforcementIntroduction}.}
 \label{fig:coarsecoding1}
 \end{figure}
 If the circles are small or large, generalization will be over respectively a short or large distance. The nature of the generalization is also affected by the shape of the features' receptive fields.  This can be seen in Figure~\ref{fig:coarsecoding2}. The fineness of discrimination is however only determined by the total number of features.
@@ -332,7 +345,7 @@ If the circles are small or large, generalization will be over respectively a sh
 \captionsetup{width=0.8\textwidth}
 \centering
 \includegraphics[width=0.8\linewidth]{images/coarsecoding2.png}
-\caption{Generalization depends on the shape of the receptive fields of the features. When multiple features' receptive fields overlap, the generalization is broad and narrow when only few of them overlap. Source: \cite{Sutton1998ReinforcementIntroductionb}.}
+\caption[Shapes of receptive fields]{Generalization depends on the shape of the receptive fields of the features. When multiple features' receptive fields overlap, the generalization is broad and narrow when only few of them overlap. Source: \cite{Sutton1998ReinforcementIntroduction}.}
 \label{fig:coarsecoding2}
 \end{figure}
 
@@ -368,56 +381,56 @@ The restriction of convergence is especially a problem for off-policy methods su
 Bootstrapping looks like a bad idea because non-bootstrapping methods are more easy and reliably used with function approximation and can be applied over a broader range of conditions. Non-bootstrapping methods also achieve a lower error in approaching the value function, even when backups are done according to the on-policy distribution \citep{ML}. In practice, however, bootstrapping methods achieve better performance. When $\lambda$ approaches $1$, which is the non-bootstrapping case, the performance becomes much worse.
 
 %Chapter 9
-\subsection{Planning and Learning}
-A model is something that can be used by an agent to predict the resulting state and reward of doing an action in the environment. Distribution models give a probability for each possibility, whereas sample models just return one of the possibilities. The model can be used to simulate experiences because as it can be used to simulate several transitions and as such to simulate entire episodes.\\
-Planning is the computational process of using this model and producing/improving a policy. State-space planning means the search through the state space for an optimal policy or path to a goal. In plan-space planning, we search through the space of plans. This includes evolutionary methods and partial-order planning. In the latter, the ordering of the steps is not fully defined in all the stages of planning.
-\begin{figure}[htb]
-\includegraphics[width=\linewidth]{images/modelplanning.png}
-\label{fig:modelplanning}
-\end{figure}
-Planning uses simulated experience, whereas learning uses real experience. Learning algorithms that only require experience as input can be used with real experience as well as simulated experience.\\
+% \subsection{Planning and Learning}
+% A model is something that can be used by an agent to predict the resulting state and reward of doing an action in the environment. Distribution models give a probability for each possibility, whereas sample models just return one of the possibilities. The model can be used to simulate experiences because as it can be used to simulate several transitions and as such to simulate entire episodes.\\
+% Planning is the computational process of using this model and producing/improving a policy. State-space planning means the search through the state space for an optimal policy or path to a goal. In plan-space planning, we search through the space of plans. This includes evolutionary methods and partial-order planning. In the latter, the ordering of the steps is not fully defined in all the stages of planning.
+% \begin{figure}[htb]
+% \includegraphics[width=\linewidth]{images/modelplanning.png}
+% \label{fig:modelplanning}
+% \end{figure}
+% Planning uses simulated experience, whereas learning uses real experience. Learning algorithms that only require experience as input can be used with real experience as well as simulated experience.\\
 
-We planning is done online, new information gained from the interaction may change the model and influence planning. If decision-making and model-learning are both computationally expensive, the resources assigned to them must be divided.\\
-Real experience can be used by a planning agent in two ways: for improving the model (such that it more accurately represents the real environment), named \textit{model-learning}, and for directly improving the value function and as such the policy, called \textit{direct reinforcement learning}. Because the model is used by planning methods to influence the policy, it can be called \textit{indirect reinforcement learning}. Indirect models are complex but are able to achieve a better performance with less amount of experience. Direct methods are simpler and are not affected by biases that are present in the models used by indirect methods.\\
-Dyna-Q is an algorithm that combines planning, acting, model-learning and direct-RL. The planning method is a random-sample on-step tabular Q-planning method. The direct RL method is one-step tabular Q-learning. The model-learning method is also table-based and assumes the world is deterministic. This means that it doesn't use probabilities and just returns the previously experienced state and reward that was received after the queried state-action pair. The Q-planning algorithm only samples randomly from state-action pairs that have already been experienced, so the model is never queried with unknown pairs. Typically, as in Dyna-Q, the same reinforcement learning method is used both for learning from real experience and for planning from simulated experience.
+% We planning is done online, new information gained from the interaction may change the model and influence planning. If decision-making and model-learning are both computationally expensive, the resources assigned to them must be divided.\\
+% Real experience can be used by a planning agent in two ways: for improving the model (such that it more accurately represents the real environment), named \textit{model-learning}, and for directly improving the value function and as such the policy, called \textit{direct reinforcement learning}. Because the model is used by planning methods to influence the policy, it can be called \textit{indirect reinforcement learning}. Indirect models are complex but are able to achieve a better performance with less amount of experience. Direct methods are simpler and are not affected by biases that are present in the models used by indirect methods.\\
+% Dyna-Q is an algorithm that combines planning, acting, model-learning and direct-RL. The planning method is a random-sample on-step tabular Q-planning method. The direct RL method is one-step tabular Q-learning. The model-learning method is also table-based and assumes the world is deterministic. This means that it doesn't use probabilities and just returns the previously experienced state and reward that was received after the queried state-action pair. The Q-planning algorithm only samples randomly from state-action pairs that have already been experienced, so the model is never queried with unknown pairs. Typically, as in Dyna-Q, the same reinforcement learning method is used both for learning from real experience and for planning from simulated experience.
 
-Without planning, each episode adds only one additional step to the policy. With planning, also only one step is added during the first episode, but during the second one, an extensive planning policy can be applied that reaches back almost to the start state. The result of this is shown in Figure \ref{fig:withwithoutplanning}.
-\begin{figure}[htb]
-\includegraphics[width=\linewidth]{images/withwithoutplanning.png}
-\caption{Difference in computed optimal actions when using no planning method and when using one. Source: \cite{Sutton1998ReinforcementIntroductionb}.}
-\label{fig:withwithoutplanning}
-\end{figure}
+% Without planning, each episode adds only one additional step to the policy. With planning, also only one step is added during the first episode, but during the second one, an extensive planning policy can be applied that reaches back almost to the start state. The result of this is shown in Figure \ref{fig:withwithoutplanning}.
+% \begin{figure}[htb]
+% \includegraphics[width=\linewidth]{images/withwithoutplanning.png}
+% \caption{Difference in computed optimal actions when using no planning method and when using one. Source: \cite{Sutton1998ReinforcementIntroduction}.}
+% \label{fig:withwithoutplanning}
+% \end{figure}
 
-It can be seen that models may be able to fill in correct information. However, this is not always the case. Models may be wrong because only a limited number of samples have been observed, because of an imperfect function approximation that generalized wrongly or because the environment has changed and this hasn't been observed yet. When using this incorrect model, a sub-optimal policy will be computed. When the model is too optimistic, the algorithm will try to exploit this and notice that the optimistic values do not exist and will correct them. This optimism is for example discovered when a way in a maze gets blocked suddenly.\\
-There is a larger problem when the environment changes such that there are better opportunities than there were before. This "modelling error" may not be detected for a long time. In a maze, this may mean that suddenly a shorter path becomes available but the Dyna-Q algorithm doesn't detect it for a long time (or not at all) and keeps choosing the sub-optimal path.\\
-The general problem here is the trade-off between exploitation and exploration. As the algorithms did not try actions that were computed as being sub-optimal in the policy, the new, optimal path was never discovered. We would like to explore changes in the environment, but without degrading too much the performance.\\
-The Dyna-Q+ algorithm is a heuristic algorithm that tries to find a good balance and achieve and practical solution. It encourages using actions that haven't been tried for a long time in the current state. It does so by increasing the reward of that transition by a value relative the the number of steps since the last use of the action. This way, exploration is encouraged because now taking that action seems better.\\
+% It can be seen that models may be able to fill in correct information. However, this is not always the case. Models may be wrong because only a limited number of samples have been observed, because of an imperfect function approximation that generalized wrongly or because the environment has changed and this hasn't been observed yet. When using this incorrect model, a sub-optimal policy will be computed. When the model is too optimistic, the algorithm will try to exploit this and notice that the optimistic values do not exist and will correct them. This optimism is for example discovered when a way in a maze gets blocked suddenly.\\
+% There is a larger problem when the environment changes such that there are better opportunities than there were before. This "modelling error" may not be detected for a long time. In a maze, this may mean that suddenly a shorter path becomes available but the Dyna-Q algorithm doesn't detect it for a long time (or not at all) and keeps choosing the sub-optimal path.\\
+% The general problem here is the trade-off between exploitation and exploration. As the algorithms did not try actions that were computed as being sub-optimal in the policy, the new, optimal path was never discovered. We would like to explore changes in the environment, but without degrading too much the performance.\\
+% The Dyna-Q+ algorithm is a heuristic algorithm that tries to find a good balance and achieve and practical solution. It encourages using actions that haven't been tried for a long time in the current state. It does so by increasing the reward of that transition by a value relative the the number of steps since the last use of the action. This way, exploration is encouraged because now taking that action seems better.\\
 
-The previous Dyna agents simulated transitions starting from state-action pairs that were selected uniformly at random. However, focusing on certain state-action pairs may be more useful than others. In the start, for example, most state-action pairs still have a value of zero. As such, their is no use in simulating these transitions. Only transitions into states prior to the goal or from the state to the goal are useful to simulate. Later on, there are more and more useful backups. However, this may again result in sampling from too many backups. It may be more useful to focus on transitions that would do the most good.\\
-When a value of a state has changed, the only useful transitions are those to this changed state. Afterwards, the transitions leading to these can be simulated as well, and so on. This way, we work backwards from the changed state.\\
-Again, we will have a lot of state-action pairs that can be backed up. Still, not all of them may be equally useful. The values of some states may have changed a lot, and as such the predecessor pairs of those are more likely to change a lot. To use this information, we insert backups of predecessors of changed states into a priority queue, sorted by the size of the change. We only insert it if the priority is larger than some threshold.\\
-The mentioned algorithms have the problem of relying on the fact that states are discrete. When function approximation is used (because the states are continuous), a single backup could influence a lot of other states. It is not clear if these states could be identified or processed efficiently.\\
-When using stochastic environments, the only difference is that we need to do a full backup and take into account all the possible next states along with their possibilities, instead of doing a sample backup.\\
+% The previous Dyna agents simulated transitions starting from state-action pairs that were selected uniformly at random. However, focusing on certain state-action pairs may be more useful than others. In the start, for example, most state-action pairs still have a value of zero. As such, their is no use in simulating these transitions. Only transitions into states prior to the goal or from the state to the goal are useful to simulate. Later on, there are more and more useful backups. However, this may again result in sampling from too many backups. It may be more useful to focus on transitions that would do the most good.\\
+% When a value of a state has changed, the only useful transitions are those to this changed state. Afterwards, the transitions leading to these can be simulated as well, and so on. This way, we work backwards from the changed state.\\
+% Again, we will have a lot of state-action pairs that can be backed up. Still, not all of them may be equally useful. The values of some states may have changed a lot, and as such the predecessor pairs of those are more likely to change a lot. To use this information, we insert backups of predecessors of changed states into a priority queue, sorted by the size of the change. We only insert it if the priority is larger than some threshold.\\
+% The mentioned algorithms have the problem of relying on the fact that states are discrete. When function approximation is used (because the states are continuous), a single backup could influence a lot of other states. It is not clear if these states could be identified or processed efficiently.\\
+% When using stochastic environments, the only difference is that we need to do a full backup and take into account all the possible next states along with their possibilities, instead of doing a sample backup.\\
 
-The computation of (one-step) backups can differ in 3 possible ways: The first is the binary difference of whether they backup state values or action values. The second one is whether they estimate the value for the optimal policy or for an arbitrary given policy. The last one is whether the backups are full backups or just sample backups. This results in 8 cases, of which 7 result in useful kind of backups. These are shown in Figure \ref{fig:backuptypes}.
-\begin{figure}[H]
-\includegraphics[width=\linewidth]{images/backuptypes.png}
-\caption{Different kind of backups, depending on what value they backup and whether they do full backups or sample backups. Source: \cite{Sutton1998ReinforcementIntroductionb}.}
-\label{fig:backuptypes}
-\end{figure}
-Full backups are only possible when we know the transition distribution ($\mathcal{P}^a_{ss'}$) and reward distribution ($\mathcal{R}^a_{ss'}$). Otherwise, we have to do sample backups using sample transitions from the environment or from a sample model. Full backups may give a better estimate because they are uncorrupted by the sample error, but they also require more computation because they need to do a lot more backups: they consider all the possible next states ($b$, the branching factor) instead of just one next state. This is probably not feasible to use with planning when there is not a lot of time available.\\
+% The computation of (one-step) backups can differ in 3 possible ways: The first is the binary difference of whether they backup state values or action values. The second one is whether they estimate the value for the optimal policy or for an arbitrary given policy. The last one is whether the backups are full backups or just sample backups. This results in 8 cases, of which 7 result in useful kind of backups. These are shown in Figure \ref{fig:backuptypes}.
+% \begin{figure}[H]
+% \includegraphics[width=\linewidth]{images/backuptypes.png}
+% \caption{Different kind of backups, depending on what value they backup and whether they do full backups or sample backups. Source: \cite{Sutton1998ReinforcementIntroduction}.}
+% \label{fig:backuptypes}
+% \end{figure}
+% Full backups are only possible when we know the transition distribution ($\mathcal{P}^a_{ss'}$) and reward distribution ($\mathcal{R}^a_{ss'}$). Otherwise, we have to do sample backups using sample transitions from the environment or from a sample model. Full backups may give a better estimate because they are uncorrupted by the sample error, but they also require more computation because they need to do a lot more backups: they consider all the possible next states ($b$, the branching factor) instead of just one next state. This is probably not feasible to use with planning when there is not a lot of time available.\\
 
-In dynamic programming, we perform sweeps through the entire state(-action) space. As we already said, this may take a lot of time. In many tasks, some states may be irrelevant as they are only visited with a low probability and/or using very poor policies. The second possibility is to sample from the state(-action) space according to a distribution. If we would sample uniformly, we would have the same problems as the already explained exhaustive sweep.\\
-We could also use the distribution observed when following the current policy. This is easily generated by just starting in the begin state and simulating until the terminal state (in case of an episodic task, otherwise it just keeps simulating). Here we simulate explicit individual trajectories and we perform backups using the state or state-action pairs encountered. This way of generating experience is called \textit{trajectory sampling}.\\
-If we would have an explicit representation of the on-policy distribution, we could sweep through all states, weighting the backup according to this distribution. This however will gives us again a large computational cost. We could also sample and update individual state-action pairs from this distribution, but this would not give a huge benefit over simulating the trajectories. Moreover, computing the on-policy distribution may require itself a big computational cost, as the distribution changes whenever the policy changes.\\
-Focusing on the on-policy distribution may be good because uninteresting parts of the state(-action) space may be ignored. However, it may also result in backing op the same part of the space over and over again.
+% In dynamic programming, we perform sweeps through the entire state(-action) space. As we already said, this may take a lot of time. In many tasks, some states may be irrelevant as they are only visited with a low probability and/or using very poor policies. The second possibility is to sample from the state(-action) space according to a distribution. If we would sample uniformly, we would have the same problems as the already explained exhaustive sweep.\\
+% We could also use the distribution observed when following the current policy. This is easily generated by just starting in the begin state and simulating until the terminal state (in case of an episodic task, otherwise it just keeps simulating). Here we simulate explicit individual trajectories and we perform backups using the state or state-action pairs encountered. This way of generating experience is called \textit{trajectory sampling}.\\
+% If we would have an explicit representation of the on-policy distribution, we could sweep through all states, weighting the backup according to this distribution. This however will gives us again a large computational cost. We could also sample and update individual state-action pairs from this distribution, but this would not give a huge benefit over simulating the trajectories. Moreover, computing the on-policy distribution may require itself a big computational cost, as the distribution changes whenever the policy changes.\\
+% Focusing on the on-policy distribution may be good because uninteresting parts of the state(-action) space may be ignored. However, it may also result in backing op the same part of the space over and over again.
 
-In experiments it was seen that sampling according to the on-policy distribution results in faster planning initially and retarded planning in the long run than when using the uniform distribution \citep{ML}. The effect is stronger with smaller branching factors, as well as when the number of states increased. In the short term, using the on-policy distribution results in performing backups on states that are near descendants of the start state. In the long run, this distribution may be bad for us because we keep focusing on the same states, which already have more or less their correct values. Other states may be more interesting to explore, which is why the exhaustive unfocused approached may be better in this case, at least for small problems (because of the computational cost).\\
+% In experiments it was seen that sampling according to the on-policy distribution results in faster planning initially and retarded planning in the long run than when using the uniform distribution \citep{ML}. The effect is stronger with smaller branching factors, as well as when the number of states increased. In the short term, using the on-policy distribution results in performing backups on states that are near descendants of the start state. In the long run, this distribution may be bad for us because we keep focusing on the same states, which already have more or less their correct values. Other states may be more interesting to explore, which is why the exhaustive unfocused approached may be better in this case, at least for small problems (because of the computational cost).\\
 
-The idea of heuristic search is to make improved action selections given a value function. As such, it is a part of the policy computation. For a state, it considers a tree of all possible continuations. The approximate value function is applied to the leaf nodes and then backed up (max-backups like for $V^{*}$ and $Q^{*}$) towards the current state at the root. Once these backed-up values are computed, we can choose the best of them and discard the rest. ($\epsilon$-)greedy action selection methods are alike, as they only compute the backup values for all the possible next states (not for the states after those).\\
-By searching deeper, we obtain better action selections. This can eliminate the problem of imperfect action selection and the actions will be near optimal. However, more computation time is needed for deeper searches.\\
-Besides using it for action selection, heuristic search can also suggest ways to distribute the backups such that the optimal value function is approximated faster and to make the search more efficient. Ideally, the tree should be grown and explored deeper for actions that seem most likely to be best. Practically, this could be done by updating state-action pairs of which the value is close to the maximum available from the state.\\
-Much of the effectiveness of heuristic search is due to its search tree being tightly focused on the states and actions that might immediately follow the current state. In a state, you select the actions of which the state-action value urgently needs to be accurate. Besides this, the required memory resources is limited. This 2 ways of focusing may be the reasons why heuristic search is effective.
+% The idea of heuristic search is to make improved action selections given a value function. As such, it is a part of the policy computation. For a state, it considers a tree of all possible continuations. The approximate value function is applied to the leaf nodes and then backed up (max-backups like for $V^{*}$ and $Q^{*}$) towards the current state at the root. Once these backed-up values are computed, we can choose the best of them and discard the rest. ($\epsilon$-)greedy action selection methods are alike, as they only compute the backup values for all the possible next states (not for the states after those).\\
+% By searching deeper, we obtain better action selections. This can eliminate the problem of imperfect action selection and the actions will be near optimal. However, more computation time is needed for deeper searches.\\
+% Besides using it for action selection, heuristic search can also suggest ways to distribute the backups such that the optimal value function is approximated faster and to make the search more efficient. Ideally, the tree should be grown and explored deeper for actions that seem most likely to be best. Practically, this could be done by updating state-action pairs of which the value is close to the maximum available from the state.\\
+% Much of the effectiveness of heuristic search is due to its search tree being tightly focused on the states and actions that might immediately follow the current state. In a state, you select the actions of which the state-action value urgently needs to be accurate. Besides this, the required memory resources is limited. This 2 ways of focusing may be the reasons why heuristic search is effective.
 
 \subsection{Policy gradient}
 %By David Silver.\\
@@ -448,7 +461,7 @@ Instead, we will solve the problem analytically. We assume that the policy is di
 
 % The distinction is subtle, so I’ll say it again. For conditional probability, the hypothesis is treated as a given and the data are free to vary. For likelihood, the data are a given and the hypotheses vary.
 % Source (with more explanation): https://alexanderetz.com/2015/04/15/understanding-bayes-a-look-at-the-likelihood/
-\todo{Explain likelihood?}
+\todo{TODO: Explain likelihood?}
 Likelihood ratios use the following identity:
 \begin{align}
 \nabla_{\theta}\pi_{\theta}(s,a) &= \pi_{\theta}(s,a) \frac{\nabla_{\theta}\pi_{\theta}(s,a)}{\pi_{\theta}(s,a)}\\
@@ -504,7 +517,7 @@ Initialize $\theta$ arbitrarily\;
     }
 }
 \Return $\theta$
-\caption{REINFORCE algorithm. Source: \cite{Sutton1998ReinforcementIntroduction}}
+\caption[REINFORCE]{REINFORCE algorithm. Source: \cite{Sutton1998ReinforcementIntroduction}}
 \label{algo:reinforce}
 \end{algorithm}
 
@@ -579,7 +592,6 @@ In practice, we use the function approximator of the critic function for the val
 
 Before deep learning, raw data had to be transformed into an internal representation using manually crafted features usable for learners. In deep learning, these features are learned by itself, as it is a representation-learning method. Furthermore, different levels of representation can be used. Each level builds upon the previous one, starting from the input itself, and represents it in a more abstract way. These abstractions are generated as to recognize aspects of the input that are important for the task. Because of this, it is possible that small variations in the input have no influence on the abstraction and output. Because these abstractions are learned automatically, there is no need anymore to create internal representations manually, which require more work as it is different for every kind of task. The generated abstractions may also recognize useful patterns in the data that might not be represented using the hand-crafted features.\\
 
-
 In supervised learning, our data set contains pairs of an input and the associated correct output, also called training examples. The goal is to be able to predict the correct output given the input. When doing classification, the output only has a finite set of possible values. As such, the classification algorithm can output a score for each possible output which signifies its certainty or confidence for that output being the correct one given the input. Because of this, we want the correct output to have the highest score. In order to evaluate and improve the algorithm, we compute the error by calculating the differences between the computed output and the correct output. Using this error, the algorithm can then improve its predictions and subsequently reduce the error by adjusting its internal parameters. These parameters, also called weights, influence which output is generated given the input.\\
 
 In order to adjust the weight vector, i.e. the internal parameters, a gradient is computed. This gradient indicates how the error would change when adjusting each parameter by an infinitely small amount, calculated using derivatives. The weight vector is then adjusted in the opposite direction of the gradient vector as to decrease the error. This is only possible if the values of the weight vector are continuous and they are differentiable w.r.t. the error.
@@ -597,6 +609,7 @@ Most of these modules contain weights which can be trained.
 
 As already explained, stochastic gradient descent is used in order to reduce the error. This method requires however gradients to be computed. To do this, we use backpropagation. This requires that there exists a derivative of each computation. First, these are applied to the weights producing the final output (using the directly received error), and then by working backwards and propagating the gradient (using the chain rule) to the weights that directly handle the input.
 
+\todo{TODO: add neural network background}
 In most of the applications using deep learning, feedforward neural networks are used. Here the input and output have a fixed size and the input is processed, possible using multiple layers, in order to produce the output.
 The linear combination computed to go from one layer to the next can also pass through a non-linear function. One of the most popular is the rectified linear unit (\textit{ReLU}). This uses the formula $f(z) = max(0,z)$. Other possibilities include the \textit{tanh} function ($f(z) = tanh(z)$) and the sigmoid function ($f(z) = \frac{1}{1 + e^{-z}}$). \textit{ReLU} is the most popular for deep learning however as it learns much faster when having a lot of layers.
 
@@ -609,10 +622,24 @@ Instead, there are more saddle points. Here, the gradient is zero and the surfac
 Convolutional neural networks are neural networks that are inspired by the way the visual cortex of an animal works. These networks get as input data in multi-dimensional arrays, such as 2-dimensional images with pixel intensities as the third dimension for example.\\
 A convolutional neural network is structured as a series of stages, which are combinations of layers. In the first stages, convolutional layers and pooling layers are used.
 In a convolutional layer, units are organized in feature maps. Each of these units is connected to a patch in the feature maps of the previous layer through a matrix of weights that is called the filter bank. The filter bank matrix then slides over the feature map, does an element-wise computation of the 2 matrices and sums the results. The filter bank is then moved by a certain amount, called the stride. All units in a specific feature map of a layer use the same filter bank.
-This is done because local groups of values may be correlated and as such may have the same weights. This reduces the amount of weights that need to be trained. Furthermore, certain concepts and local statistics (of images) may be invariant to the location. A certain pattern or motif in an image might appear in different places of the image and may have the same meaning.\\
+This is done because local groups of values may be correlated and as such may have the same weights. This reduces the amount of weights that need to be trained. Furthermore, certain concepts and local statistics (of images) may be invariant to the location. A certain pattern or motif in an image might appear in different places of the image but may have the same meaning.\\
 The result of this convolutional operation (which is linear) operation is again a feature map and can then be passed to a non-linear function such as a \textit{ReLU}.\\
 
-These convolutional layers are then combined with pooling layers. Instead of detecting local conjunctions of features from the previous layer, pooling tries to merge semantically similar features into one. This is necessary because the positions of features that form a motif are not exact and can vary somewhat. It may not manner for example that an object is close or far in an image. To detect the motifs more reliably, we course-grain their features. The typical pooling units compute the maximum or average of a local patch of units in one or a few feature maps. The neighbouring pooling units do the same for patches that are shifted by one or more rows and/or columns and as such creating an invariance to small shifts and distortions.\\
+These convolutional layers are then combined with pooling layers. Instead of detecting local conjunctions of features from the previous layer, pooling tries to merge semantically similar features into one. This is necessary because the positions of features that form a motif are not exact and can vary somewhat. It may not matter for example that an object is close or far in an image. To detect the motifs more reliably, we course-grain their features. The typical pooling units compute the maximum or average of a local patch of units in one or a few feature maps. The neighbouring pooling units do the same for patches that are shifted by one or more rows and/or columns and as such creating an invariance to small shifts and distortions.\\
+A typical layout of a convolutional neural network is shown in Figure~\ref{fig:cnnlayout}, while a hierarchy of features extracted using a convolutional neural network is shown in Figure~\ref{fig:cnnfeatures}.\\
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=\linewidth]{images/cnnlayout.png}
+    \caption[Convolutional neural network layout]{Layout of a typical convolutional neural network, which uses convolutional layers, pooling layers and fully connected layers in order to detect an object in an image. Source: \url{https://www.clarifai.com/technology}}
+    \label{fig:cnnlayout}
+\end{figure}
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=\linewidth]{images/cnnfeatures.png}
+    \caption[Convolutional neural network features hierarchy]{A hierarchy of features with as low-level features contours of faces. A more complex layer represents parts of faces. The final layer shows whole faces and can be used for classification or regression. Note that these features don't always have an intuitive meaning. Source: \cite{conf/icml/LeeGRN09}.}
+    \label{fig:cnnfeatures}
+\end{figure}
+
 An example of a convolutional neural network is ConvNet, a convolutional network architecture that achieved many successes. Here, two or three of these convolutions, non-linearities and poolings are stacked. Afterwards, a convolutional layer and fully-connected layer follow.\\
 
 \subsection{Recurrent Neural Networks}
@@ -620,7 +647,7 @@ Recurrent neural networks (RNNs) are used to process sequential data such as spe
 \begin{figure}[htb]
 \centering
 \includegraphics[width=0.8\linewidth]{images/RNN-unrolled.jpg} %source: http://www.wildml.com/2015/09/recurrent-neural-networks-tutorial-part-1-introduction-to-rnns/
-\caption{A recurrent neural network in which each state (hidden unit) is passed to the next one. $x_t$ and $o_t$ are respectively the input and output at time step $t$. $s_t$ is the output of a hidden layer and depends on the input and the hidden unit at the previous time step: $s_t = U*x_t + W*s_{t-1}$. Note that the same weights $U$, $V$ and $W$ are used at each time step. Source: \cite{LeCun2015DeepLearning}.}
+\caption[Recurrent neural network]{A recurrent neural network in which each state (hidden unit) is passed to the next one. $x_t$ and $o_t$ are respectively the input and output at time step $t$. $s_t$ is the output of a hidden layer and depends on the input and the hidden unit at the previous time step: $s_t = U*x_t + W*s_{t-1}$. Note that the same weights $U$, $V$ and $W$ are used at each time step. Source: \cite{LeCun2015DeepLearning}.}
 \label{fig:rnnunrolled}
 \end{figure}
 %The above diagram has outputs at each time step, but depending on the task this may not be necessary. For example, when predicting the sentiment of a sentence we may only care about the final output, not the sentiment after each word. Similarly, we may not need inputs at each time step. The main feature of an RNN is its hidden state, which captures some information about a sequence.
@@ -649,6 +676,13 @@ An LSTM architecture consists of different parts:
 \end{itemize}
 Here, $U^i$ is for example one of the weight vectors for the input gate. The $\sigma$ function means the sigmoid function. $\circ$ refers to the dot product, i.e. $x \circ y = \sum_i^N x_i y_i$.\\
 We can almost get the original RNN by setting the input and output gate weights to 1 and the forget gate weights to 0. The only difference is the $tanh$ function used to compute the output hidden state, which squashes the result more (along with the $tanh$ used to compute the candidate hidden state).\\
+The architecture of an LSTM cell is shown in Figure~\ref{fig:lstm}.
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=\linewidth]{images/lstm.png}
+    \caption[Long short-term memory cell]{The architecture of an LSTM cell. Source: \cite{journals/corr/Graves13}.}
+    \label{fig:lstm}
+\end{figure}
 Another kind of recurrent unit is the Gated Recurrent Unit (GRU), which was introduced by \cite{Cho2014LearningTranslation}. It is simpler than LSTM but yields similar results. A GRU unit consists of the following parts:
 \begin{itemize}
 \item The update gate $z$ determines how much of the previous memory we want to keep, based on the input and the previous hidden state: $z = \sigma (x_tU^z + s_{t-1}W^z)$.
@@ -656,7 +690,13 @@ Another kind of recurrent unit is the Gated Recurrent Unit (GRU), which was intr
 \item Again a candidate hidden state $h$ that actually combines the previous hidden state and the input, using its own weights and the information from the reset gate: $h = tanh(x_tU^h + (s_{t-1} \circ r)W^h)$.
 \item A new output hidden state based that combines all the previous information: $s_t = (1-z) \circ h + z \circ s_{t-1}$.
 \end{itemize}
-As we can see, the non-linearity function $tanh$ is only used once here. We also have no internal memory $c_t$ here. Instead, we use the update gate $z$ to combine the forget and input gate of the LSTM. The reset gate here is applied to the previous hidden state. As such, resetting in the LSTM architecture is done here using both the update gate and the reset gate. By always setting the reset gate to $1$ and the update gate to $0$ we get again the classic RNN architecture.\\
+As we can see, the non-linearity function $tanh$ is only used once here. We also have no internal memory $c_t$ here. Instead, we use the update gate $z$ to combine the forget and input gate of the LSTM. The reset gate here is applied to the previous hidden state. As such, resetting in the LSTM architecture is done here using both the update gate and the reset gate. By always setting the reset gate to $1$ and the update gate to $0$ we get again the classic RNN architecture. The architecture of a GRU cell is visualized in Figure~\ref{fig:gru}.\\
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=0.6\linewidth]{images/gru.png}
+    \caption[Gated Recurrent Unit cell]{Gated Recurrent Unit cell. Source: \cite{journals/corr/ChungGCB14}.}
+    \label{fig:gru}
+\end{figure}
 
 Other networks with memory include a Neural Turing Machine, in which a tape-like memory is used from which the network can read or write.\\
 Another kind is a memory network, in which a normal network is augmented by a associative memory.\\
@@ -730,7 +770,7 @@ Initialize target action-value function $\hat{Q}$ with weights $\theta^- = \thet
         Every $C$ steps reset $\hat{Q} \gets Q$\;
     }
 }
-\caption{Deep Q-learning with experience replay. Source: \cite{mnih2013playing}.}
+\caption[Deep Q-learning with experience replay]{Deep Q-learning with experience replay. Source: \cite{mnih2013playing}.}
 \label{algo:dqn}
 \end{algorithm}
 
@@ -786,30 +826,29 @@ Initialize thread step counter $t\gets 1$\;
     }
     Perform asynchronous update of $\theta$ using $d\theta$ and of $\theta_v$ using $d\theta_v$\;
 }
-\caption{Asynchronous Advantage Actor Critic (A3C). Source: \cite{Mnih2016AsynchronousLearning}.}
+\caption[Asynchronous Advantage Actor Critic]{Asynchronous Advantage Actor Critic (A3C). Source: \cite{Mnih2016AsynchronousLearning}.}
 \label{algo:a3c}
 \end{algorithm}
 
 \section{Transfer learning}
 %\cite{Taylor2009TransferSurvey}.
-\todo{Say somewhere that a task is simply an Markov Decision Process}
-Transfer learning involves the use of experience gained when learning one task to improve the performance on a different but related task. Here, we discuss a framework for transfer methods that can be used for reinforcement learning, closely following \cite{Taylor2009TransferSurvey}.\\
+Transfer learning involves the use of experience gained when learning one or more tasks, to improve the performance on a different but related task. Each task is represented by a Markov Decision Process (MDP).\\  Here, we discuss a framework for transfer methods that can be used for reinforcement learning, closely following \cite{Taylor2009TransferSurvey}.\\
 
-The transfer of knowledge always happens between one or more source tasks. First, an appropriate set of tasks must be selected. Afterwards, the transfer learning algorithm must learn how these source tasks are related to the target task.\\
+As already said, the transfer of knowledge always happens between one or more source tasks and a target task. First, an appropriate set of tasks must be selected. Afterwards, the transfer learning algorithm must learn how these source tasks are related to the target task. Then, the appropriate knowledge can be transferred.\\
 
 To be able to transfer knowledge, some assumptions must be made about differences between the source tasks and the target task. This can be for example in the underlying dynamics of the environment, which can make the task harder or easier to solve, or different sets of possible actions at certain states. These differences define between which type of source and target tasks knowledge can be transferred. The differences between the source task(s) and target task can also make the knowledge transfer easier or harder, requiring the appropriate guidance by a human or a method that can overcome these differences in case of a fully autonomous transfer learner.\\
-Multi-task learning is a special kind of task learning where the problems for the source and target tasks are drawn from the same distribution instead of having arbitrary source and target tasks. More specifically, the transition function is drawn from a fixed distribution of functions. For the mountain car environment , this may mean for example that the motor of the car differs in power in different tasks.\\
+Multi-task learning is a special kind of task learning where the problems for the source and target tasks are drawn from the same distribution instead of having arbitrary source and target tasks. More specifically, the transition function is drawn from a fixed distribution of functions. For the mountain car environment, this may mean for example that the motor of the car differs in power in different tasks.\\
 
-As was stated, first the set of source tasks needs to be selected. Again, this can be done by a human in case of a human-guided scenario. However, the selection may also be done by the agent itself. It can learn multiple source tasks and then use them all for transfer. Another possibility is to select the source tasks that are the most relevant and lead to highest performance for the target task. The agent may also just aim to avoid negative transfer, which means that the specific selection of source tasks leads to worse learning performance for the target task.
-The agent could also modify the source task such that the knowledge transfer is the most useful in the target task.\\
+As was stated, first the set of source tasks needs to be selected. Again, this can be done by a human in case of a human-guided scenario. However, the selection may also be done by the agent itself. For example, it can learn multiple source tasks and then use them all for transfer. Another possibility is to select the source tasks that are the most relevant and lead to highest performance for the target task. The agent may also just aim to avoid negative transfer, such that the specific selection of source tasks does not to worsen learning performance for the target task.
+The agent could also modify the source task(s) such that the transferred knowledge is the most useful in the target task.\\
 
 Instead of just knowing that tasks are related, many methods also need to know how tasks are related, using task mappings. This is necessary to make the knowledge gained on the source tasks useful for the target task. Tasks may differ in state and action variables and the in the semantic meaning of them. In the mountain car environment, one can have a task where the goal is on the opposite side. As such, taking the action \texttt{Left} has a different meaning for these tasks. Actions in the two tasks must be mapped such that their effects are similar.\\
-Again, these mappings can be provided by a human or they can be learned by the agent. Note that these mappings may be partial and not every action in the source task is mapped to an action in the target task or vice-versa. For states, it is also possible to map the states themselves instead of the state variables.\\
-In multi-task learning, states and variables are the same and have the same meaning. Because of this, no task mapping is necessary in multi-task learning.\\
+Again, these mappings can be provided by a human or they can be learned by the agent. Note that these mappings may be partial and not every action in the source task is mapped to an action in the target task or vice-versa. For the state space, it is also possible to map the states themselves instead of the state variables.\\
+In multi-task learning, states and variables are the same and have the same meaning. Because of this, no task mappings are necessary in multi-task learning.\\
 
 Task learning methods can also differ in the type of knowledge that is transferred between source and target tasks. This knowledge can be for example an action-value function, transitions or policy gradient parameters. For tasks that are closely related, detailed knowledge may be useful. Otherwise, high-level information may result in a better learning performance. The type of knowledge that is transferred can also depend on the type of source and target tasks and on the task mappings.\\
 
-Last, the task learning method may also restrict which reinforcement learning algorithms that can be used. It is possible for example that only a class of reinforcement learning algorithms or only one specific reinforcement learning algorithm can be used with the task learning method or that the algorithm is the same for both the source and target tasks. Ideally, the reinforcement learning algorithms can be chosen freely and may be selected based on the characteristics of the task.\\
+Last, the task learning method may also restrict which reinforcement learning algorithms that can be used. It is possible for example that only a class of reinforcement learning algorithms or only one specific reinforcement learning algorithm can be used with the task learning method or that the algorithm is the same for both the source and target tasks. Ideally, the reinforcement learning algorithms can be chosen freely and may be selected based on the characteristics of the task at hand.\\
 
 \subsection{Metrics}
 Several metrics exist to evaluate the learning performance and solution quality of transfer learning algorithms. Generally, one metric does not give a complete representation of the overall performance of the algorithm. Because of this, often multiple metrics are used.\\
@@ -817,7 +856,7 @@ Here we will list the most popular ones:
 \begin{itemize}
     \item \textit{Jumpstart}: This is the initial improvement that the target task has over an algorithm that doesn't use knowledge transfer. However, no learning has occurred yet. Because of this, learning performance can't be measured. The metric also does not give an indication about the final performance, i.e. the performance after having learned.
     \item \textit{Asymptotic performance}: This is the opposite of \textit{jumpstart} performance and measures the performance improvement after having learned the target task. However, this is hard to measure because one has to know when the task learning algorithm converged. Furthermore, the task learning algorithm and the algorithm that doesn't use knowledge transfer may require a different training time in order to converge.
-    \item \textit{Total reward}: This is the total reward that the algorithm has accumulated during learning, i.e. the area under the learning curve. In case of improvement, this area is bigger than when transfer learning isn't used. This can be achieved when the transfer learning algorithm has a higher learning rate. However, convergence is again an issue here. An algorithm that learns slower and thus takes more time to converge may accumulate a higher total reward than a faster algorithm that may even reach a higher performance. This metric is only useful for task that always have the same duration.
+    \item \textit{Total reward}: This is the total reward that the algorithm has accumulated during learning, i.e. the area under the learning curve. In case of improvement, this area is bigger than when transfer learning isn't used. This can be achieved when the transfer learning algorithm has a higher learning rate. However, convergence is again an issue here. An algorithm that learns slower and thus takes more time to converge may accumulate a higher total reward than a faster algorithm, although the latter may even reach a higher performance. This metric is only useful for task that always have the same duration.
     \item \textit{Transfer ratio}: This is the ratio of the total reward improvement that the transfer learning algorithm has over the other algorithm. Because it uses the \textit{total reward} metric, it suffers from the same issues. Furthermore, it is also influenced by the reward structure. For example, an agent always receiving a reward of $+1$ at the end of the episode may result in a different ratio.
     \item \textit{Time to threshold}: This measures the time needed to reach a pre-defined performance. A transfer learning algorithm may need less time to reach this threshold. The threshold needs to be defined manually and depends on the task domain and learning method.
 \end{itemize}
@@ -825,7 +864,7 @@ A graph with 3 of the 5 metrics is shown in Figure~\ref{fig:TLmetrics}.
 \begin{figure}[htb]
     \centering
     \includegraphics[width=\linewidth]{images/tlmetrics.png}
-    \caption{A graph comparing the \textit{jumpstart}, \textit{time to threshold} and \textit{asymptotic performance} metrics between the algorithm that uses knowledge transfer and the one that doesn't. Note that here the transfer learning algorithm performs better on all three metrics. It can also be seen that the total reward is higher. Source: \cite{Taylor2009TransferSurvey}.}
+    \caption[Transfer learning metrics]{A graph comparing the \textit{jumpstart}, \textit{time to threshold} and \textit{asymptotic performance} metrics between the algorithm that uses knowledge transfer and the one that doesn't. Note that here the transfer learning algorithm performs better on all three metrics. It can also be seen that the total reward is higher. Source: \cite{Taylor2009TransferSurvey}.}
     \label{fig:TLmetrics}
 \end{figure}
 Instead of comparing the transfer learning algorithm with a algorithm that doesn't use knowledge transfer, it is also possible to compare the algorithm with the performance of humans (by averaging their performances). However, metrics must be chosen carefully such that they don't favor the algorithm or the human and they can be abused.
@@ -836,7 +875,7 @@ In \cite{Isele2016UsingLearning}, a method is presented that learns these task s
 %factorization: ontbinding in factoren: bijv. 15=3*5
 First, it is assumed that the policy parameters for every task $t$ can be factorized using a shared knowledge base $L \in \mathbb{R}^{d \times k}$: $\theta^{(t)} = Ls^{(t)}$. $s^{(t)} \in \mathbb{R}^{(k)}$ are the sparse coefficients over the basis, i.e. the latent representation of the policy's parameters for task $t$. $L$ is able to capture relationships among policies as this is used to compute every policy, whereas there is a sparse representation for computed for each task separately.\\
 The features of the task are obtained by (possibly non-linear) feature extractors applied on the descriptor of the task: $\phi(m^{(t)}) \in \mathbb{R}^{d_m}$. These features can also be linearly factorized using another shared knowledge base $D \in \mathbb{R}^{d_m \times k}$: $\phi(m^{(t)}) = Ds^{(t)}$, where the same sparse representation is used as the one used to compute the policy. Both knowledge bases provide information about the task and because of this they share the same coefficient vectors $S$. We then used coupled dictionary optimization techniques from the sparse coding literature to optimize these dictionaries. They are updated iteratively based on trajectories samples from the current task.\\
-When a new task arrives, with its task descriptor, we search for the coefficients $s^{(t_{new})}$ that minimize the difference between the extracted features and the reconstruction of it using the shared knowledge base $D$. Using these coefficients, we can compute the policy parameters using $\theta = Ls^{(t_{new})}$. Afterwards, we can iterate again to improve $s$ and the knowledge bases.
+When a new task arrives, with its task descriptor, we search for the coefficients $s^{(t_{new})}$ that minimize the difference between the extracted features and the reconstruction of it using the shared knowledge base $D$. Using these coefficients, we can compute the policy parameters using $\theta = Ls^{(t_{new})}$. Afterwards, we can iterate again to improve the sparse representation $s$ and the knowledge bases.
 
 \section{Related work}
 % Types of knowledge that is transferred: Value functions, features extracted from value functions, heuristics, policies
@@ -851,21 +890,22 @@ When a new task arrives, with its task descriptor, we search for the coefficient
 
 % transferring instances
 % transferring advice/preferences
-Transfer learning methods for reinforcement learning can first be divided into 2 groups: methods that use task mappings and methods that don't. We will only discuss methods that don't use task mappings as our approach also does not use task mappings.\\
+Transfer learning methods for reinforcement learning can first be divided into 2 groups: methods that use task mappings and methods that do not. We will only discuss methods that do not use task mappings as our approach also does not use task mappings.\\
 
-In of the earliest works of transfer learning used for reinforcement learning \citep{conf/ijcai/SelfridgeSB85}, the transition function was gradually changed as to make the task harder. A cart pole task was used where the pole was long and light at first, but was made shorter and heavier over time. The total time spent learning on the sequence of gradually modified tasks was shorter than when trying to solve the hardest task directly.\\
+In one of the earliest works of transfer learning used for reinforcement learning \citep{conf/ijcai/SelfridgeSB85}, the transition function was gradually changed as to make the task harder. A cart pole task was used where the pole was long and light at first, but was made shorter and heavier over time. The total time spent learning on the sequence of gradually modified tasks was shorter than when trying to solve the hardest task directly.\\
 
-Earlier work was generally focused on transferring from one source task to a target task, while in recent research, most of the times a more general scenario with possibly multiple sources is considered. The approaches that we will further discuss mostly focus on transferring from multiple sources to just one. We do this because our approach also allows the use of multiple source tasks. Furthermore, the  discussed algorithms that can use multiple source tasks generally also alow just one source task from which to transfer information.\\
+Later work was generally focused on transferring from one source task to a target task, while in recent research, most of the times a more general scenario with possibly multiple sources is considered. The approaches that we will further discuss mostly focus on transferring from multiple sources instead of just one. We do this because our approach also allows the use of multiple source tasks. Furthermore, the  discussed algorithms that can use multiple source tasks generally also allow just one source task from which to transfer knowledge.\\
 
 One approach, presented in \cite{lazaric2008transfer}, is to transfer transitions (also called \textit{instances} or \textit{samples}) gathered from the source tasks to the target task. However, transitions may not be useful if the target tasks differs too much from the source tasks. To solve this, transitions from source tasks are chosen based on the similarity of these tasks to the target task. After having trained on the source tasks and collected transitions, we also collect a few transitions from the target task. The similarity between a source task and the target task is then the probability that the transitions of the target task were generated by an approximated model of the source task.\\
 
 Another possibility is to transfer a representation. In this case, characteristics are inferred from multiple source tasks.
-In \cite{Bernstein99reusingold}, policies are averaged and can be applied for $n$ time steps on all states. This combination policy, time steps and states is called an option. The reasoning is that actions that are used a lot in a state in source tasks may also be useful in the target task. In \cite{perkins1999using}, these options are provided on beforehand. The agent then learn a single action-value function over these options using all the source tasks. These options along with the action-value function can then be used for the target task.\\
-Another possibility, presented in \cite{fernandez2006probabilistic}, is to collect a library of policies and select one to use probabilistically, depending on the expected reward. At every time step, it can choose to use one of the source task policies, use the current best target task policy or to randomly explore. As the probabilities depend on the gained rewards, after some time more useful policies are exploited more often. This method only works however for tasks where only the goal state in a maze is different.
+In \cite{Bernstein99reusingold}, policies are averaged and can be applied for $n$ time steps on all states. This combination of policy, time steps to execute and states is called an option. The reasoning is that actions that are used a lot in a state in source tasks may also be useful in the target task. In \cite{perkins1999using}, these options are provided on beforehand. The agent then learns a single action-value function over these options using all the source tasks. These options along with the action-value function can then be transferred and used for the target task.\\
 
-Instead of selecting a policy from which to transfer information, \cite{conf/cira/TanakaY03} uses statistics of all the source tasks. More specifically, the average and standard deviation of each state-action pair are calculated. In the target task, the action-value function for each state-action pair is then instantiated to the average for that pair for the source tasks. The standard deviation is used in order to prioritize updates for state-action pairs that are far from the average. Besides this, states-action pairs that fluctuate often within an episode are also prioritized.
+Instead of using a single policy or action-value function, one can also collect a library of policies and select one to use probabilistically, depending on the expected reward. This approach is presented in \cite{fernandez2006probabilistic,fernandez2013learning}. At every time step, the algorithm can choose to use one of the source task policies, use the current best target task policy or to randomly explore. As the probabilities depend on the gained rewards, after some time more useful policies are exploited more often. This method only works however for tasks where only the goal state in a maze is different.\\
 
-\cite{journals/ml/FosterD02} tries to extract sub-tasks across multiple source tasks. Optimal policies are then learned for each of these sub-tasks and pieced together. In this case, the environment was a maze and tasks differ in their goal in the maze. Value functions can then be learned on parts of the maze. Less learning for the target task is then required because most of the already learned sub-tasks can also be used for the target task.\\
+Instead of selecting a policy from which to transfer information, \cite{conf/cira/TanakaY03} use statistics of all the source tasks. More specifically, the average and standard deviation of each state-action pair are calculated. In the target task, the action-value function for each state-action pair is then instantiated to the average for that pair for the source tasks. The standard deviation is used in order to prioritize updates for state-action pairs that are far from the average. Besides this, states-action pairs that fluctuate often within an episode are also prioritized.\\
+
+\cite{journals/ml/FosterD02} try to extract sub-tasks across multiple source tasks. Optimal policies are then learned for each of these sub-tasks and pieced together. In this case, the environment was a maze and tasks differ in their goal in the maze. Value functions can then be learned on parts of the maze. Less learning for the target task is then required because most of the already learned sub-tasks can also be used for the target task.\\
 
 Previous methods can only be applied on problems with a discrete state and action space. However, other methods exist that can be applied on problems with a continuous state and action space. Here, function approximation is always required. \cite{walsh2006transferring} group states encountered in the source tasks and treat them as being one and the same state. This abstraction along with the value function learned on this abstraction can then be transferred and used for learning the target task.\\
 \cite{lazaric2008knowledge} also groups states of the source tasks, but does this by adjusting parameters of a function approximator to build features. Only a small set of features are searched while still being able to learn useful value functions. The learning process for the tasks is executed in parallel. Again, after learning the source tasks, the parameters of the function approximator and the value functions are transferred.
@@ -873,7 +913,7 @@ Previous methods can only be applied on problems with a discrete state and actio
 2 other approaches use a hierarchical Bayesian model. They use this to find parameters that make up the dynamics and reward function of a problem. In \cite{sunmola2006model}, transitions of source tasks are used as a prior to find parameters for models. After getting transitions from the target task, the most probable model for the target task transitions is transferred and used.\\
 \cite{conf/icml/WilsonFRT07} use a similar approach, but they don't make a distinction between source and target tasks. Instead, problems (MDPs) are executed sequentially and models are built using an already acquired set of transitions and models of previous tasks.\\
 
-Together with the interest in deep reinforcement learning \citep{Mnih2015Human-levelLearning,Mnih2016AsynchronousLearning}, the interest in its application to transfer learning also grows. In \cite{DBLP:journals/corr/ParisottoBS15}, the algorithm, Actor-Mimic Network (AMN), learns the $Q$ function from source tasks from an expert for each specific task (in this paper a DQN trained until convergence). Note that only one set of parameters (and thus one neural network) is used to learn on all the source tasks. As can be seen, this is supervised learning (more specifically regression) with the output of the expert's network as target value. As input, both the expert and the AMN can be used to sample trajectories. Besides mimicking using the expert's output, the AMN also tries to mimick the hidden layer activations of the expert's network by adding a loss between those activations and the activations of the AMN. Intuitively, this gives insight to the AMN, also called to student, why it should act in a specific way, in addition to telling how it should act. After learning for a pre-determined frames on each task, the weights of the AMN are transferred to a DQN and the algorithm trains on an unseen target task. Note that each task is a different game here (i.e. the state space, action space, transition function and reward function can be different). However, the algorithm can also be applied to tasks with the same state and action space.
+Together with the interest in deep reinforcement learning \citep{Mnih2015Human-levelLearning,Mnih2016AsynchronousLearning}, the interest in its application to transfer learning also grows. In \cite{DBLP:journals/corr/ParisottoBS15}, the algorithm, Actor-Mimic Network (AMN), learns the $Q$ function for source tasks from an expert for each specific task (in this paper a DQN that was trained until convergence). Note that only one set of parameters (and thus one neural network) is used to learn on all the source tasks. As can be seen, this is supervised learning (more specifically regression) with the output of the expert's network as target value. As input, both the expert and the AMN can be used to sample trajectories. Besides mimicking using the expert's output, the AMN also tries to mimick the hidden layer activations of the expert's network. This is done by adding a loss in function of the difference between the hidden layer activations of the expert network and the activations of the AMN. Intuitively, this gives insight to the AMN, also called to student, why it should act in a specific way, in addition to telling how it should act. After learning for a pre-determined number of frames on each task, the weights of the AMN are transferred to a DQN and the algorithm trains on an unseen target task. Note that each task is a different game here (i.e. the state space, action space, transition function and reward function can be different). However, the algorithm can also be applied to tasks with the same state and action space.
 
 \section{Proposed algorithm}
 \label{sec:proposed_algorithm} % (fold)
@@ -883,7 +923,6 @@ The first set of tasks can be learned in two ways. One can either learn these ta
 Once this is done, we sum and apply the gradients of every task. The learning process for this set of tasks then stops when a certain number of updates have been applied.\\
 In the asynchronous way, learning is executed in parallel and for each task, a number of updates are executed on its own. Trajectories are collected for each task continuously and its gradients are applied immediately after they are calculated. This means that they are not first summed as in the sequential method.\\
 Afterwards, we learn the new task separately for a certain number of updates.\\
-\todo{Use ref instead}
 The resulting pseudo code for the source tasks can be seen in Algorithm~\ref{algo:ownsource}.\\
 \begin{algorithm}[htb]
 \DontPrintSemicolon
@@ -952,7 +991,7 @@ Hyperparameters, such as the learning rate of neural networks, were chosen by it
 \begin{figure}[H]
     \centering
     \includegraphics[width=\linewidth]{images/knowledge_transfer.png}
-    \caption{Artificial neural network architecture.}
+    \caption[Artificial neural network architecture used in our approach]{Artificial neural network architecture used in our approach. The sparse representation is different for every task, while a unique knowledge base is used for every task.}
     \label{fig:algonn}
 \end{figure}
 \section{Results}
