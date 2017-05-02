@@ -49,8 +49,10 @@
 \section{Introduction}
 \section{Reinforcement learning}
 %\cite{Sutton1998ReinforcementIntroduction.}.
-\subsection{Basics}
 In reinforcement learning, one tries to find which action to take in a certain state of the environment in order to maximise a possibly delayed numerical reward.\\
+For chapters \ref{sub:rl_basics} to \ref{sub:rl_gfa}, we will closely follow the explanation by \cite{Sutton1998ReinforcementIntroduction}.
+\subsection{Basics}
+\label{sub:rl_basics}
 Reinforcement learning problems can be formulated in the form of a Markov Decision Process (MDP). This is four-tuple $(\mathcal{S}, \mathcal{A}, \mathcal{P}, \mathcal{R})$. $\mathcal{S}$ is the state space and contains all the possible states of the environment. The action space, $\mathcal{A}$, denotes all the possible actions that the agent can take in the environment. $\mathcal{P}: \mathcal{S} \times \mathcal{A} \to \mathcal{S}$ is the transition function and defines the probabilities for being in next state given a state and an action. $\mathcal{R}: \mathcal{S} \times \mathcal{A} \to \mathcal{R}$ gives probabilities for rewards when taking an action in a certain state.\\
 It does not know on beforehand which actions are optimal. As such, this must be discovered by trial-and-error. Subsequently, it can change its policy to increase the achieved rewards. This policy, denoted by $\pi$, defines for each state and action a probability $\pi(s,a)$, which denotes the probability of taking action $a$ when in state $s$: $\pi_t(s,a) = P(a_t = a \vert s_t = s)$. Note that exactly one action has to be taken in a state and that the action probabilities for one state sum to $1$: $\sum_{a\in \mathcal{A}}\pi_t(s,a)=1$.\\
 Because feedback in the form of numerical rewards may not be immediate, a reinforcement learning algorithm must be able to backtrack which actions in certain situation lead to the reward that the reinforcement learning algorithm received.\\
@@ -81,6 +83,7 @@ Where $\tau$ is called the temperature and controls the balance between explorat
 
 %Chapter 4
 \subsection{Dynamic programming}
+\label{sub:rldp}
 In Dynamic programming, the whole model of the problem is known. A such, we have the complete probability distribution of all the possible transitions. For example, to evaluate a policy $\pi$:
 \begin{align}
 V^{\pi}(s) &= E_{\pi} \{r_{t+1} + \gamma r_{t+2} + \gamma^2r_{t+3}+\dots \mid s_t=s\}\\
@@ -103,6 +106,7 @@ Q^{*}(s,a) &= E\{r_{t+1} + \gamma \max_{a'} Q^{*}(s_{t+1},a') \vert s_t=s, a_t=a
 \end{align}
 
 \subsection{Monte Carlo and Temporal-Difference}
+\label{sub:rl_mctd}
 Unlike dynamic programming, model-free methods don't require complete knowledge of the environment. Instead, only sample transitions are needed. This way, 2 problems with dynamic programming can be solved. First, the model may be large, which makes it infeasible to use for computing for example an optimal policy. Second, in real world problems, a complete model of the problem may not be available. It may for example be unknown what is the probability of ending in a certain state when taking a certain action from a start state.\\
 Monte Carlo methods collect sample returns and average them in order to approximate a value function. The incremental implementation for approximating $V$ is as follows:
 \begin{equation}
@@ -128,6 +132,7 @@ Note that the policy still can influence which state-action pairs are visited an
 
 %Chapter 7
 \subsection{Eligibility traces}
+\label{sub:rl_et}
 Eligibility traces are used in order to only influence eligible states or actions when a certain action is taken.\\
 %$n$-Step TD prediction
 Monte Carlo methods perform a backup for each state based on the entire sequence of observed rewards from that state until the end of the episode. The backup of more simple methods is only based on the next reward of a state, using the state value one step later as a proxy for the remaining rewards. An intermediate method would perform a backup based on an intermediate number of rewards. Then, we use the rewards of the intermediate steps and the estimated value of the last state. A visualization can be seen in Figure \ref{fig:nStepTD}.
@@ -296,6 +301,7 @@ Another possible improvement if set correctly is a variable $\lambda$, which can
 
 %Chapter 8
 \subsection{Generalization and function approximation}
+\label{sub:rl_gfa}
 Normally, if there are a lot of possible states, it will take a long time to learn the estimates of all states. It is even possible that, after some time, previously unseen states will be encountered. This problem is possible when using continuous variables, images, \dots To solve this, we generalize states. As such, we can apply information of seen states to related states that haven't been visited yet. To do this, we combine standard reinforcement learning methods with generalization methods. A well known kind of generalization methods is called function approximation: it takes examples of a desired function and tries to approximate it. This is supervised learning (the input is the original value and the output to predict is the generalized value). The used supervised learning algorithm needs to be able to handle non-stationary target functions, as learning must be able to occur on-line. The error for the algorithm to minimize is the mean-squared error (MSE) between the true value of the state and the approximated one:
 \begin{equation}
 MSE(\overrightarrow{\theta_t}) = \sum_{s \in S} P(s) \big[ V^{\pi}(s) - V_t(s) \big]^2
@@ -332,6 +338,7 @@ As can be seen, this update is rather simple. Furthermore, there is only one opt
 Note that this linear form doesn't allow for the representation of interactions between features, for example when the presence of a certain features is good only if another feature is absent. For this, we need to introduce features that are combinations of feature values.\\
 
 \subsubsection{Coarse coding}
+\label{subs:rl_cc}
 Coarse coding is the representation of a state with features that overlap, for example a binary feature that is $1$ when the coordinate given by a $x$ and $y$ feature lies in a circle. If 2 points \textit{A} and \textit{B} have circles "in common", there will be some generalization between them, as the features for both points for those circles will be 1. This is shown in Figure~\ref{fig:coarsecoding1}. The more features in common, the greater this effect.
 \begin{figure}[htb]
 \captionsetup{width=0.8\textwidth}
@@ -360,11 +367,13 @@ The advantage of this method is that they produce approximate functions that var
 
 %Kanerva coding
 \subsubsection{Kanerva coding}
+\label{subs:rl_kc}
 When the states have a high number of attributes, the previous methods can become impractical because of their computational complexity, even if we apply hashing. In the worst case, the complexity of the target function scales with the size of the state space. However, it is possible that some attributes are not useful for the learning algorithm and it would we better if those do not contribute to the complexity. This way, adding dimensions may not lead to an exponential increase in computational complexity.\\
 A way of achieving this is called Kanerva coding, where we choose binary features that correspond to particular prototype states. These are randomly selected from the entire state space. The receptive field of such a feature is all states that are sufficiently close to the prototype. This means that there is a feature for every prototype state and it is set to 1 if the state is close to that prototype state and 0 otherwise. The chosen distance is the hamming distance for a binary state space (e.g. in case of a bitwise representation of states), which is the number of bits at which two states differ.
 Using Kanerva coding, the complexity of the functions depends entirely on the number of used features, i.e. the number of prototype states, instead of the dimensionality. The amount of prototypes can be tuned such that the computational complexity and/or the performance improves.\\
 
 \subsubsection{Function approximation for control}
+\label{subs:rl_facontrol}
 To use function approximation for control, we use the action-value function $Q_t \approx Q^{\pi}$, that is represented as a parametrised functional form with parameter vector $\overrightarrow{\theta}_t$. Instead of only using training examples with $s_t$, they are now of the form $s_t, a_t \mapsto v_t$. The target output $v_t$ can be any approximation of $Q^{\pi}(s_t,a_t)$, including the usual backed-up values such as the full Monte Carlo return $R_t$ or the one-step Sarsa return $r_{t+1} + \gamma Q_t(s_{t+1}, a_{t+1})$. The gradient-descent update is now:
 \begin{equation}
 \overrightarrow{\theta}_{t+1} = \overrightarrow{\theta}_t + \alpha \big[ v_t - Q_t(s_t,a_t) \big] \nabla_{\overrightarrow{\theta}_t} Q_t(s_t,a_t)
@@ -375,6 +384,7 @@ We can also set the traces of all non-selected actions to zero in the states enc
 
 %Off-policy bootstrapping
 \subsubsection{Bootstrapping}
+\label{subs:rl_bootstrapping}
 Bootstrapping is the updating of a value estimate based on other value estimates. This is done by TD and DP methods, but not by Monte Carlo methods. TD($\lambda$) is a bootstrapping method when $\lambda <1$, but not when $\lambda = 1$. Although the latter involves bootstrapping within an episode, afterwards the effect over a complete episode is the same as the non-bootstrapping Monte Carlo update. Bootstrapping methods such as TD($\lambda$) are harder to combine with function approximation because they only find near-minimal MSE solutions (only for the on-policy distribution) instead of the minimal MSE using for example linear, gradient-descent function approximation for any distribution of training examples, $P$.\\
 The restriction of convergence is especially a problem for off-policy methods such as Q-learning and DP methods because they do not backup states (or state-action pairs) with exactly the same distribution as the distribution of states we encounter when following the policy of which we want to estimate the value function. Off-policy bootstrapping combined with function approximation can even lead to divergence and infinite MSE.\\
 
@@ -382,6 +392,7 @@ Bootstrapping looks like a bad idea because non-bootstrapping methods are more e
 
 %Chapter 9
 % \subsection{Planning and Learning}
+% \label{sub:rl_planning_learning}
 % A model is something that can be used by an agent to predict the resulting state and reward of doing an action in the environment. Distribution models give a probability for each possibility, whereas sample models just return one of the possibilities. The model can be used to simulate experiences because as it can be used to simulate several transitions and as such to simulate entire episodes.\\
 % Planning is the computational process of using this model and producing/improving a policy. State-space planning means the search through the state space for an optimal policy or path to a goal. In plan-space planning, we search through the space of plans. This includes evolutionary methods and partial-order planning. In the latter, the ordering of the steps is not fully defined in all the stages of planning.
 % \begin{figure}[htb]
@@ -433,6 +444,7 @@ Bootstrapping looks like a bad idea because non-bootstrapping methods are more e
 % Much of the effectiveness of heuristic search is due to its search tree being tightly focused on the states and actions that might immediately follow the current state. In a state, you select the actions of which the state-action value urgently needs to be accurate. Besides this, the required memory resources is limited. This 2 ways of focusing may be the reasons why heuristic search is effective.
 
 \subsection{Policy gradient}
+\label{sub:rl_policy_gradient}
 %By David Silver.\\
 
 Here, we parametrise the policy instead of the state value or state-action value function.
@@ -896,18 +908,20 @@ In one of the earliest works of transfer learning used for reinforcement learnin
 
 Later work was generally focused on transferring from one source task to a target task, while in recent research, most of the times a more general scenario with possibly multiple sources is considered. The approaches that we will further discuss mostly focus on transferring from multiple sources instead of just one. We do this because our approach also allows the use of multiple source tasks. Furthermore, the  discussed algorithms that can use multiple source tasks generally also allow just one source task from which to transfer knowledge.\\
 
-One approach, presented in \cite{lazaric2008transfer}, is to transfer transitions (also called \textit{instances} or \textit{samples}) gathered from the source tasks to the target task. However, transitions may not be useful if the target tasks differs too much from the source tasks. To solve this, transitions from source tasks are chosen based on the similarity of these tasks to the target task. After having trained on the source tasks and collected transitions, we also collect a few transitions from the target task. The similarity between a source task and the target task is then the probability that the transitions of the target task were generated by an approximated model of the source task.\\
+One approach, presented in \cite{lazaric2008transfer}, is to transfer transitions (also called \textit{instances} or \textit{samples}) gathered from the source tasks to the target task. However, transitions may not be useful if the target tasks differs too much from the source tasks. To solve this, transitions from source tasks are chosen based on the similarity of these tasks to the target task. After having trained on the source tasks and collected transitions, we also collect a few transitions from the target task. The similarity between a source task and the target task is then the probability that the transitions of the target task were generated by an approximated model of the source task.
+
+\cite{Ammar2014} also focus on the problem of selecting the appropriate source tasks from which to transfer knowledge. Here, however, a Restricted Boltzmann Machine \citep{Smolensky1986} is used in order to generate a model of a source tasks that yields features that are relevant for characterizing the task. The model, generated using transitions of the source task, then tries to reconstruct samples of the target task. The similarity of a source and target task can then be assesed using the difference of the reconstructed transitions and the real transitions of the target task. Note however that the state and action spaces of the source tasks and target task needs to be the same.\\
 
 Another possibility is to transfer a representation. In this case, characteristics are inferred from multiple source tasks.
 In \cite{Bernstein99reusingold}, policies are averaged and can be applied for $n$ time steps on all states. This combination of policy, time steps to execute and states is called an option. The reasoning is that actions that are used a lot in a state in source tasks may also be useful in the target task. In \cite{perkins1999using}, these options are provided on beforehand. The agent then learns a single action-value function over these options using all the source tasks. These options along with the action-value function can then be transferred and used for the target task.\\
 
 Instead of using a single policy or action-value function, one can also collect a library of policies and select one to use probabilistically, depending on the expected reward. This approach is presented in \cite{fernandez2006probabilistic,fernandez2013learning}. At every time step, the algorithm can choose to use one of the source task policies, use the current best target task policy or to randomly explore. As the probabilities depend on the gained rewards, after some time more useful policies are exploited more often. This method only works however for tasks where only the goal state in a maze is different.\\
 
-Instead of selecting a policy from which to transfer information, \cite{conf/cira/TanakaY03} use statistics of all the source tasks. More specifically, the average and standard deviation of each state-action pair are calculated. In the target task, the action-value function for each state-action pair is then instantiated to the average for that pair for the source tasks. The standard deviation is used in order to prioritize updates for state-action pairs that are far from the average. Besides this, states-action pairs that fluctuate often within an episode are also prioritized.\\
+Unlike \cite{conf/cira/TanakaY03}, action-value functions are transferred instead of policies and statistics about them are used. More specifically, the average and standard deviation of the value each state-action pair is calculated. In the target task, the action-value function for each state-action pair is then instantiated to the average for that pair for the source tasks. The standard deviation is used in order to prioritize updates for state-action pairs that are far from the average. Besides this, states-action pairs that fluctuate often within an episode are also prioritized.\\
 
 \cite{journals/ml/FosterD02} try to extract sub-tasks across multiple source tasks. Optimal policies are then learned for each of these sub-tasks and pieced together. In this case, the environment was a maze and tasks differ in their goal in the maze. Value functions can then be learned on parts of the maze. Less learning for the target task is then required because most of the already learned sub-tasks can also be used for the target task.\\
 
-Previous methods can only be applied on problems with a discrete state and action space. However, other methods exist that can be applied on problems with a continuous state and action space. Here, function approximation is always required. \cite{walsh2006transferring} group states encountered in the source tasks and treat them as being one and the same state. This abstraction along with the value function learned on this abstraction can then be transferred and used for learning the target task.\\
+Most methods focus on problems with a discrete state and action space. However, other methods exist that can be applied on problems with a continuous state and action space. Here, function approximation is always required. \cite{walsh2006transferring} group states encountered in the source tasks and treat them as being one and the same state. This abstraction along with the value function learned on this abstraction can then be transferred and used for learning the target task.\\
 \cite{lazaric2008knowledge} also groups states of the source tasks, but does this by adjusting parameters of a function approximator to build features. Only a small set of features are searched while still being able to learn useful value functions. The learning process for the tasks is executed in parallel. Again, after learning the source tasks, the parameters of the function approximator and the value functions are transferred.
 
 2 other approaches use a hierarchical Bayesian model. They use this to find parameters that make up the dynamics and reward function of a problem. In \cite{sunmola2006model}, transitions of source tasks are used as a prior to find parameters for models. After getting transitions from the target task, the most probable model for the target task transitions is transferred and used.\\
@@ -935,7 +949,7 @@ Initialize thread step counter $t\gets 1$\;
     Synchronize agent-specific parameters  $\theta_g' \gets \theta_g$\;
     $t_{start} \gets t$\;
     Initialize state $s_t$\;
-    \Repeat{terminal $s_t$ \textbf{or} $t-t_{start} == t_{max}$}{
+    \Repeat{terminal $s_t$ \textbf{or} $t-t_{start} = t_{max}$}{
         Perform $a_t$ according to policy $\pi(a_t|s_t;\theta' \cup \theta^{(t)})$\;
         Receive reward $r_t$ and new state $s_{t+1}$\;
         $t \gets t + 1$\;
@@ -960,7 +974,7 @@ Initialize thread step counter $t\gets 1$\;
 \Repeat{$T > T_{max}$}{
     $t_{start} \gets t$\;
     Initialize state $s_t$\;
-    \Repeat{terminal $s_t$ \textbf{or} $t-t_{start} == t_{max}$}{
+    \Repeat{terminal $s_t$ \textbf{or} $t-t_{start} = t_{max}$}{
         Perform $a_t$ according to policy $\pi(a_t|s_t;\theta_g \cup \theta^{(t)})$\;
         Receive reward $r_t$ and new state $s_{t+1}$\;
         $t \gets t + 1$\;
