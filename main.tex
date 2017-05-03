@@ -51,7 +51,7 @@ Abstract
 \section{Introduction}
 \section{Reinforcement learning}
 %\cite{Sutton1998ReinforcementIntroduction.}.
-In reinforcement learning, one tries to find which action to take in a certain state of the environment in order to maximise a possibly delayed numerical reward.\\
+In reinforcement learning, one tries to find which action to take in a certain state of the environment in order to maximize a possibly delayed numerical reward.\\
 For chapters \ref{sub:rl_basics} to \ref{sub:rl_gfa}, we will closely follow the explanation by \cite{Sutton1998ReinforcementIntroduction}.
 
 \subsection{Basics}
@@ -122,7 +122,7 @@ Temporal-Difference (TD) learning tries to solve this by bootstrapping technique
 V(s_t) \leftarrow V(s_t) + \alpha\big[r_{t+1}+\gamma V(s_{t+1}) - V(s_t)\big]
 \end{equation}
 These estimates can then be used for acting in an environment.\\
-Sarsa uses TD estimates for on-policy control. Because it is on-policy, we must estimate the action-value function $Q^\pi(s,a)$ for the current behaviour policy $\pi$ and for all states $s$ and actions $a$. We consider transitions from state-action pair to state-action pair instead of transitions from state to state. The update is as follows:
+Sarsa uses TD estimates for on-policy control. Because it is on-policy, we must estimate the action-value function $Q^\pi(s,a)$ for the current behavior policy $\pi$ and for all states $s$ and actions $a$. We consider transitions from state-action pair to state-action pair instead of transitions from state to state. The update is as follows:
 \begin{equation}
 Q(s_t,a_t) \leftarrow Q(s_t,a_t) + \alpha \big[ r_{t+1} + \gamma Q(s_{t+1},a_{t+1}) - Q(s_t,a_t) \big]
 \end{equation}
@@ -132,7 +132,7 @@ Another control method called Q-learning also uses TD estimates but doesn't use 
 \begin{equation}
 Q(s_t,a_t) \leftarrow Q(s_t,a_t) + \alpha \big[ r_{t+1} + \gamma \max_{a} Q(s_{t+1}, a) - Q(s_t,a_t) \big]
 \end{equation}
-Note that the policy still can influence which state-action pairs are visited and updated. To guarantee finding the optimal behaviour, it is required that all pairs continue to be updated.\\
+Note that the policy still can influence which state-action pairs are visited and updated. To guarantee finding the optimal behavior, it is required that all pairs continue to be updated.\\
 
 %Chapter 7
 \subsection{Eligibility traces}
@@ -188,7 +188,7 @@ Here we work backwards and update backward to each prior state according to the 
 \label{fig:TDBackwardView}
 \end{figure}
 If we set $\lambda = 0$, then we only update the trace for $s_t$, thus getting TD(0). For larger values, with $\lambda < 1$, more of the preceding states are changed. The more distant states are changed by a smaller amount because the eligibility trace is smaller. This way, they are blamed less for the TD error.\\
-If $\lambda = 1$ the credit given to earlier states falls only by $\gamma$ per step. If $\lambda = 1$ and $\gamma = 1$, then there is no decay at all and we achieve the Monte Carlo method for an undiscounted episodic task. This is known as TD(1). This TD(1) is more general however because it cannot only be applied to episodic tasks, but also to discounted continuing tasks. It can also be performed incrementally and on-line, while Monte Carlo methods have to wait until the episode is over. If the Monte Carlo control method does something bad, its behaviour cannot change during the same episode, while on-line TD(1) can (using $n$-step).\\
+If $\lambda = 1$ the credit given to earlier states falls only by $\gamma$ per step. If $\lambda = 1$ and $\gamma = 1$, then there is no decay at all and we achieve the Monte Carlo method for an undiscounted episodic task. This is known as TD(1). This TD(1) is more general however because it cannot only be applied to episodic tasks, but also to discounted continuing tasks. It can also be performed incrementally and on-line, while Monte Carlo methods have to wait until the episode is over. If the Monte Carlo control method does something bad, its behavior cannot change during the same episode, while on-line TD(1) can (using $n$-step).\\
 Both methods achieve the same weight update.\\
 
 To combine TD($\lambda$) and Sarsa, called Sarsa($\lambda$), we need eligibility traces for each state-action pair: $e_t(s,a)$. As such, we do updates like this:
@@ -363,7 +363,7 @@ If the circles are small or large, generalization will be over respectively a sh
 In tile encoding, a form of coarse encoding, the fields of the features are grouped into exhaustive partitions of the input space, called tilings. These tilings are defined by ranges of values for state attributes that they cover. For one specific tiling, the state can only lie in the ranges of 1 tile. As such, maximally one feature is active in each tiling and the total number of features present is always the same as the number of tilings. This allows us to set the step-size parameter $\alpha$ (used in formula \ref{eq:backview1}) in an easy, intuitive way. We can for example choose $\alpha = \frac{1}{m}$, where $m$ is the number of tilings. This results in exact one-trial learning. When the example $s_t \mapsto v_t$ is received, then the new value will be $V_{t+1}(s_t) = v_t$, whatever the prior value $V_t(s_t)$ was. For a slower change using for example $\alpha=\frac{1}{10m}$, one would move one-tenth of the way to the target in one update.\\
 The weighted sum to make up the approximate value function is almost trivial to compute, as in tile coding only binary features are used. Instead of performing $n$ multiplications and additions, we compute the indices of the $m<<n$ present features and then add up the $m$ corresponding components of the parameter vector. The eligibility trace computation is also easier because the components of the gradient $\nabla_{\overrightarrow{\theta}} V_t(s_t)$ are either $0$ or $1$.\\
 An easy to compute form of tilings are grid-like ones. Different tilings may also be used, ideally offset by different amounts. The width and shapes should match the width of generalization that is expected to be optimal. The denser the tiling, the more fine-grained the desired function can be, but also the greater the computational cost of updating. The width or shape of each tile must not be uniform or regular-shaped (like a square) however. One can also use stripes, diamond shapes, \dots To reduce memory requirements, hashing can be used. A large tiling can be collapsed in such way into a much smaller set of tiles. This hashing produces tiles consisting of non-contiguous, disjoint regions randomly spread throughout the state space, but that still form an exhaustive tiling.\\
-Radial basis functions are a generalization of coarse coding that allows for continuous-valued features: in the interval $[0,1]$ instead of just $0$ or $1$. This way, we can reflect various degrees to which the feature is present. A typical RBF feature, $i$, has a Gaussian (bell-shaped) response $\phi_s(i)$ dependent only on the distance between the state and the feature's centre state, $c_i$ and relative to the feature's width $\sigma_i$:
+Radial basis functions are a generalization of coarse coding that allows for continuous-valued features: in the interval $[0,1]$ instead of just $0$ or $1$. This way, we can reflect various degrees to which the feature is present. A typical RBF feature, $i$, has a Gaussian (bell-shaped) response $\phi_s(i)$ dependent only on the distance between the state and the feature's center state, $c_i$ and relative to the feature's width $\sigma_i$:
 \begin{equation}
 \phi_s(i) = e^{-\frac{||s-c_i||^2}{2 \sigma^2_i}}
 \end{equation}
@@ -378,7 +378,7 @@ Using Kanerva coding, the complexity of the functions depends entirely on the nu
 
 \subsubsection{Function approximation for control}
 \label{subs:rl_facontrol}
-To use function approximation for control, we use the action-value function $Q_t \approx Q^{\pi}$, that is represented as a parametrised functional form with parameter vector $\overrightarrow{\theta}_t$. Instead of only using training examples with $s_t$, they are now of the form $s_t, a_t \mapsto v_t$. The target output $v_t$ can be any approximation of $Q^{\pi}(s_t,a_t)$, including the usual backed-up values such as the full Monte Carlo return $R_t$ or the one-step Sarsa return $r_{t+1} + \gamma Q_t(s_{t+1}, a_{t+1})$. The gradient-descent update is now:
+To use function approximation for control, we use the action-value function $Q_t \approx Q^{\pi}$, that is represented as a parametrized functional form with parameter vector $\overrightarrow{\theta}_t$. Instead of only using training examples with $s_t$, they are now of the form $s_t, a_t \mapsto v_t$. The target output $v_t$ can be any approximation of $Q^{\pi}(s_t,a_t)$, including the usual backed-up values such as the full Monte Carlo return $R_t$ or the one-step Sarsa return $r_{t+1} + \gamma Q_t(s_{t+1}, a_{t+1})$. The gradient-descent update is now:
 \begin{equation}
 \overrightarrow{\theta}_{t+1} = \overrightarrow{\theta}_t + \alpha \big[ v_t - Q_t(s_t,a_t) \big] \nabla_{\overrightarrow{\theta}_t} Q_t(s_t,a_t)
 \end{equation}
@@ -451,8 +451,8 @@ Bootstrapping looks like a bad idea because non-bootstrapping methods are more e
 \label{sub:rl_policy_gradient}
 %By David Silver.\\
 
-Here, we parametrise the policy instead of the state value or state-action value function.
-Methods that parametrise the policy tend to have better convergence properties \citep{Sutton1999PolicyApproximation}.
+Here, we parametrize the policy instead of the state value or state-action value function.
+Methods that parametrize the policy tend to have better convergence properties \citep{Sutton1999PolicyApproximation}.
 No value must be stored for every specific state and action. This is useful in problems where the state and/or action space is high-dimensional and/or continuous. Last, they can also learn policies where a probability is provided for every action.
 However, policy gradient methods also come with a few disadvantages. They typically converge to a local optimum instead of a global optimum. It is also rather hard to evaluate a policy and it can have a high variance.\\
 The policy gradient has the form of $\pi_{\theta}(s,a)$. The way of measuring the quality of a policy (i.e. how well it performs in an environment) depends on the type of environment:
@@ -501,7 +501,7 @@ The score function is here defined as being:
 \begin{equation}
 \nabla_{\theta} \log \pi_{\theta}(s,a) = \phi(s,a) - E_{\pi_{\theta}}[\phi(s,\cdot)]
 \end{equation}
-When having a continuous action space, it is better to use a Gaussian policy, where the mean is a linear combination $\mu(s) = \phi(s)^T \theta$ and the variance can be either fixed or also parametrised. The policy is then $a \sim N(\mu(s), \sigma^2)$. The score function here is defined as being:
+When having a continuous action space, it is better to use a Gaussian policy, where the mean is a linear combination $\mu(s) = \phi(s)^T \theta$ and the variance can be either fixed or also parametrized. The policy is then $a \sim N(\mu(s), \sigma^2)$. The score function here is defined as being:
 \begin{equation}
 \nabla_{\theta} \log \pi_{\theta}(s,a) = \frac{(a-\mu(s))\phi(s)}{\sigma^2}
 \end{equation}
@@ -567,7 +567,7 @@ Sample $a \sim \pi_{\theta}$\;
 \caption{QAC}
 \label{algo:qac}
 \end{algorithm}
-For a function approximation to be compatible, it needs to fulfil 2 conditions:
+For a function approximation to be compatible, it needs to fulfill 2 conditions:
 \begin{itemize}
 \item The value function approximator is compatible to the policy: $\nabla_w Q_w(s,a) = \nabla_{\theta} \log \pi_{\theta}(s,a)$
 \item The value function parameters w minimize the mean-squared error: $\epsilon = E_{\pi_{\theta}} [(Q^{\pi_{\theta}}(s,a) - Q_w(s,a))^2]$
@@ -655,7 +655,7 @@ This is done because local groups of values may be correlated and as such may ha
 The result of this convolutional operation (which is linear) operation is again a feature map and can then be passed to a non-linear function such as a \textit{ReLU}.\\
 
 These convolutional layers are then combined with pooling layers. Instead of detecting local conjunctions of features from the previous layer, pooling tries to merge semantically similar features into one. This is necessary because the positions of features that form a motif are not exact and can vary somewhat. It may not matter for example that an object is close or far in an image.
-To detect the motifs more reliably, we course-grain their features. The typical pooling units compute the maximum or average of a local patch of units in one or a few feature maps. The neighbouring pooling units do the same for patches that are shifted by one or more rows and/or columns and as such creating an invariance to small shifts and distortions.\\
+To detect the motifs more reliably, we course-grain their features. The typical pooling units compute the maximum or average of a local patch of units in one or a few feature maps. The neighboring pooling units do the same for patches that are shifted by one or more rows and/or columns and as such creating an invariance to small shifts and distortions.\\
 A typical layout of a convolutional neural network is shown in Figure~\ref{fig:cnnlayout}, while a hierarchy of features extracted using a convolutional neural network is shown in Figure~\ref{fig:cnnfeatures}.\\
 \begin{figure}[htb]
     \centering
@@ -755,7 +755,7 @@ Where $f'(\theta_t)$ is the gradient, $\alpha$ is the learning rate and $v_{t+1}
 
 \section{DQN}
 %Original paper by \cite{Mnih2015Human-levelLearning}.\\
-A deep Q-network (DQN), presented in \cite{Mnih2015Human-levelLearning}, aims to combine deep learning with reinforcement learning. It applies a convolutional neural network to high-dimensional sensory inputs such as the pixels of a game screen in order to approximate an action-value function $Q^{*}(s,a)$. This is parametrised by the weights of the convolutional neural network, thus being $Q(s;a;\theta_i)$. Past experiences are also reused and the Q value function used to select action is only periodically updated to the most recently learned one in order to reduce instability.\\
+A deep Q-network (DQN), presented in \cite{Mnih2015Human-levelLearning}, aims to combine deep learning with reinforcement learning. It applies a convolutional neural network to high-dimensional sensory inputs such as the pixels of a game screen in order to approximate an action-value function $Q^{*}(s,a)$. This is parametrized by the weights of the convolutional neural network, thus being $Q(s;a;\theta_i)$. Past experiences are also reused and the Q value function used to select action is only periodically updated to the most recently learned one in order to reduce instability.\\
 
 This instability is caused by using a nonlinear function to approximate the action-value function and by the correlation between subsequent observations. Small changes in the $Q$ value can lead to big changes in the policy and because of that the data distribution and the correlations between the action-values $Q(s,a)$ and the target values $r+\gamma \max_{a'} Q(s',a')$ can also change a lot. The action that is selected determines which states that will be observed next.
 
@@ -764,13 +764,13 @@ For the replay memory, all the encountered experiences can be used or only the $
 
 A second improvement is to only update the used target function every $C$ steps. This helps to reduce the correlation between the action-value function values and the target values, as for example $Q(s_t, a_t)$ can have an influence on $Q(s_{t+1},a)$. To do this, we copy the current network weights to obtain an action-value function $\hat{Q}$ to generate target values $y_j$. By doing this, we add a delay between the time an update to $Q$ is made and the time the update affects the targets $y_j$, making divergence or oscillations much more unlikely.
 
-The loss function used to update the weights of the parametrised action-value function is:
+The loss function used to update the weights of the parametrized action-value function is:
 \begin{equation}
 L_i(\theta_i) = E_{s,a,r,s'} \sim U(D) \big [ (r + \gamma \max_{a'} Q(s',a'; Q^{-}_i - Q(s,a;\theta_i)^2 \big ]
 \end{equation}
 Where $U(D)$ means that we take a uniformly random subset of the data set $D$. $\theta^{-}_i$ are the network parameters used to compute the target value. $\gamma$ determines the importance of future rewards. Instead of stochastic gradient descent, RMSProp is used here to update the weights.\\
 
-The deep convolutional neural network gets as input the pixel colours of a game screen and has an output unit for every possible action. As such, we can compute the action-value function for every action when being in a certain state using only one forward pass.\\
+The deep convolutional neural network gets as input the pixel colors of a game screen and has an output unit for every possible action. As such, we can compute the action-value function for every action when being in a certain state using only one forward pass.\\
 
 To select an action, we can use the classic action selection policies such as $\epsilon$-greedy and softmax. Using these policies, we can learn off-policy because we don't always choose the action with the highest action-value. The value of respectively $\epsilon$ or $\tau$ in these mentioned policies can change over time to get closer to on-policy.\\
 
@@ -931,7 +931,7 @@ Later work was generally focused on transferring from one source task to a targe
 
 One approach, presented in \cite{lazaric2008transfer}, is to transfer transitions (also called \textit{instances} or \textit{samples}) gathered from the source tasks to the target task. However, transitions may not be useful if the target tasks differs too much from the source tasks. To solve this, transitions from source tasks are chosen based on the similarity of these tasks to the target task. After having trained on the source tasks and collected transitions, we also collect a few transitions from the target task. The similarity between a source task and the target task is then the probability that the transitions of the target task were generated by an approximated model of the source task.
 
-\cite{Ammar2014} also focus on the problem of selecting the appropriate source tasks from which to transfer knowledge. Here, however, a Restricted Boltzmann Machine \citep{Smolensky1986} is used in order to generate a model of a source tasks that yields features that are relevant for characterizing the task. The model, generated using transitions of the source task, then tries to reconstruct samples of the target task. The similarity of a source and target task can then be assesed using the difference of the reconstructed transitions and the real transitions of the target task. Note however that the state and action spaces of the source tasks and target task needs to be the same.\\
+\cite{Ammar2014} also focus on the problem of selecting the appropriate source tasks from which to transfer knowledge. Here, however, a Restricted Boltzmann Machine \citep{Smolensky1986} is used in order to generate a model of a source tasks that yields features that are relevant for characterizing the task. The model, generated using transitions of the source task, then tries to reconstruct samples of the target task. The similarity of a source and target task can then be assessed using the difference of the reconstructed transitions and the real transitions of the target task. Note however that the state and action spaces of the source tasks and target task needs to be the same.\\
 
 Another possibility is to transfer a representation. In this case, characteristics are inferred from multiple source tasks.
 In \cite{Bernstein99reusingold}, policies are averaged and can be applied for $n$ time steps on all states. This combination of policy, time steps to execute and states is called an option. The reasoning is that actions that are used a lot in a state in source tasks may also be useful in the target task. In \cite{perkins1999using}, these options are provided on beforehand. The agent then learns a single action-value function over these options using all the source tasks. These options along with the action-value function can then be transferred and used for the target task.\\
@@ -950,7 +950,7 @@ Most methods focus on problems with a discrete state and action space. However, 
 
 Together with the interest in deep reinforcement learning \citep{Mnih2015Human-levelLearning,Mnih2016AsynchronousLearning}, the interest in its application to transfer learning also grows. In \cite{DBLP:journals/corr/ParisottoBS15}, the algorithm, Actor-Mimic Network (AMN), learns the $Q$ function for source tasks from an expert for each specific task (in this paper a DQN that was trained until convergence).
 Note that only one set of parameters (and thus one neural network) is used to learn on all the source tasks. As can be seen, this is supervised learning (more specifically regression) with the output of the expert's network as target value. As input, both the expert and the AMN can be used to sample trajectories.
-Besides mimicking using the expert's output, the AMN also tries to mimick the hidden layer activations of the expert's network. This is done by adding a loss in function of the difference between the hidden layer activations of the expert network and the activations of the AMN. Intuitively, this gives insight to the AMN, also called to student, why it should act in a specific way, in addition to telling how it should act.
+Besides mimicking using the expert's output, the AMN also tries to mimic the hidden layer activations of the expert's network. This is done by adding a loss in function of the difference between the hidden layer activations of the expert network and the activations of the AMN. Intuitively, this gives insight to the AMN, also called to student, why it should act in a specific way, in addition to telling how it should act.
 After learning for a pre-determined number of frames on each task, the weights of the AMN are transferred to a DQN and the algorithm trains on an unseen target task.
 Note that each task is a different game here (i.e. the state space, action space, transition function and reward function can be different). However, the algorithm can also be applied to tasks with the same state and action space.
 
@@ -1036,7 +1036,7 @@ The state is defined by 4 continuous-valued attributes: the position of the cart
 \end{figure}
 For executing the experiments, an implementation of this environment by \cite{Brockman2016OpenAIGym} was used.\\
 
-In the experiment, first a number of environments are randomly generated. We try to learn with both 5 and 10 environements.
+In the experiment, first a number of environments are randomly generated. We try to learn with both 5 and 10 environments.
 The environment for each task can differ for a predefined number of attributes, of which the values can each be in a certain range. For a cart-pole task, these are the mass of the cart, the mass of the pole and the length of the pole.\\
 Then a number of source tasks were learned that can update both the shared knowledge base and their own sparse representation. After a number of epochs, i.e. updates to these variables, we stop with learning these tasks. Instead, we learn to solve a new task, the target task, for which we hadn't learned its sparse representation yet. Here however, only the sparse representation can be updated and not the shared knowledge base.\\
 This learning process is repeated 100 times, each time using a different set of environments and thus problems to solve.\\
