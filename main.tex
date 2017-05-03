@@ -475,7 +475,7 @@ Instead, we will solve the problem analytically. We assume that the policy is di
 
 % The distinction is subtle, so I’ll say it again. For conditional probability, the hypothesis is treated as a given and the data are free to vary. For likelihood, the data are a given and the hypotheses vary.
 % Source (with more explanation): https://alexanderetz.com/2015/04/15/understanding-bayes-a-look-at-the-likelihood/
-\todo{TODO: Explain likelihood?}
+% \todo{TODO: Explain likelihood?}
 Likelihood ratios use the following identity:
 \begin{align}
 \nabla_{\theta}\pi_{\theta}(s,a) &= \pi_{\theta}(s,a) \frac{\nabla_{\theta}\pi_{\theta}(s,a)}{\pi_{\theta}(s,a)}\\
@@ -521,7 +521,7 @@ The Policy Gradient theorem states that we can use this for multi-step MDP's \ci
 \begin{equation}
 E_{\pi_{\theta}} [\nabla_{\theta} \log \pi_{\theta}(s,a)Q^{\pi_{\theta}}(s,a)]
 \end{equation}
-Monte-Carlo policy gradients use this policy gradient theorem and update parameters using stochastic gradient descent. For this, a return $v_t$ is used as an unbiased sample of $Q^{\pi_{\theta}}(s,a)$. The resulting algorithm is called \texttt{REINFORCE} \citep{williams1992simple} and is shown in Algorithm~\ref{algo:reinforce}.\\
+Monte-Carlo policy gradients use this policy gradient theorem and update parameters using stochastic gradient descent. For this, a return $v_t$ is used as an unbiased sample of $Q^{\pi_{\theta}}(s,a)$. The resulting algorithm is called \textit{REINFORCE} \citep{williams1992simple} and is shown in Algorithm~\ref{algo:reinforce}.\\
 \begin{algorithm}[htb]
 \DontPrintSemicolon
 Initialize $\theta$ arbitrarily\;
@@ -540,7 +540,7 @@ The problem with the Monte-Carlo policy gradient is that it has a high variance.
 \nabla_{\theta}J(\theta) &\approx E_{\pi_{\theta}}[\nabla_{\theta} \log \pi_{\theta}(s,a) Q_w(s,a)]\\
 \Delta \theta &= \alpha \nabla_{\theta} \log \pi_{\theta}(s,a) Q_w(s,a)
 \end{align}
-The critic function can be seen of a way of evaluating how good the policy is for the current $\theta$. A simple way of computing $Q_w(s,a)$ is simply a linear function of $w$ and $\phi(s,a)$: $Q_w(s,a) = \phi(s,a)^T w$. The algorithm, named \texttt{QAC} is shown in Algorithm~\ref{algo:qac}.\\
+The critic function can be seen of a way of evaluating how good the policy is for the current $\theta$. A simple way of computing $Q_w(s,a)$ is simply a linear function of $w$ and $\phi(s,a)$: $Q_w(s,a) = \phi(s,a)^T w$. The algorithm, named \textit{QAC} is shown in Algorithm~\ref{algo:qac}.\\
 \begin{algorithm}[htb]
 \DontPrintSemicolon
 Initialize $s,\theta$\;
@@ -871,6 +871,7 @@ Task learning methods can also differ in the type of knowledge that is transferr
 Last, the task learning method may also restrict which reinforcement learning algorithms that can be used. It is possible for example that only a class of reinforcement learning algorithms or only one specific reinforcement learning algorithm can be used with the task learning method or that the algorithm is the same for both the source and target tasks. Ideally, the reinforcement learning algorithms can be chosen freely and may be selected based on the characteristics of the task at hand.\\
 
 \subsection{Metrics}
+\label{sub:tl_metrics}
 Several metrics exist to evaluate the learning performance and solution quality of transfer learning algorithms. Generally, one metric does not give a complete representation of the overall performance of the algorithm. Because of this, often multiple metrics are used.\\
 Here we will list the most popular ones:
 \begin{itemize}
@@ -955,11 +956,10 @@ The architecture of the network used for one task is visualized in Figure~\ref{f
 \end{figure}
 
 The source tasks can be learned in two ways. They can be learned either sequentially or in parallel.
-In the sequential way, we collect trajectories and calculate the gradients for every task after another. This is calculated for every episode of a task like in the \texttt{REINFORCE} algorithm, i.e. with likelihood ratios using discounted rewards as a sample for the $Q$ values of the policy.\\
-Once this is done, we sum and apply the gradients of every task. The learning process for this set of tasks then stops when a certain number of updates have been applied.\\
-In the parallel way, all source tasks are learned at the same time, each executing a certain number of updates. Trajectories are collected for each task continuously and its gradients are applied immediately after they are calculated. This means that they are not first summed as in the sequential method.\\
-Afterwards, we learn the new task separately for a certain number of updates.\\
-The resulting pseudo code for the source tasks can be seen in Algorithm~\ref{algo:ownsource}.\\
+In the sequential way, we collect trajectories and calculate the gradients for every task after another. These gradients include both those for the sparse representation and for the knowledge base. They are calculated for every episode of a task like in the \texttt{REINFORCE} algorithm (explained in Section~\ref{sub:rl_policy_gradient}), i.e. with likelihood ratios using discounted rewards as a sample for the $Q$ values of the policy.\\
+After evaluating every task, we sum and apply all of their gradients. The learning process for the source tasks then stops when a certain number of updates have been applied.\\
+In the parallel way, all source tasks are learned at the same time, each executing a certain number of updates. Trajectories are collected for each task continuously and its gradients are applied immediately after they are calculated. This means that they are not first summed up like in the sequential method.\\
+The resulting pseudo code for the source tasks learned using the parallel method can be seen in Algorithm~\ref{algo:ownsource}.\\
 \begin{algorithm}[htb]
 \DontPrintSemicolon
 \emph{// Assume global shared parameter vector $\theta_g$ and global shared counter $T \gets 0$}\;
@@ -983,10 +983,11 @@ Initialize thread step counter $t\gets 1$\;
     }
     Perform asynchronous update of $\theta$ using $d\theta$ and of $\theta_v$ using $d\theta_v$\;
 }
-\caption{Asynchronous knowledge transfer agent for source task}
+\caption[Asynchronous knowledge transfer agent for a source task]{Asynchronous knowledge transfer agent for a source task.}
 \label{algo:ownsource}
 \end{algorithm}
-For the target task, we then get the pseudo-code of Algorithm~\ref{algo:owntarget}.\\
+
+After learning the source tasks, the knowledge base that they jointly learned is transferred to the target task. This task then separately learns and executes updates for a number of episodes. The pseudo-code for the target task is shown in Algorithm~\ref{algo:owntarget}.\\
 \begin{algorithm}[htb]
 \DontPrintSemicolon
 \emph{// Assume global shared parameter vector $\theta_g$ and global shared counter $T \gets 0$}\;
@@ -1008,23 +1009,53 @@ Initialize thread step counter $t\gets 1$\;
     }
     Perform asynchronous update of $\theta$ using $d\theta$ and of $\theta_v$ using $d\theta_v$\;
 }
-\caption{Knowledge transfer agent for target task}
+\caption[Knowledge transfer agent for the target task]{Knowledge transfer agent for the target task.}
 \label{algo:owntarget}
 \end{algorithm}
 % section proposed_algorithm (end)
 
 \section{Experimental setup}
 Experiments were executed on variations of the cart-pole environment.
-In this 2-dimensional environment, a pole is placed vertically on a cart. The goal in this environment is to keep the pole balanced vertically (i.e. keep the angle of the pole between thresholds) and to keep the cart between 2 borders. The state is defined by 4 continuous-valued attributes: the position of the cart, the velocity of the cart, the angle of the pole and the angular velocity of the pole. A discrete value of $1$ is given as a reward each time the pole is balanced and the cart is between bounds. If this isn't the case, the episode ends. An agent can either move left or right. It can't stay at its current position. For the experiments, an implementation by \cite{Brockman2016OpenAIGym} was used.\\
+In this 2-dimensional environment, a pole is placed vertically on a cart. The goal in this environment is to keep the pole balanced vertically (i.e. keep the angle of the pole between thresholds) and to keep the cart between 2 borders.
+The state is defined by 4 continuous-valued attributes: the position of the cart, the velocity of the cart, the angle of the pole and the angular velocity of the pole. A discrete value of $1$ is given as a reward each time the pole is balanced and the cart is between bounds. If these requirements are not fulfilled, the episode ends. An agent can either move left or right. It can't stay at its current position. The environment is visualized in Figure~\ref{fig:cartpole}.
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=.6\linewidth]{images/cartpole.png}
+    \caption[Cart-Pole environment]{Cart-Pole environment. $F$ is the force applied to the cart when taking an action. $x$ is the distance of the cart from the center and $\dot{x}$ is its velocity. $\theta$ is the angle of the pole and $\dot{\theta}$ refers to its angular velocity. Source: \cite{grant1990modelling}.}
+    \label{fig:cartpole}
+\end{figure}
+For executing the experiments, an implementation of this environment by \cite{Brockman2016OpenAIGym} was used.\\
 
-In the experiment, first a number of environments are randomly generated. The environment for each task can differ for a predefined number of attributes, of which the values can each be in a certain range. For a cart-pole task, this can be the length and the mass of the pole.\\
-Then a number of tasks were learned that can update both the shared knowledge base and their own sparse representation. After a number of epochs, i.e. updates to these variables, we stop with learning these tasks. Instead, we learn to solve a new task for which we hadn't learned its sparse representation. Here however, only the sparse representation can be updated and not the shared knowledge base.\\
-This learning process is repeated 20 times with the same set of environments. However it is possible that the attributes of each environment may be similar and thus knowledge transfer may be trivial. Because of this, we generate 10 times a new set of environments and execute 20 runs with them as explained before.\\
-Afterwards the rewards are averaged over all the runs and results of different environment sets.\\
+In the experiment, first a number of environments are randomly generated. We try to learn with both 5 and 10 environements.
+The environment for each task can differ for a predefined number of attributes, of which the values can each be in a certain range. For a cart-pole task, these are the mass of the cart, the mass of the pole and the length of the pole.\\
+Then a number of source tasks were learned that can update both the shared knowledge base and their own sparse representation. After a number of epochs, i.e. updates to these variables, we stop with learning these tasks. Instead, we learn to solve a new task, the target task, for which we hadn't learned its sparse representation yet. Here however, only the sparse representation can be updated and not the shared knowledge base.\\
+This learning process is repeated 100 times, each time using a different set of environments and thus problems to solve.\\
+Afterwards the rewards are averaged over all the runs.\\
 Trajectories for both sets of tasks contained of maximally 200 steps. This could be less in case the environment was in an end state. In case of the cart-pole environment, this can mean for example that the cart tried to cross the left or right border or that the pole fell down.\\
 Hyperparameters, such as the learning rate of neural networks, were chosen by iteratively executing the previously mentioned experiment. Possible values for each hyperparameter were chosen manually.
 
 \section{Results}
+We first explore the differences between learning directly on a target task and first learning on source task (i.e. using our transfer learning algorithm), using the metrics that we defined in Section~\ref{sub:tl_metrics}. For the regular algorithm, we use the \textit{REINFORCE} that was discussed in Section~\ref{sub:rl_policy_gradient}. The learning curve of both algorithms on the target task is visualized in Figure~\ref{fig:tla_re_5envs}.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=.8\linewidth]{images/tla_re_target_5envs.png}
+    \caption[Learning curves for \textit{REINFORCE} and \textit{TLA}]{Learning curves of the \textit{REINFORCE} algorithm and our transfer learning algorithm (\textit{TLA}). The learning curves are only showed until epoch 30 in order to better show the initial performance of both algorithms. Both algorithms were converged and achieved the same rewards after epoch 30.}
+    \label{fig:tla_re_5envs}
+\end{figure}
+It can be seen that, on average, the jumpstart performance of our algorithm is higher than when we do not use transfer learning.
+%statistical test?
+Specifically, the mean jumpstart performance for \textit{REINFORCE} is $37.575$, while the jumpstart performance for our algorithm is $73.414$.\\
+Both algorithms eventually reach the maximum reward ($200$) and as such they have the same asymptotic performance.\\
+
+To further explore the jumpstart performance, we will look at boxplots of the jumpstarts of both algorithms, computed using all the 100 runs of both algorithms. These are shown in Figure~\ref{fig:boxplot_tla_re_5envs}.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=.8\linewidth]{images/boxplot_tla_re_target_5envs.png}
+    \caption{Boxplot of the jumpstart performance of \textit{REINFORCE} and our transfer learning algorithm (\textit{TLA}).}
+    \label{fig:boxplot_tla_re_5envs}
+\end{figure}
+We can see that, although the mean jumpstart performances are different, there is little difference between the medians: $22.774$ for \textit{REINFORCE} and $23.459$ for our algorithm. However, our algorithm is able to reach a higher initial performance more often. In 75\% of the cases, the jumpstart performance for \textit{REINFORCE} is below $55.535$, while it is $160.595$ for our algorithm.
+
 \section{Conclusion}
 \subsubsection*{Acknowledgments}
 
