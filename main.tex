@@ -457,9 +457,18 @@ No value must be stored for every specific state and action. This is useful in p
 However, policy gradient methods also come with a few disadvantages. They typically converge to a local optimum instead of a global optimum. It is also rather hard to evaluate a policy and it can have a high variance.\\
 The policy gradient has the form of $\pi_{\theta}(s,a)$. The way of measuring the quality of a policy (i.e. how well it performs in an environment) depends on the type of environment:
 \begin{itemize}
-\item Episodic environments: use the value of the start state: $J_1(\theta) = V^{\pi_{\theta}}(s_1) = E_{\pi_{\theta}} [v_1]$
-\item Continuing environments: use the average value: $J_{avV}(\theta) = \sum_s d^{\pi_{\theta}}(s)V^{\pi_{\theta}}(s)$
-\item or the average reward per time step: $J_{avR}(\theta) = \sum_s d^{\pi_{\theta}} \sum_a \pi_{\theta}(s,a) R_s^a$
+\item Episodic environments: use the value of the start state:
+        \begin{equation}
+            J_1(\theta) = V^{\pi_{\theta}}(s_1) = E_{\pi_{\theta}} [v_1]
+        \end{equation}
+\item Continuing environments: use the average value:
+        \begin{equation}
+            J_{avV}(\theta) = \sum_s d^{\pi_{\theta}}(s)V^{\pi_{\theta}}(s)
+        \end{equation}
+\item or the average reward per time step:
+        \begin{equation}
+            J_{avR}(\theta) = \sum_s d^{\pi_{\theta}} \sum_a \pi_{\theta}(s,a) R_s^a
+        \end{equation}
 \end{itemize}
 Where $d^{\pi_{\theta}}$ is the stationary distribution of the Markov chain for $\pi_{\theta}$. The stationary distribution $\bar{\pi}$ of a Markov distribution $P$ is a probability distribution such that $\bar{\pi} = \bar{\pi} P$. It can be thought of as denoting how much time is spent in each state. This way, values/rewards of states which are visited often are given a higher importance.\\
 As such, we need to find the parameters $\theta$ that maximize $J(\theta)$. This optimization problem can be solved using approaches that don't use a gradient, such as hill climbing or genetic algorithms. However, here we focus on gradient descent. In this case, we move the parameter values along the gradient using the quality function: $\Delta \theta = \alpha \nabla_{\theta} J(\theta)$, where $\alpha$ is the step-size parameter and $\nabla_{\theta} J(\theta)$ is the partial derivative for every dimension of $\theta$. To estimate each partial derivative, we can compute the policy objective function $J(\theta)$ for a slightly changed value of $\theta$, determined by $\epsilon$. For each dimension $k$, this is:
@@ -766,7 +775,7 @@ The deep convolutional neural network gets as input the pixel colours of a game 
 To select an action, we can use the classic action selection policies such as $\epsilon$-greedy and softmax. Using these policies, we can learn off-policy because we don't always choose the action with the highest action-value. The value of respectively $\epsilon$ or $\tau$ in these mentioned policies can change over time to get closer to on-policy.\\
 
 All rewards were clipped between -1 and 1 to limit the scale of derivatives and as such the amount of change of the weights. It also allows for using the same learning rate for multiple games.\\
-\todo{Better explain gradient descent step?}
+% \todo{Better explain gradient descent step?}
 The resulting pseudo-code can be seen in Algorithm~\ref{algo:dqn}.\\
 \begin{algorithm}[htb]
 \DontPrintSemicolon
@@ -964,26 +973,27 @@ In the parallel way, all source tasks are learned at the same time, each executi
 The resulting pseudo code for the source tasks learned using the parallel method can be seen in Algorithm~\ref{algo:ownsource}.\\
 \begin{algorithm}[htb]
 \DontPrintSemicolon
-\emph{// Assume global shared parameter vector $\theta_g$ and global shared counter $T \gets 0$}\;
-\emph{// Assume thread-specific parameter vector $\theta_g'$}\;
+\emph{// Assume global knowledge base $L$ and global shared counter $T \gets 0$}\;
+% \emph{// Assume thread-specific parameter vector $\theta_g'$}\;
 Initialize thread-specific parameter vector $\theta^{(t)}$\;
 Initialize thread step counter $t\gets 1$\;
 \Repeat{$T > T_{max}$}{
-    Reset gradients: $d\theta_g \gets 0$\;
-    Synchronize agent-specific parameters  $\theta_g' \gets \theta_g$\;
+    $\theta^{(t)} \gets Ls^{(t)}$\;
+    Reset gradients: $d\theta^{(t)} \gets 0$\;
+    % Synchronize agent-specific parameters  $\theta_g' \gets \theta_g$\;
     $t_{start} \gets t$\;
     Initialize state $s_t$\;
     \Repeat{terminal $s_t$ \textbf{or} $t-t_{start} = t_{max}$}{
-        Perform $a_t$ according to policy $\pi(a_t|s_t;\theta' \cup \theta^{(t)})$\;
+        Perform $a_t$ according to policy $\pi(a_t \vert s_t;\theta^{(t)})$\;
         Receive reward $r_t$ and new state $s_{t+1}$\;
         $t \gets t + 1$\;
         $T \gets T + 1$\;
         }
     \For {$i \in \{t-1,\dots,t_{start} \}$} {
         %Accumulate gradients w.r.t. $\theta'$: $d\theta \gets d\theta + \nabla_{\theta'} \log\pi(a_i|s_i;\theta') (R - V(s_i;\theta'_v))$\;
-        Accumulate gradients w.r.t. $\theta' \cup \theta^{(t)}$: $\theta \gets \theta + \alpha \nabla_{\theta \cup \theta^{(t)}} \log \pi_{\theta \cup \theta^{(t)}}(s_t,a_t)v_t$\;
+        Accumulate gradients w.r.t. $\theta^{(t)}$: $\theta^{(t)} \gets \theta ^{(t)}+ \alpha \nabla_{\theta^{(t)}} \log \pi_{\theta^{(t)}}(s_t,a_t)v_t$\;
     }
-    Perform asynchronous update of $\theta$ using $d\theta$ and of $\theta_v$ using $d\theta_v$\;
+    Perform asynchronous update of $\theta^{(t)}$ using $d\theta^{(t)}$\;
 }
 \caption[Asynchronous knowledge transfer agent for a source task]{Asynchronous knowledge transfer agent for a source task.}
 \label{algo:ownsource}
@@ -992,24 +1002,22 @@ Initialize thread step counter $t\gets 1$\;
 After learning the source tasks, the knowledge base that they jointly learned is transferred to the target task. This task then separately learns and executes updates for a number of episodes. The pseudo-code for the target task is shown in Algorithm~\ref{algo:owntarget}.\\
 \begin{algorithm}[htb]
 \DontPrintSemicolon
-\emph{// Assume global shared parameter vector $\theta_g$ and global shared counter $T \gets 0$}\;
-\emph{// Assume thread-specific parameter vector $\theta_g'$}\;
-Initialize thread-specific parameter vector $\theta^{(t)}$\;
+\emph{// Assume global knowledge base $L$}\;
+Initialize task-specific sparse representation $s^{(t)}$\;
 Initialize thread step counter $t\gets 1$\;
 \Repeat{$T > T_{max}$}{
     $t_{start} \gets t$\;
     Initialize state $s_t$\;
     \Repeat{terminal $s_t$ \textbf{or} $t-t_{start} = t_{max}$}{
-        Perform $a_t$ according to policy $\pi(a_t|s_t;\theta_g \cup \theta^{(t)})$\;
+        Perform $a_t$ according to policy $\pi(a_t|s_t;L  s^{(t)})$\;
         Receive reward $r_t$ and new state $s_{t+1}$\;
         $t \gets t + 1$\;
-        $T \gets T + 1$\;
         }
     \For {$i \in \{t-1,\dots,t_{start} \}$} {
         %Accumulate gradients w.r.t. $\theta'$: $d\theta \gets d\theta + \nabla_{\theta'} \log\pi(a_i|s_i;\theta') (R - V(s_i;\theta'_v))$\;
-        Accumulate gradients w.r.t. $\theta^{(t)}$: $\theta \gets \theta^{(t)} + \alpha \nabla_{\theta^{(t)}} \log \pi_{\theta^{(t)}}(s_t,a_t)v_t$\;
+        Accumulate gradients w.r.t. $s^{(t)}$: $s^{(t)} \gets s^{(t)} + \alpha \nabla_{s^{(t)}} \log \pi_{s^{(t)}}(s_t,a_t)v_t$\;
     }
-    Perform asynchronous update of $\theta$ using $d\theta$ and of $\theta_v$ using $d\theta_v$\;
+    Perform update of $s^{(t)}$ using $ds^{(t)}$\;
 }
 \caption[Knowledge transfer agent for the target task]{Knowledge transfer agent for the target task.}
 \label{algo:owntarget}
