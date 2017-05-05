@@ -13,3 +13,5 @@
 *.lof
 *.pdf
 !titlepage.pdf
+
+/thesis_paper.sublime-workspace
