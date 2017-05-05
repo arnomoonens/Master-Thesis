@@ -39,24 +39,32 @@ Where $\tau$ is called the temperature and controls the balance between explorat
 \label{sub:rldp}
 In Dynamic programming, the whole model of the problem is known. A such, we have the complete probability distribution of all the possible transitions. For example, to evaluate a policy $\pi$:
 \begin{align}
+\begin{split}
 V^{\pi}(s) &= E_{\pi} \{r_{t+1} + \gamma r_{t+2} + \gamma^2r_{t+3}+\dots \mid s_t=s\}\\
 &= E_{\pi} \{r_{t+1} + \gamma V^{\pi}(s_{t+1}) \mid s_t=s\}\\
 &= \sum_a \pi(s,a) \sum_{s'} \mathcal{P}^a_{ss'} [\mathcal{R}^a_{ss'} + \gamma V^{\pi}(s')]
+\end{split}
 \end{align}
 Here, $\pi(s,a)$ is the probability of taking action $a$ in state $s$. This $V^{\pi}(s)$ can be computed using iterative updates for every $s$:
 \begin{align}
+\begin{split}
 V_{k+1}(s) &= E_{\pi}\{r_{t+1} + \gamma V_k(s_{t+1}) \vert s_t=s\}\\
 &= \sum_a \pi(s,a) \sum_{s'}\mathcal{P}^a_{ss'} [\mathcal{R}^a_{ss'} + \gamma V_k(s')]
+\end{split}
 \end{align}
 This iteration stops when this state-value function has converged. As can be seen, every possible next states is used in the computation instead of just a sample. Because of this, this kind of updates is called a full backup.
 Note that we use an estimate of the value function to update the estimate itself. This is called bootstrapping.\\
 The optimal state-value function $V^*(s)$ and state-action-value function $Q^*(s,a)$ can be calculated using the following formulas:
-\begin{align}
+\begin{gather}
+\begin{split}
 V^{*}(s) &= \max_a E\{r_{t+1} + \gamma V^{*}(s_{t+1}) \vert s_t = s, a_t = a\}\\
-&= \max_a \sum_{s'} \mathcal{P}^a_{ss'} [\mathcal{R}^a_{ss'}+\gamma V^{*}(s')]\\
+&= \max_a \sum_{s'} \mathcal{P}^a_{ss'} [\mathcal{R}^a_{ss'}+\gamma V^{*}(s')]
+\end{split}\\
+\begin{split}
 Q^{*}(s,a) &= E\{r_{t+1} + \gamma \max_{a'} Q^{*}(s_{t+1},a') \vert s_t=s, a_t=a\}\\
 &= \sum_{s'} \mathcal{P}^a_{ss'} [\mathcal{R}^a_{ss'}+\gamma \max_{a'} Q^{*}(s',a')]
-\end{align}
+\end{split}
+\end{gather}
 
 \subsection{Monte Carlo and Temporal-Difference}
 \label{sub:rl_mctd}
@@ -234,11 +242,11 @@ $e(s,a) \gets 0$ for all $s,a$\;
 Because exploratory actions happen often, backups won't be long and so eligibility traces won't have a lot of advantage anymore.\\
 Peng's Q($\lambda$) tries to solve this, being a hybrid of Sarsa($\lambda$) and Watkin's Q($\lambda$). Its component backups are neither off- nor on-policy. The earlier transitions are each on-policy and the last transition uses the greedy policy. As such, all but the last uses the actual experiences. Because of this, for a fixed non-greedy policy, $Q_t$ converges to neither $Q^{\pi}$ nor $Q^{*}$, but some hybrid between the 2. If the policy is more greedy, the method may still converge to $Q^{*}$.\\
 
-Replacing traces are a modified kind of eligibility traces that can yield a slightly better performance. With the traditional kind of traces (accumulating traces), the trace of a state is augmented by 1 when visiting it. With replacing traces, however, they are set to 1. Thus, we get the following update:
+Replacing traces are a modified kind of eligibility traces that can yield a slightly better performance. With the traditional kind of traces (accumulating traces), the trace of a state is augmented by 1 when visiting it. With replacing traces, however, they are set to $1$. Thus, we get the following update:
 \begin{equation}
 e_t(s) = \begin{cases}
-\gamma \lambda e_{t-1}(s) & \text{if $s \neq s_t$;}\\
-1 & \text{if $s=s_t$.}
+1 & \text{if $s=s_t$}\\
+\gamma \lambda e_{t-1}(s) & \text{otherwise}
 \end{cases}
 \end{equation}
 Prediction or control algorithms using this are called replace-trace methods.
@@ -269,8 +277,10 @@ Like already discussed, we assume that the states over which we want to minimize
 %Found following definition on: https://en.wikipedia.org/wiki/Score_(statistics)
 Gradient descent works by reducing the error by adjusting the parameters using the gradient, which is a vector of partial derivatives:
 \begin{align}
+\begin{split}
 \overrightarrow{\theta}_{t+1} &= \overrightarrow{\theta}_t - \frac{1}{2} \alpha \Delta_{\overrightarrow{\theta}_t} \big[ V^{\pi}(s_t) - V_t(s_t) \big]^2\\
 &= \overrightarrow{\theta}_t + \alpha \big[ V^{\pi}(s_t) - V_t(s_t) \big] \Delta_{\overrightarrow{\theta}_t} V_t(s_t)
+\end{split}
 \end{align}
 Where $\alpha$ is a positive step-size parameter and $\nabla_{\overrightarrow{\theta}_t}$ denotes the vector of partial derivatives for every function $f$. This vector is called the gradient of $f$ with respect to $\overrightarrow{\theta}_t$. The method is called gradient descent because the step with which we change $\overrightarrow{\theta}_t$ is proportional to the negative gradient of the MSE of the examples, i.e. in the direction of a lower MSE.\\
 If $V^{\pi}(s_t)$ is unavailable because we only have a noise-corrupted version or one with backed-up values, we can simple use $v_t$ instead of $V^{\pi}(s_t)$:
@@ -438,8 +448,10 @@ Instead, we will solve the problem analytically. We assume that the policy is di
 % \todo{TODO: Explain likelihood?}
 Likelihood ratios use the following identity:
 \begin{align}
+\begin{split}
 \nabla_{\theta}\pi_{\theta}(s,a) &= \pi_{\theta}(s,a) \frac{\nabla_{\theta}\pi_{\theta}(s,a)}{\pi_{\theta}(s,a)}\\
 &= \pi_{\theta}(s,a) \nabla_{\theta} \log \pi_{\theta}(s,a)
+\end{split}
 \end{align}
 Writing it using the $\log$ is possible because $(\log f)' = \frac{f'}{f}$. The score function is $\nabla_{\theta} \log \pi_{\theta}(s,a)$.\\
 This can now be used with for example a softmax policy. Here, we weight actions using a linear combination of features: $\phi(s_a)^T \theta$. The probability of an action is then the following proportion:
@@ -455,12 +467,18 @@ When having a continuous action space, it is better to use a Gaussian policy, wh
 \nabla_{\theta} \log \pi_{\theta}(s,a) = \frac{(a-\mu(s))\phi(s)}{\sigma^2}
 \end{equation}
 We can now use the likelihood ratios to compute the policy gradients for one-step Markov decision processes:
+\begin{subequations}
 \begin{align}
+\begin{split}
 J(\theta) &= E_{\pi_{\theta}}[r]\\
-&= \sum_{s \in S} d(s) \sum_{a \in A} \pi_{\theta}(s,a) R(s,a)\\
+&= \sum_{s \in S} d(s) \sum_{a \in A} \pi_{\theta}(s,a) R(s,a)
+\end{split}\\
+\begin{split}
 \nabla_{\theta} J(\theta) &= \sum_{s \in S} d(s) \sum_{a \in A} \pi_{\theta}(s,a) \nabla_{\theta} \log \pi_{\theta}(s,a) R(s,a)\\
 &= E_{\pi_{\theta}} [\nabla_{\theta} \log \pi_{\theta}(s,a)r]
+\end{split}
 \end{align}
+\end{subequations}
 %Got it from here: https://pdfs.semanticscholar.org/eb5b/459c8a3e56064158fb3514eeab763486e437.pdf but I interpreted it wrong. However, REINFORCE may do something like , by averaging these gradients over multiple trajectories. So it may be useful to look into it
 % \todo{Next part is wrong, see comment}
 % When considering multiple trajectories $\tau \sim p_\theta(\tau) = p(\tau \vert \theta)$, we can compute the quality like this:
@@ -527,9 +545,11 @@ The policy gradient will then be exactly:
 \end{equation}
 To reduce the variance in the policy gradient we subtract the baseline function $B(s)$ from it. This doesn't change the expectation:
 \begin{align}
+\begin{split}
 E_{\pi_{\theta}} [\nabla_{\theta} \log \pi_{\theta}(s,a)B(s)] &= \sum_{s \in S} d^{\pi_{\theta}}(s) \sum_a \nabla_{\theta} \pi_{\theta}(s,a)B(s)\\
 &= \sum_{s \in S} d^{\pi_{\theta}}B(s)\nabla_{\theta} \sum_{a \in A} \pi_{\theta} (s,a)\\
 &= 0
+\end{split}
 \end{align}
 A good baseline function is the state value function: $B(s) = V^{\pi_{\theta}}$. When this is used as a baseline function, we can rewrite the policy gradient using the advantage function $A^{\pi_{\theta}}(s,a)$:
 \begin{align}
@@ -548,9 +568,11 @@ For updating those values, we can again use temporal difference learning. The TD
 \end{equation}
 This is an unbiased estimate of the advantage function:
 \begin{align}
+\begin{split}
 E_{\pi_{\theta}}[\delta^{\pi_{\theta}} | s,a] &= E_{\pi_{\theta}}[r + \gamma V^{\pi_{\theta}}(s') | s,a] - V^{\pi_{\theta}}(s)\\
 &= Q^{\pi_{\theta}}(s,a) - V^{\pi_{\theta}}(s)\\
 &= A^{\pi_{\theta}}(s,a)
+\end{split}
 \end{align}
 As such, we can use this TD error to compute the policy gradient:
 \begin{equation}

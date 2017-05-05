@@ -6,7 +6,6 @@
 		}
 	],
 	"settings": {
-		"spell_check": true,
 		 "TEXroot": "main.tex",
 	    	"build_on_save": 1
 	}

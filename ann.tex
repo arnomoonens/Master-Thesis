@@ -16,8 +16,133 @@ As said, artificial neural networks are made up of units. These units can be div
     \caption[An artificial neural network]{An artificial neural network with 3 input units, 4 hidden units and 2 output units. $w_{ih}$ and $w_{ho}$ are the weights for connections between respectively the input units and hidden units and between the hidden units and output units.}
     \label{fig:ann}
 \end{figure}
+Input units receive information that is available externally and provide information to other units. Output units are the opposite and receive information from the network itself and provide information externally. Hidden units both receive information from and provide information to units inside the network.\\
+As a non-input unit gets weighted activations from multiple units, these need to be combined to determine if the unit can be activated or not. This is done by applying a linear or non-linear function to the weighted sum.
 % subsection basics (end)
 
+\subsection{Activation functions} % (fold)
+\label{sub:activation_functions}
+Formally, an activation function $\phi$ will compute for unit $j$ with inputs from layer $x$:
+\begin{equation}
+    o = \phi\big(\sum_i^n w_{ij} x_i\big)
+\end{equation}
+Or in vector format:
+\begin{equation}
+    o = \phi(\overrightarrow{w} \cdot \overrightarrow{x})
+\end{equation}
+Here, we will discuss the most commonly used activation functions.
+\subsubsection{Perceptron} % (fold)
+\label{ssub:perceptron}
+A perceptron, defined by \cite{Rosenblatt58}, gives as output either $-1$ or $+1$:
+\begin{equation}
+e_t(s) = \begin{cases}
++1 & \text{if $\sum_i^n w_{ij} x_i > 0$}\\
+-1 & \text{otherwise}
+\end{cases}
+\end{equation}
+It can be seen as a hyperplane where the output is $-1$ or $+1$ depending on which side the input lies.
+Using $-1$ as \texttt{false} and $+1$ as \texttt{true}, it is also possible to represent boolean functions such as \textit{AND}, \textit{OR}, \textit{NAND} and \textit{NOR}. However, some boolean functions, such as \textit{XOR} cannot be represented by a single perceptron \citep{ML}.
+
+\todo{fix citation}
+A schematic using the perceptron function is shown in Figure~\ref{fig:perceptron}.\\
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=\linewidth]{images/activation_functions/perceptron.png}
+    \caption[Perceptron function applied to the inputs for a single unit]{Perceptron function applied to the inputs for a single unit.Source: \cite{Taspinar2016}.}
+    \label{fig:perceptron}
+\end{figure}
+
+For the definitions of the following activation functions, we will assume that $x$ is already the weighted sum of the input units.
+% subsubsection perceptron (end)
+
+\subsubsection{Sigmoid} % (fold)
+\label{ssub:sigmoid}
+A disadvantage of a perceptron is that it is not differentiable in the whole domain (specifically at $x=0$). Why this is a problem will become clear in Section~\ref{sub:gradient_descent_and_backpropagation}.\\
+To solve this problem, a sigmoid function is used. A sigmoid function is a differentiable function that is monotonically increasing approaches an asymptote for $x \to \pm\infty$ \citep{series/lncs/LeCunBOM12}. As a result, these can still separate the input space in 2 parts.\\
+In the artificial neural networks domain, the \textit{sigmoid function} generally refers to a variation of the logistic function and is denoted by $\sigma(x)$. Its formula is:
+\begin{align}
+    \begin{split}
+        f(x) &= \sigma(x)\\
+        &= \frac{1}{1+e^{-x}}
+    \end{split}
+\end{align}
+The behavior of this function is visualized in Figure~\ref{fig:sigmoid}.
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=.8\linewidth]{images/activation_functions/sigmoid.png}
+    \caption[The sigmoid function]{The sigmoid function.}
+    \label{fig:sigmoid}
+\end{figure}
+% subsubsection sigmoid (end)
+
+\subsubsection{Hyperbolic tangent} % (fold)
+\label{ssub:hyperbolic_tangent}
+Another popular function and another kind of sigmoid function is the hyperbolic tangent function, also called \textit{tanh}. While the output of the sigmoid function ranges between $0$ and $1$, here the output ranges between $-1$ and $+1$, just like the 2 possible values of the perceptron.
+The formula of the hyperbolic tangent function, which can also be written in terms of the sigmoid function, is:
+\begin{align}
+    \begin{split}
+        f(x) &= tanh(x)\\
+        &= 2\sigma(2x) - 1\\
+        &= \frac{e^{\frac{x}{2}} - e^{-\frac{x}{2}}}{e^{\frac{x}{2}} + e^{-\frac{x}{2}}}
+    \end{split}
+\end{align}
+This function is visualized in Figure~\ref{fig:tanh}.
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=.8\linewidth]{images/activation_functions/tanh.png}
+    \caption{Hyperbolic tangent function.}
+    \label{fig:tanh}
+\end{figure}
+% subsubsection hyperbolic_tangent (end)
+
+\subsubsection{Rectified Linear Unit} % (fold)
+\label{ssub:rectified_linear_unit}
+A rectified linear unit, also called a ReLU, is another popular and more recent activation function. It was first defined by \cite{conf/icml/NairH10}. The output is the identity function if $x \ge 0$ and $0$ otherwise:
+\begin{equation}
+    f(x) = \begin{cases}
+        x & \text{if $x \ge 0$}\\
+        0 & \text{otherwise}
+        \end{cases}
+\end{equation}
+As can be seen, this function requires less computations than the sigmoid and hyperbolic tangent function. However, the derivative for $x<0$ is always $0$. Why this can be a problem is explained in Section~\ref{sub:gradient_descent_and_backpropagation}.\\
+The ReLU function is shown in Figure~\ref{fig:relu}.
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=.8\linewidth]{images/activation_functions/relu.png}
+    \caption[Rectified Linear Unit function]{Rectified Linear Unit function.}
+    \label{fig:relu}
+\end{figure}
+
+To solve the problem of the derivative being zero at $x<0$, the Leaky ReLU was invented \citep{maas2013rectifier}. Here, instead of the output being zero for $x<0$, the output has a small slope, defined by a constant $\alpha$:
+\begin{equation}
+    f(x) = \begin{cases}
+        x & \text{if $x \ge 0$}\\
+        \alpha x & \text{otherwise}
+        \end{cases}
+\end{equation}
+As can be seen, the derivative of this function is always non-zero.\\
+An example of a Leaky ReLU is shown in Figure~\ref{fig:lrelu}.\\
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=.8\linewidth]{images/activation_functions/lrelu.png}
+    \caption[Leaky ReLU function]{Leaky ReLU function with $\alpha = 0.2$.}
+    \label{fig:lrelu}
+\end{figure}
+% subsubsection rectified_linear_unit (end)
+% subsection activation_functions (end)
+
+A variation of a Leaky ReLU, called Parametric Rectified Unit, also has a small slope for $x<0$, but with an $\alpha$ that can be learned \citep{journals/corr/HeZR015}. Other variants use a random slope for values below zero \citep{journals/corr/XuWCL15}, add noise a ReLU \citep{conf/icml/NairH10} or use an exponential function for values below zero \citep{journals/corr/ClevertUH15}:
+\begin{equation}
+    f(x) = \begin{cases}
+        x & \text{if $x \ge 0$}\\
+        \alpha (e^x-1) & \text{otherwise}
+        \end{cases}
+\end{equation}
+
+\subsection{Gradient descent and backpropagation} % (fold)
+\label{sub:gradient_descent_and_backpropagation}
+
+% subsection gradient_descent_and_backpropagation (end)
 % Inspired by biology
 % Applications
 % Activation functions
