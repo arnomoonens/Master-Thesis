@@ -142,11 +142,72 @@ A variation of a Leaky ReLU, called Parametric Rectified Unit, also has a small 
 
 \subsection{Gradient descent and backpropagation} % (fold)
 \label{sub:gradient_descent_and_backpropagation}
+%Also something about linearly separable?
+%Why no algebraic solution?
+If we choose the weights of our network correctly, we might succeed in the approximating a function.
+However, it is not always possible to separate the input space with our artificial neural network. In that case, we might want the best solution, e.g. one that has the least amount of errors in producing outputs w.r.t. the correct outputs, also called the target outputs. Furthermore, choosing the weights manually can be a tedious process.\\
+For these reasons, we use an algorithm called called backpropagation, which uses a variation of gradient descent. We will first discuss gradient descent as this provides the basis of the backpropagation algorithm.
 
+\subsubsection{Gradient descent} % (fold)
+\label{ssub:gradient_descent}
+In gradient descent, we search in the weight vector space, also called hypothesis space, to find weights that can approximate a function as best as possible. The tuple of the input and output of the target function is called a training example.
+
+To be able to update weights, we first need to know how wrong our outputs were relative to those of our training examples.
+This is called the training error and depends on the learning algorithm (in our case an artificial neural network), its parameters and the training examples. However, here we assume that the learning algorithm and the training examples are fixed while learning.
+A common measure for the training error is:
+\begin{equation}
+    E(\overrightarrow{w}) \equiv \frac{1}{2} \sum_{i=0}^N (y_i - f(x_i;\overrightarrow{w}))^2
+\end{equation}
+Where $N$ is the number of training examples, $x_i$ is the input of a training example, $y_i$ is the target output of the training example and $f$ is our learning algorithm, which depends on the weight vector $\overrightarrow{w}$.
+
+Because we now know how the training error and the weight vector is related, we can compute the derivative of the training error $E$ with respect to each component of $\overrightarrow{w}$. This called the gradient and is denoted as $\nabla E(\overrightarrow{w})$:
+\begin{equation}
+    \nabla E(\overrightarrow{w}) \equiv \big[ \frac{\partial E}{\partial w_0}, \frac{\partial E}{\partial w_1}, \dots, \frac{\partial E}{\partial w_n} \big]
+\end{equation}
+Where $n$ is the number of components in $\overrightarrow{w}$. Note $\nabla E(\overrightarrow{w})$ is also a vector. It defines how to change the weight components in order to get the steepest increase in the training error $E$. Thus, if we negate the gradient, we get the steepest decrease in $E$. Thus, we can update the weight vector as such:
+\begin{equation}
+    \overrightarrow{w} \gets \overrightarrow{w} - \eta \nabla E(\overrightarrow{w})
+\end{equation}
+Where $\eta$ is a positive value called the learning rate and influences how big the changes to the weight vector are.
+\todo{Define (local) minimum. Also add figure?}
+A small value leads to slow convergence, while a high value can cause the algorithm to overstep a local minimum. Because of this, the some algorithms gradually decrease the learning rate as the number of weight updates grows.\\
+For a single weight component, we get:
+\begin{equation}
+    \label{eq:weightcomponentupdate}
+    w_i \gets w_i - \eta \frac{\delta E}{\delta w_i}
+\end{equation}
+
+Of course, in order to update the weights, we first need to calculate the derivate of $E$ w.r.t. each component $w_i$. As an example, we show the derivative when using a simple linear unit, which defined as:
+\begin{equation}
+    f(\overrightarrow{x};\overrightarrow{w}) = \overrightarrow{x} \cdot \overrightarrow{w}
+\end{equation}
+We then get the following derivation:
+\begin{align}
+    \label{eq:gradderiv}
+    \begin{split}
+        \frac{\delta E}{\delta w_i} &= \frac{\delta}{\delta w_i} \frac{1}{2} \sum_{j=0}^N (y_j - f(\overrightarrow{x_j};\overrightarrow{w}))^2\\
+        &= \frac{1}{2} \sum_{j=0}^N \frac{\delta}{\delta w_i} (y_j - f(\overrightarrow{x_j};\overrightarrow{w}))^2\\
+        &= \frac{1}{2} \sum_{j=0}^N 2 (y_j - f(\overrightarrow{x_j};\overrightarrow{w})) \frac{\delta}{\delta w_i} (y_j - f(\overrightarrow{x_j};\overrightarrow{w}))\\
+        &= \sum_{j=0}^N (y_j - f(\overrightarrow{x_j};\overrightarrow{w})) \frac{\delta}{\delta w_i} (y_i - \overrightarrow{x_i} \cdot \overrightarrow{w})\\
+        &= \sum_{j=0}^N (y_j - f(\overrightarrow{x_j};\overrightarrow{w}))(-x_{ij})
+    \end{split}
+\end{align}
+Where $x_{ij}$ is the $i$'th input component of training example $j$. We can then use the resulting formula of Equation~\ref{eq:gradderiv} along with Equation~\ref{eq:weightcomponentupdate} update each component of the weight vector:
+\begin{equation}
+    w_i \gets w_i + \eta \sum_{j=0}^N (y_i - f(\overrightarrow{x_j};\overrightarrow{w}))x_{ij}
+\end{equation}
+% subsubsection gradient_descent (end)
+
+\subsubsection{Stochastic gradient descent} % (fold)
+\label{ssub:stochastic_gradient_descent}
+
+% subsubsection stochastic_gradient_descent (end)
+
+\subsubsection{Backpropagation} % (fold)
+\label{ssub:backpropagation}
+% subsubsection backpropagation (end)
 % subsection gradient_descent_and_backpropagation (end)
+
 % Inspired by biology
-% Applications
-% Activation functions
-% (Stochastic) gradient descent
-% Back propagation
+
 % section artificial_neural_networks (end)
