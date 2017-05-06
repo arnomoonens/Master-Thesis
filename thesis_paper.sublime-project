@@ -7,7 +7,11 @@
 	],
 	"settings": {
 		 "TEXroot": "main.tex",
-	    	"build_on_save": 1
+	    	"build_on_save": 1,
+	    	"preview_math_template_preamble": [
+			"\\DeclareMathOperator*{\\argmax}{arg\\,max}",
+			"\\DeclareMathOperator*{\\ex}{\\mathop{{}\\mathbb{E}}}"
+		]
 	}
 
 }
