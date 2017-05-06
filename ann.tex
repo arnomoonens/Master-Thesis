@@ -185,27 +185,29 @@ We then get the following derivation:
 \begin{align}
     \label{eq:gradderiv}
     \begin{split}
-        \frac{\delta E}{\delta w_i} &= \frac{\delta}{\delta w_i} \frac{1}{2} \sum_{j=0}^N (y_j - f(\overrightarrow{x_j};\overrightarrow{w}))^2\\
-        &= \frac{1}{2} \sum_{j=0}^N \frac{\delta}{\delta w_i} (y_j - f(\overrightarrow{x_j};\overrightarrow{w}))^2\\
-        &= \frac{1}{2} \sum_{j=0}^N 2 (y_j - f(\overrightarrow{x_j};\overrightarrow{w})) \frac{\delta}{\delta w_i} (y_j - f(\overrightarrow{x_j};\overrightarrow{w}))\\
-        &= \sum_{j=0}^N (y_j - f(\overrightarrow{x_j};\overrightarrow{w})) \frac{\delta}{\delta w_i} (y_i - \overrightarrow{x_i} \cdot \overrightarrow{w})\\
-        &= \sum_{j=0}^N (y_j - f(\overrightarrow{x_j};\overrightarrow{w}))(-x_{ij})
+        \frac{\delta E}{\delta w_i} &= \frac{\delta}{\delta w_i} \frac{1}{2} \sum_{j=0}^N (y_j - o_j)^2\\
+        &= \frac{1}{2} \sum_{j=0}^N \frac{\delta}{\delta w_i} (y_j - o_j)^2\\
+        &= \frac{1}{2} \sum_{j=0}^N 2 (y_j - o_j) \frac{\delta}{\delta w_i} (y_j - o_j)\\
+        &= \sum_{j=0}^N (y_j - o_j) \frac{\delta}{\delta w_i} (y_i - \overrightarrow{x_i} \cdot \overrightarrow{w})\\
+        &= \sum_{j=0}^N (y_j - o_j)(-x_{ij})
     \end{split}
 \end{align}
-Where $x_{ij}$ is the $i$'th input component of training example $j$. We can then use the resulting formula of Equation~\ref{eq:gradderiv} along with Equation~\ref{eq:weightcomponentupdate} update each component of the weight vector:
+Where $x_{ij}$ is the $i$'th input component of training example $j$ and $o_j \equiv f(x_j; \overrightarrow{w})$. Instead of just using a linear unit, the function $f$ can of course be more complex and use for example on of the activation functions from Section~\ref{sub:activation_functions}. However, we can now see that we cannot use the perceptron because it is not differentiable.\\
+
+Using the resulting formula of Equation~\ref{eq:gradderiv} along with Equation~\ref{eq:weightcomponentupdate}, we can also define how to update each component of the weight vector:
 \begin{equation}
-    w_i \gets w_i + \eta \sum_{j=0}^N (y_j - f(\overrightarrow{x_j};\overrightarrow{w}))x_{ij}
+    w_i \gets w_i + \eta \sum_{j=0}^N (y_j - o_j)x_{ij}
 \end{equation}
 As we can see, for each weight vector, we need to apply the model to the input of each training example. For this reason, this version of gradient descent is also often called \textit{batch gradient descent}. Of course, the outputs only need to be computed once per weight vector update as they do not depend on which specific weight vector component that we are updating.\\
 
-Still, each time using every training example for the weight vector update can lead to slow convergence to a local minimum. Furthermore, in case of multiple local minima in the error surface, it is possible that the gradient descent does not stop at the global minimum \citep{ML}.
+Still, each time using every training example for the weight vector update can lead to slow convergence to a local minimum. Furthermore, in case of multiple local minima in the error surface, it is possible that the gradient descent algorithm does not stop at the global minimum \citep{ML}.
 % subsubsection gradient_descent (end)
 
 \subsubsection{Stochastic gradient descent} % (fold)
 \label{ssub:stochastic_gradient_descent}
 A popular variation of batch gradient descent that tries to solve the previously mentioned issues is \textit{stochastic gradient descent}. Instead of summing using all training examples, we do a weight update using only one training example. To do this, we first use a different error function for each example $j$:
 \begin{equation}
-    E_j(\overrightarrow{w}) = \frac{1}{2}(y_j - f(x_j;\overrightarrow{w}))^2
+    E_j(\overrightarrow{w}) = \frac{1}{2}(y_j - o_j)^2
 \end{equation}
 The update for a single weight vector component when using a linear unit is then:
 \begin{equation}
@@ -218,7 +220,56 @@ By making the learning rate small enough, usually smaller than with batch gradie
 
 \subsubsection{Backpropagation} % (fold)
 \label{ssub:backpropagation}
+The backpropagation algorithm uses gradient descent and can learn weights of a multilayer network with possibly multiple units in each layer \citep{rumelhart1986learning}.
+
+We say that, for multilayer networks, $L>2$, with $L$ the number of layers in the network. This means that there are other (hidden) layers besides the input and output layer. Such a network was already depicted in Figure~\ref{fig:ann}.
+
+As multiple output units are also possible, we need a new training error measure that sums over all of the output units of the network:
+\begin{equation}
+    E(\overrightarrow{w}) \equiv \frac{1}{2} \sum_{i=0}^N \sum_{k \in outputs} (y_{ki} - o_{ki})^2
+\end{equation}
+Where $outputs$ are the output units of the network and $y_{ki}$ and $o_{ki}$ is the value of the $k$'th output unit of respectively the $i$'th training example and network output.\\
+
+The difference with calculating the weight changes in artificial neural networks with more than 2 layers is that, starting from the second non-input layer, the input to a unit comes, besides the weights, from other units of which the value itself is also calculated.
+Thus, units in some layers can depend on units in multiple previous layers. This must also be taken into account when calculating the gradient for the output of those units.
+To do this, we can use the chain rule for the gradient of a single weight component:
+\begin{align}
+    \frac{\partial E_d}{\partial w_{ji}} &= \frac{\partial E_d}{\partial net_j} \frac{\partial net_j}{\partial w_{ji}}\\
+    &= \frac{\partial E_d}{\partial net_j} x_{ji}
+\end{align}
+Where $E_d$ is the error for a training example $d$, $x_{ji}$ is the $i$'th input to unit $j$, $w_{ji}$ is the weight associated with this input and $net_j = \sum_i w_{ji} x_{ji}$. The further derivation for all the weights of the network is described in \cite[Chapter~4]{ML}. For an artificial neural network with 1 hidden layer, we get the pseudo-code shown in Algorithm~\ref{algo:backpropagation}.\\
+\begin{algorithm}[htb]
+\DontPrintSemicolon
+\KwIn{training\_examples, neural\_network, $\eta$}
+\emph{// Assume a network with $n_{in}$ input units $n_{hidden}$ hidden units and $n_{out}$ output units.}\\
+\emph{// Assume (randomly) instantiated weights.}\\
+\Repeat{a termination condition is met}{
+    \For{$(\overrightarrow{x},\overrightarrow{y})$ in training\_examples}{
+        Propagate $\overrightarrow{x}$ through the network and receive values for all the output units: $o_u$ with $u$ an output unit of the network\\
+        \For{each network output unit $k$}{
+            Calculate its error term:\\
+            $\delta_k \gets o_k(1-o_k)(y_k-o_k)$
+        }
+        \For{each hidden unit $h$}{
+            Calculate its error term:\\
+            $\delta_h \gets o_h(1-o_h) \sum_{k \in outputs} w_{kh}\delta_k$
+        }
+        \For{each network weight $w_{ji}$}{
+            Do an update:\\
+            $w_{ji} \gets w_{ji} + \Delta w_{ji}$\\
+            where\\
+            $\Delta w_{ji} = \eta \delta_j x_{ji}$
+        }
+    }
+}
+\caption[Backpropagation]{Backpropagation algorithm. Source: \cite[Chapter~4]{ML}.}
+\label{algo:backpropagation}
+\end{algorithm}
 % subsubsection backpropagation (end)
+\subsubsection{Extensions and improvements} % (fold)
+\label{ssub:extensions_and_improvements}
+
+% subsubsection extensions_and_improvements (end)
 % subsection gradient_descent_and_backpropagation (end)
 
 % Inspired by biology
