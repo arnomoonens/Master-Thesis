@@ -162,7 +162,7 @@ Where $N$ is the number of training examples, $x_i$ is the input of a training e
 
 Because we now know how the training error and the weight vector is related, we can compute the derivative of the training error $E$ with respect to each component of $\overrightarrow{w}$. This called the gradient and is denoted as $\nabla E(\overrightarrow{w})$:
 \begin{equation}
-    \nabla E(\overrightarrow{w}) \equiv \big[ \frac{\partial E}{\partial w_0}, \frac{\partial E}{\partial w_1}, \dots, \frac{\partial E}{\partial w_n} \big]
+    \nabla E(\overrightarrow{w}) \equiv \left [ \frac{\partial E}{\partial w_0}, \frac{\partial E}{\partial w_1}, \dots, \frac{\partial E}{\partial w_n} \right ]
 \end{equation}
 Where $n$ is the number of components in $\overrightarrow{w}$. Note $\nabla E(\overrightarrow{w})$ is also a vector. It defines how to change the weight components in order to get the steepest increase in the training error $E$. Thus, if we negate the gradient, we get the steepest decrease in $E$. Thus, we can update the weight vector as such:
 \begin{equation}
@@ -194,13 +194,26 @@ We then get the following derivation:
 \end{align}
 Where $x_{ij}$ is the $i$'th input component of training example $j$. We can then use the resulting formula of Equation~\ref{eq:gradderiv} along with Equation~\ref{eq:weightcomponentupdate} update each component of the weight vector:
 \begin{equation}
-    w_i \gets w_i + \eta \sum_{j=0}^N (y_i - f(\overrightarrow{x_j};\overrightarrow{w}))x_{ij}
+    w_i \gets w_i + \eta \sum_{j=0}^N (y_j - f(\overrightarrow{x_j};\overrightarrow{w}))x_{ij}
 \end{equation}
+As we can see, for each weight vector, we need to apply the model to the input of each training example. For this reason, this version of gradient descent is also often called \textit{batch gradient descent}. Of course, the outputs only need to be computed once per weight vector update as they do not depend on which specific weight vector component that we are updating.\\
+
+Still, each time using every training example for the weight vector update can lead to slow convergence to a local minimum. Furthermore, in case of multiple local minima in the error surface, it is possible that the gradient descent does not stop at the global minimum \citep{ML}.
 % subsubsection gradient_descent (end)
 
 \subsubsection{Stochastic gradient descent} % (fold)
 \label{ssub:stochastic_gradient_descent}
+A popular variation of batch gradient descent that tries to solve the previously mentioned issues is \textit{stochastic gradient descent}. Instead of summing using all training examples, we do a weight update using only one training example. To do this, we first use a different error function for each example $j$:
+\begin{equation}
+    E_j(\overrightarrow{w}) = \frac{1}{2}(y_j - f(x_j;\overrightarrow{w}))^2
+\end{equation}
+The update for a single weight vector component when using a linear unit is then:
+\begin{equation}
+    w_i \gets w_i + \eta (y_j- \overrightarrow{x_j} \cdot \overrightarrow{w})x_{ij}
+\end{equation}
+The idea here is that these weight updates, when having iterated over all the training examples, will be a decent approximation relative to using our original error function. Note that the update using one training example affects the error of the next training example.\\
 
+By making the learning rate small enough, usually smaller than with batch gradient descent, it is possible to approximate true gradient descent arbitrarily closely \citep{ML}. It is also computationally cheaper because each time we only handle one training example. Additionally, stochastic gradient descent can sometimes avoid being stuck in local minima because it uses various $\nabla E_j(\overrightarrow{w})$ instead of just $\nabla E(\overrightarrow{w})$ to move in the hypothesis space.
 % subsubsection stochastic_gradient_descent (end)
 
 \subsubsection{Backpropagation} % (fold)
