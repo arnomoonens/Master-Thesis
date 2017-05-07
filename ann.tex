@@ -274,8 +274,7 @@ Where $E_d$ is the error for a training example $d$, $x_{ji}$ is the $i$'th inpu
 \label{ssub:extensions_and_improvements}
 \paragraph{Momentum} % (fold)
 \label{par:momentum}
-One of the most common extensions to backpropagation is to add a fraction of the previous weight update to the new weight update. This extension is called \textit{momentum}.
-\todo{add equation ref}
+One of the most common extensions to backpropagation is to add a fraction of the previous weight update to the new weight update. This extension is called \textit{momentum}.\\
 To apply this, we change the equation on line~\ref{algo:backpropagation:deltaweight} of Algorithm \ref{algo:backpropagation} to the following:
 \begin{equation}
     \Delta w_{ji}(t) = \eta \delta_j x_{ji} + \alpha \Delta w_{ji}(t-1)
@@ -289,18 +288,48 @@ Here, that force is the gradient. It is also possible to get past small local mi
 
 \paragraph{RMSProp} % (fold)
 \label{par:rmsprop}
-In RMSProp, we only use the sign of the gradient to update the weights \citep{Tieleman2012LectureMagnitude.}. This allows us the escape from plateaus more quickly. This is combined with a step size, used to control how much of the gradient to apply to the weight, that is adapted for each weight separately.
-For example, we can multiply the step-size of a certain weight by a factor greater than one if its last 2 gradients agreed on the sign, and multiply the step-size by a value less than 1 otherwise.
-This means that, when the gradients agree on the direction, we give them more influence. If they are not consistent and disagree in subsequent steps, we decrease the influence. We can also put a limit on the step-size as to not let it grow to excessively low or high amounts.\\
-By just using this, we would however have a problem of weights growing too high in unwanted situations. For example, when a gradient is for 9 times a small positive amount (e.g. $0.1$) and once a large negative amount (e.g. $-0.9$), we don't want to change the weights a lot because they balance each other out.
-Using the current algorithm however, the step-size and so the weights would become too high because we only look at the signs and not the magnitude of the gradients.\\
-Notice that, right know, we are dividing by the size of the gradient in order to just get $+1$ or $-1$ depending on the sign. It is however better to divide each weight by a moving average of the squared weight using the gradients of the past steps:
+
+The weight update of Root Mean Square Propagation (RMSProp) is quite different from stochastic gradient descent and only uses the sign of the gradient to update the weights \citep{Tieleman2012LectureMagnitude.}.
+This allows us to escape from plateaus more quickly. Furthermore, the learning rate can be different for each weight.
+For example, we can multiply the learning rate of a certain weight by a factor greater than one if its last 2 gradients agreed on the sign, and multiply the learning rate by a value less than $1$ otherwise.
+This means that, when the gradients agree on the direction, we give them more influence. If they are not consistent and disagree in subsequent steps, we decrease the influence. We can also put a limit on the learning rate as to not let it grow to excessively low or high amounts.\\
+
+However, by just using an adaptive learning rate, we can have the problem of weights themselves growing too high in unwanted situations. For example, when a gradient is for 9 subsequent steps a small positive amount (e.g. $0.1$) and once a large negative amount (e.g. $-0.9$), we don't want to change the weights a lot because they balance each other out.
+Using the current algorithm however, the learning rate and as a result the weights would become too high because we only look at the signs and not the magnitude of the gradients.\\
+Notice that, right now, we are dividing the gradient by its absolute value in order to just get $+1$ or $-1$ depending on the sign. It is however better to divide each weight by a moving average of the squared weight using the gradients of the past steps:
+\begin{subequations}
+\label{eq:rmsprop}
 \begin{align}
-MeanSquare(w, t) &= \gamma * MeanSquare(w, t-1) + (1 - \gamma) * f'(\theta_t)^2 \\
-v_{t+1} &= \frac{\alpha}{\sqrt{MeanSquare(w,t)}}f'(\theta_t)
+MeanSquare(w, t) &= \gamma \cdot MeanSquare(w, t-1) + (1 - \gamma) \cdot \left (\frac{\partial E}{\partial w(t)} \right )^2 \\
+w(t+1) &= w(t) - \frac{\alpha}{\sqrt{MeanSquare(w,t)}}\frac{\partial E}{\partial w(t)} \label{eq:rmsprop:weightupdate}
 \end{align}
-Where $f'(\theta_t)$ is the gradient, $\alpha$ is the learning rate and $v_{t+1}$ is the eventual update.
+\end{subequations}
+Where $w(t)$ is a weight at time step $t$, $\frac{\partial E}{\partial w(t)}$ is its gradient, $\alpha$ is the learning rate and $w_{t+1}$ is the new weight value. The past squared gradients are decayed by a value $\gamma$. Usually $\gamma=0.9$. It is also possible to add a small number $\epsilon$ (e.g. $\epsilon = 10^{-8}$) to the denominator in Equation~\ref{eq:rmsprop:weightupdate} to avoid division by zero
 % paragraph rmsprop (end)
+
+\paragraph{Adam} % (fold)
+\label{par:adam}
+Adaptive Moment Estimation (Adam) \citep{DBLP:journals/corr/KingmaB14} also uses an adaptive learning rate for each weight and an exponentially decaying average of previous squared gradients (also called the second moment). In addition, an exponentially decaying average of past gradients (also called the first moment) is also stored:
+\begin{subequations}
+\label{eq:adam:means}
+\begin{align}
+    Mean(w,t) &= \beta_1 \cdot Mean(w,t-1) + (1-\beta_1)\cdot \frac{\partial E}{\partial w(t)}\\
+    MeanSquare(w, t) &= \gamma \cdot MeanSquare(w, t-1) + (1 - \gamma) \cdot \left (\frac{\partial E}{\partial w(t)} \right )^2
+\end{align}
+\end{subequations}
+The authors of this method observed that the two previous equations are biased towards zero, which results in high weight updates. To alleviate this problem, the use bias-corrected values:
+\begin{subequations}
+\label{eq:adam:means:corrected}
+\begin{align}
+    \widehat{Mean(w,t)} &= \frac{Mean(w,t)}{1-\beta_1^t}\\
+    \widehat{MeanSquare(w,t)} &= \frac{MeanSquare(w,t)}{1-\beta_2^t}
+\end{align}
+\end{subequations}
+The weight update then becomes:
+\begin{equation}
+    w(t+1) = w(t) - \frac{\alpha}{\sqrt{MeanSquare(w,t)} + \epsilon} Mean(w,t)
+\end{equation}
+% paragraph adam (end)
 % subsubsection extensions_and_improvements (end)
 % subsection gradient_descent_and_backpropagation (end)
 
