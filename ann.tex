@@ -2,24 +2,25 @@
 \label{sec:artificial_neural_networks}
 % What is it
 Artificial neural networks are models that can approximate discrete-valued, real-valued and vector-valued functions.
-They are composed of simple units that can be activated by other units and can further activate multiple other units using connections of varying strength.
+They are composed of interconnected units that can activate others using connections of varying strength.
 %citation?
 Artificial neural networks are loosely inspired by biological neural networks, where these units are called neurons, which are connected by axons.\\
-The higher the strength, also called weight, between units, the more influence the unit has on the connected one. These strengths can be manually defined. However, thanks to a method called backpropagation, these weights can be learned systematically.
+The higher the strength, also called weight, of connections between units, the more influence the unit has on the next one. These strengths can be manually defined. However, thanks to a method called backpropagation, weights can be learned systematically.
 The combination of artificial neural networks and backpropagation led to successful applications, for example to recognize handwritten characters \citep{journals/neco/LeCunBDHHHJ89}, for face recognition \citep{cottrell1990extracting} and to recognize spoken words \citep{journals/nn/LangWH90}.
-However, they were also used for reinforcement learning, for example to learn to balance a pendulum \citep{anderson:ieeecsm89} or play Backgammon \citep{Tesauro:92}.
+However, early applications also include reinforcement learning, for example to learn to balance a pendulum \citep{anderson:ieeecsm89} or to play the game \textit{Backgammon} \citep{Tesauro:92}.
 
 \subsection{Basics} % (fold)
 \label{sub:basics}
-As said, artificial neural networks are made up of units. These units can be divided into layer, where the values of each layer are propagated to the next layer depending on connections with weights. These weights define the model. A simple artificial neural network is visualized in Figure~\ref{fig:ann}.
+As said, artificial neural networks are made up of units. These units can be divided into layers, where the values of each layer are propagated to the next layer depending on connections with weights. These weights define the model.
+Input units receive information that is available externally and provide information to other units. Output units are the opposite and receive information from the network itself and provide information externally. Hidden units both receive information from and provide information to units inside the network.\\
+A simple artificial neural network is visualized in Figure~\ref{fig:ann}.\\
 \begin{figure}[htb]
     \centering
     \includegraphics[width=.7\linewidth]{images/ann.png}
     \caption[An artificial neural network]{An artificial neural network with 3 input units, 4 hidden units and 2 output units. $w_{ih}$ and $w_{ho}$ are the weights for connections between respectively the input units and hidden units and between the hidden units and output units.}
     \label{fig:ann}
 \end{figure}
-Input units receive information that is available externally and provide information to other units. Output units are the opposite and receive information from the network itself and provide information externally. Hidden units both receive information from and provide information to units inside the network.\\
-As a non-input unit gets weighted activations from multiple units, these need to be combined to determine if the unit can be activated or not. This is done by applying a linear or non-linear function to the weighted sum.
+As a non-input unit gets weighted activations from multiple units, these need to be combined to determine if the unit can be activated or not. This is done by applying a linear or non-linear function, called an activation function, to the weighted sum.
 % subsection basics (end)
 
 \subsection{Activation functions} % (fold)
@@ -32,13 +33,15 @@ Or in vector format:
 \begin{equation}
     o = \phi(\overrightarrow{w} \cdot \overrightarrow{x})
 \end{equation}
+From hereon we will denote the weighted sum as $z \equiv \sum_i^n w_{ij} x_i \equiv \overrightarrow{w} \cdot \overrightarrow{x}$.\\
+
 Here, we will discuss the most commonly used activation functions.
 \subsubsection{Perceptron} % (fold)
 \label{ssub:perceptron}
 A perceptron, defined by \cite{Rosenblatt58}, gives as output either $-1$ or $+1$:
 \begin{equation}
-e_t(s) = \begin{cases}
-+1 & \text{if $\sum_i^n w_{ij} x_i > 0$}\\
+o(z) = \begin{cases}
++1 & \text{if $z> 0$}\\
 -1 & \text{otherwise}
 \end{cases}
 \end{equation}
@@ -50,22 +53,20 @@ A schematic using the perceptron function is shown in Figure~\ref{fig:perceptron
 \begin{figure}[htb]
     \centering
     \includegraphics[width=\linewidth]{images/activation_functions/perceptron.png}
-    \caption[Perceptron function applied to the inputs for a single unit]{Perceptron function applied to the inputs for a single unit.Source: \cite{Taspinar2016}.}
+    \caption[The perceptron function]{The perceptron function.}
     \label{fig:perceptron}
 \end{figure}
-
-For the definitions of the following activation functions, we will assume that $x$ is already the weighted sum of the input units.
 % subsubsection perceptron (end)
 
 \subsubsection{Sigmoid} % (fold)
 \label{ssub:sigmoid}
-A disadvantage of a perceptron is that it is not differentiable in the whole domain (specifically at $x=0$). Why this is a problem will become clear in Section~\ref{sub:gradient_descent_and_backpropagation}.\\
-To solve this problem, a sigmoid function is used. A sigmoid function is a differentiable function that is monotonically increasing approaches an asymptote for $x \to \pm\infty$ \citep{series/lncs/LeCunBOM12}. As a result, these can still separate the input space in 2 parts.\\
+A disadvantage of the perceptron function is that it is not differentiable in the whole domain (specifically at $x=0$). Why this is a problem will become clear in Section~\ref{sub:gradient_descent_and_backpropagation}.\\
+To solve this problem, a sigmoid function can be used. A sigmoid function is a differentiable function that is monotonically increasing and approaches an asymptote for $x \to \pm\infty$ \citep{series/lncs/LeCunBOM12}. As a result, these can still separate the input space in 2 parts.\\
 In the artificial neural networks domain, the \textit{sigmoid function} generally refers to a variation of the logistic function and is denoted by $\sigma(x)$. Its formula is:
 \begin{align}
     \begin{split}
-        f(x) &= \sigma(x)\\
-        &= \frac{1}{1+e^{-x}}
+        f(z) &= \sigma(z)\\
+        &= \frac{1}{1+e^{-z}}
     \end{split}
 \end{align}
 The behavior of this function is visualized in Figure~\ref{fig:sigmoid}.
@@ -79,13 +80,13 @@ The behavior of this function is visualized in Figure~\ref{fig:sigmoid}.
 
 \subsubsection{Hyperbolic tangent} % (fold)
 \label{ssub:hyperbolic_tangent}
-Another popular function and another kind of sigmoid function is the hyperbolic tangent function, also called \textit{tanh}. While the output of the sigmoid function ranges between $0$ and $1$, here the output ranges between $-1$ and $+1$, just like the 2 possible values of the perceptron.
+Another popular function and another kind of sigmoid function is the hyperbolic tangent function, also called \textit{tanh}. While the output of the sigmoid function ranges between $0$ and $+1$, here the output ranges between $-1$ and $+1$, just like the range (and the only possible values) of the perceptron.
 The formula of the hyperbolic tangent function, which can also be written in terms of the sigmoid function, is:
 \begin{align}
     \begin{split}
-        f(x) &= tanh(x)\\
-        &= 2\sigma(2x) - 1\\
-        &= \frac{e^{\frac{x}{2}} - e^{-\frac{x}{2}}}{e^{\frac{x}{2}} + e^{-\frac{x}{2}}}
+        f(z) &= tanh(z)\\
+        &= 2\sigma(2z) - 1\\
+        &= \frac{e^{\frac{z}{2}} - e^{-\frac{z}{2}}}{e^{\frac{z}{2}} + e^{-\frac{z}{2}}}
     \end{split}
 \end{align}
 This function is visualized in Figure~\ref{fig:tanh}.
@@ -99,14 +100,14 @@ This function is visualized in Figure~\ref{fig:tanh}.
 
 \subsubsection{Rectified Linear Unit} % (fold)
 \label{ssub:rectified_linear_unit}
-A rectified linear unit, also called a ReLU, is another popular and more recent activation function. It was first defined by \cite{conf/icml/NairH10}. The output is the identity function if $x \ge 0$ and $0$ otherwise:
+A rectified linear unit, also called a ReLU, is another popular and more recent activation function. It was first defined by \cite{conf/icml/NairH10}. The output is the identity function if $z \ge 0$ and $0$ otherwise:
 \begin{equation}
-    f(x) = \begin{cases}
-        x & \text{if $x \ge 0$}\\
+    f(z) = \begin{cases}
+        z & \text{if $z \ge 0$}\\
         0 & \text{otherwise}
         \end{cases}
 \end{equation}
-As can be seen, this function requires less computations than the sigmoid and hyperbolic tangent function. However, the derivative for $x<0$ is always $0$. Why this can be a problem is explained in Section~\ref{sub:gradient_descent_and_backpropagation}.\\
+As can be seen, this function requires less computations than the sigmoid and hyperbolic tangent function. However, the derivative for $z<0$ is always $0$. Why this can be a problem is also explained in Section~\ref{sub:gradient_descent_and_backpropagation}.\\
 The ReLU function is shown in Figure~\ref{fig:relu}.
 \begin{figure}[htb]
     \centering
@@ -115,11 +116,11 @@ The ReLU function is shown in Figure~\ref{fig:relu}.
     \label{fig:relu}
 \end{figure}
 
-To solve the problem of the derivative being zero at $x<0$, the Leaky ReLU was invented \citep{maas2013rectifier}. Here, instead of the output being zero for $x<0$, the output has a small slope, defined by a constant $\alpha$:
+To solve the problem of the derivative being zero at $z<0$, the Leaky ReLU was invented \citep{maas2013rectifier}. Here, instead of the output being zero for $z<0$, the output has a small slope, defined by a constant $\alpha$:
 \begin{equation}
-    f(x) = \begin{cases}
-        x & \text{if $x \ge 0$}\\
-        \alpha x & \text{otherwise}
+    f(z) = \begin{cases}
+        z & \text{if $z \ge 0$}\\
+        \alpha z & \text{otherwise}
         \end{cases}
 \end{equation}
 As can be seen, the derivative of this function is always non-zero.\\
@@ -135,24 +136,26 @@ An example of a Leaky ReLU is shown in Figure~\ref{fig:lrelu}.\\
 
 A variation of a Leaky ReLU, called Parametric Rectified Unit, also has a small slope for $x<0$, but with an $\alpha$ that can be learned \citep{journals/corr/HeZR015}. Other variants use a random slope for values below zero \citep{journals/corr/XuWCL15}, add noise a ReLU \citep{conf/icml/NairH10} or use an exponential function for values below zero \citep{journals/corr/ClevertUH15}:
 \begin{equation}
-    f(x) = \begin{cases}
-        x & \text{if $x \ge 0$}\\
-        \alpha (e^x-1) & \text{otherwise}
+    f(z) = \begin{cases}
+        z & \text{if $z \ge 0$}\\
+        \alpha (e^z-1) & \text{otherwise}
         \end{cases}
 \end{equation}
+
 %Optional: add softmax and maxout definitions
 
 \subsection{Gradient descent and backpropagation} % (fold)
 \label{sub:gradient_descent_and_backpropagation}
 %Also something about linearly separable?
 %Why no algebraic solution?
-If we choose the weights of our network correctly, we might succeed in the approximating a function.
-However, it is not always possible to separate the input space with our artificial neural network. In that case, we might want the best solution, e.g. one that has the least amount of errors in producing outputs w.r.t. the correct outputs, also called the target outputs. Furthermore, choosing the weights manually can be a tedious process.\\
+If we choose the weights of our network correctly, we might succeed in approximating a function.
+However, it is not always possible to separate the input space and have the right with our artificial neural network.
+In that case, we might want the best solution, e.g. one that has the least amount of errors in producing outputs w.r.t. the correct outputs, also called the target outputs. Furthermore, choosing the weights manually can be a tedious process.\\
 For these reasons, we use an algorithm called called backpropagation, which uses a variation of gradient descent. We will first discuss gradient descent as this provides the basis of the backpropagation algorithm.
 
 \subsubsection{Gradient descent} % (fold)
 \label{ssub:gradient_descent}
-In gradient descent, we search in the weight vector space, also called hypothesis space, to find weights that can approximate a function as best as possible. The tuple of the input and output of the target function is called a training example.
+In gradient descent, we search in the weight vector space, also called hypothesis space, to find weights that can approximate a function as best as possible. A tuple containing the input and output of the target function is called a training example.
 
 To be able to update weights, we first need to know how wrong our outputs were relative to those of our training examples.
 This is called the training error and depends on the learning algorithm (in our case an artificial neural network), its parameters and the training examples. However, here we assume that the learning algorithm and the training examples are fixed while learning.
@@ -160,19 +163,22 @@ A common measure for the training error is:
 \begin{equation}
     E(\overrightarrow{w}) \equiv \frac{1}{2} \sum_{i=0}^N (y_i - f(x_i;\overrightarrow{w}))^2
 \end{equation}
-Where $N$ is the number of training examples, $x_i$ is the input of a training example, $y_i$ is the target output of the training example and $f$ is our learning algorithm, which depends on the weight vector $\overrightarrow{w}$.
+Where $N$ is the number of training examples, $x_i$ is the input of a training example, $y_i$ is the target output of the training example and $f$ is our learning algorithm, which depends on the weight vector $\overrightarrow{w}$.\\
 
-Because we now know how the training error and the weight vector is related, we can compute the derivative of the training error $E$ with respect to each component of $\overrightarrow{w}$. This called the gradient and is denoted as $\nabla E(\overrightarrow{w})$:
+Because we now know how the training error and the weight vector are related, we can compute the derivative of the training error $E$ with respect to each component of $\overrightarrow{w}$. This called the gradient and is denoted as $\nabla E(\overrightarrow{w})$:
 \begin{equation}
     \nabla E(\overrightarrow{w}) \equiv \left [ \frac{\partial E}{\partial w_0}, \frac{\partial E}{\partial w_1}, \dots, \frac{\partial E}{\partial w_n} \right ]
 \end{equation}
-Where $n$ is the number of components in $\overrightarrow{w}$. Note $\nabla E(\overrightarrow{w})$ is also a vector. It defines how to change the weight components in order to get the steepest increase in the training error $E$. Thus, if we negate the gradient, we get the steepest decrease in $E$. Thus, we can update the weight vector as such:
+Where $n$ is the number of components in $\overrightarrow{w}$. Note that $\nabla E(\overrightarrow{w})$ is also a vector. It defines how to change the weight components in order to get the steepest increase in the training error $E$. Thus, if we negate the gradient, we get the steepest decrease in $E$. We can then update the weight vector as such:
 \begin{equation}
     \overrightarrow{w} \gets \overrightarrow{w} - \eta \nabla E(\overrightarrow{w})
 \end{equation}
-Where $\eta$ is a positive value called the learning rate and influences how big the changes to the weight vector are.
-\todo{Define (local) minimum. Also add figure?}
-A small value leads to slow convergence, while a high value can cause the algorithm to overstep a local minimum. Because of this, the some algorithms gradually decrease the learning rate as the number of weight updates grows.\\
+Where $\eta$ is a positive value called the learning rate, which influences how big the changes to the weight vector are.\\
+
+\todo{Add figure?}
+The goal is to set the weights to such values so that the error is minimized. However, it is possible that any change in weights increases the error. Thus, with the current algorithm, there is no incentive to change the weights. Although the algorithm cannot "see" immediate improvements, it is possible that another combination of weight values leads to a lower error. This is analogous to being in a valley in the mountains, where the valley after a mountain (and thus not visible) may lie lower.\\
+
+A small value of $\eta$ leads to slow convergence, while a high value can cause the algorithm to overstep a local minimum. Because of this, the some algorithms gradually decrease the learning rate as the number of weight updates grows.\\
 For a single weight component, we get:
 \begin{equation}
     \label{eq:weightcomponentupdate}
