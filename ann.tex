@@ -48,7 +48,6 @@ o(z) = \begin{cases}
 It can be seen as a hyperplane where the output is $-1$ or $+1$ depending on which side the input lies.
 Using $-1$ as \texttt{false} and $+1$ as \texttt{true}, it is also possible to represent boolean functions such as \textit{AND}, \textit{OR}, \textit{NAND} and \textit{NOR}. However, some boolean functions, such as \textit{XOR} cannot be represented by a single perceptron \citep{ML}.
 
-\todo{fix citation}
 A schematic using the perceptron function is shown in Figure~\ref{fig:perceptron}.\\
 \begin{figure}[htb]
     \centering
@@ -175,8 +174,13 @@ Where $n$ is the number of components in $\overrightarrow{w}$. Note that $\nabla
 \end{equation}
 Where $\eta$ is a positive value called the learning rate, which influences how big the changes to the weight vector are.\\
 
-\todo{Add figure?}
-The goal is to set the weights to such values so that the error is minimized. However, it is possible that any change in weights increases the error. Thus, with the current algorithm, there is no incentive to change the weights. Although the algorithm cannot "see" immediate improvements, it is possible that another combination of weight values leads to a lower error. This is analogous to being in a valley in the mountains, where the valley after a mountain (and thus not visible) may lie lower.\\
+The goal is to set the weights to such values so that the error is minimized. However, it is possible that any change in weights increases the error. Thus, with the current algorithm, there is no incentive to change the weights. Although the algorithm cannot "see" immediate improvements, it is possible that another combination of weight values leads to a lower error. This is analogous to being in a valley in the mountains, where the valley after a mountain (and thus not visible) may lie lower. This is also visualized in Figure~\ref{fig:error_surface}.\\
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=\linewidth]{images/error_surface.png}
+    \caption[An example of an error surface]{An example of an error surface using only one weight $w_0$. \textit{A}, \textit{B} and \textit{C} are local minima, while \textit{D} is the global minimum.}
+    \label{fig:error_surface}
+\end{figure}
 
 A small value of $\eta$ leads to slow convergence, while a high value can cause the algorithm to overstep a local minimum. Because of this, the some algorithms gradually decrease the learning rate as the number of weight updates grows.\\
 For a single weight component, we get:

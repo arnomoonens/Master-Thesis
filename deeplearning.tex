@@ -22,9 +22,9 @@ Generally, feature extractors need to be developed manually in order to represen
 In deep learning, the important aspects of the input can be detected automatically by combining different modules in order to get higher abstractions and to eventually generate output.
 Most of these modules contain weights which can be trained.
 
+\todo{Remove or rewrite this}
 As already explained, stochastic gradient descent is used in order to reduce the error. This method requires however gradients to be computed. To do this, we use backpropagation. This requires that there exists a derivative of each computation. First, these are applied to the weights producing the final output (using the directly received error), and then by working backwards and propagating the gradient (using the chain rule) to the weights that directly handle the input.
 
-\todo{TODO: add neural network background}
 In most of the applications using deep learning, feedforward neural networks are used. Here the input and output have a fixed size and the input is processed, possible using multiple layers, in order to produce the output.
 The linear combination computed to go from one layer to the next can also pass through a non-linear function. One of the most popular is the rectified linear unit (\textit{ReLU}). This uses the formula $f(z) = max(0,z)$. Other possibilities include the \textit{tanh} function ($f(z) = tanh(z)$) and the sigmoid function ($f(z) = \frac{1}{1 + e^{-z}}$). \textit{ReLU} is the most popular for deep learning however as it learns much faster when having a lot of layers.
 
