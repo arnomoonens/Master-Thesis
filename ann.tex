@@ -174,13 +174,16 @@ Where $n$ is the number of components in $\overrightarrow{w}$. Note that $\nabla
 \end{equation}
 Where $\eta$ is a positive value called the learning rate, which influences how big the changes to the weight vector are.\\
 
-The goal is to set the weights to such values so that the error is minimized. However, it is possible that any change in weights increases the error. Thus, with the current algorithm, there is no incentive to change the weights. Although the algorithm cannot "see" immediate improvements, it is possible that another combination of weight values leads to a lower error. This is analogous to being in a valley in the mountains, where the valley after a mountain (and thus not visible) may lie lower. This is also visualized in Figure~\ref{fig:error_surface}.\\
+The goal is to set the weights to such values so that the error is minimized. This is called a global minimum. No other combinations of weight values can lead to a lower error an those of the global minima. \\
+However, it is possible that, given a combination of weight values, any change in those values does not influence the error, in which case the gradient for every weight component is $0$. Thus, with the current algorithm, there is no incentive to change the weights. This is called a local minimum. Although the algorithm cannot "see" immediate improvements, it is possible that another combination of weight values leads to a lower error. This is analogous to being in a valley in the mountains, where the valley after a mountain (and thus not visible) may lie lower. This is also visualized in Figure~\ref{fig:error_surface}.\\
 \begin{figure}[htb]
     \centering
     \includegraphics[width=\linewidth]{images/error_surface.png}
     \caption[An example of an error surface]{An example of an error surface using only one weight $w_0$. \textit{A}, \textit{B} and \textit{C} are local minima, while \textit{D} is the global minimum.}
     \label{fig:error_surface}
 \end{figure}
+Local minima might seem like a problem for neural networks, but in practice they rarely are, according to theoretical and empirical results \citep{choromanska2015loss}.
+Instead, there are more saddle points. Here, the gradient is zero and the error goes up when some weights are changed and goes down for others. Generally a lot of such points are present, but they all have the same value for the objective function (i.e. the error function).\\
 
 A small value of $\eta$ leads to slow convergence, while a high value can cause the algorithm to overstep a local minimum. Because of this, the some algorithms gradually decrease the learning rate as the number of weight updates grows.\\
 For a single weight component, we get:
