@@ -285,8 +285,44 @@ Where $E_d$ is the error for a training example $d$, $x_{ji}$ is the $i$'th inpu
 % subsubsection backpropagation (end)
 \subsubsection{Extensions and improvements} % (fold)
 \label{ssub:extensions_and_improvements}
-\paragraph{Momentum} % (fold)
-\label{par:momentum}
+\paragraph{Different error functions} % (fold)
+\label{par:different_error_functions}
+Besides just the difference between the output of the network and the expected output, additional penalties can be added to indirectly influence the values of the weights.
+\todo{rephrase}
+Here, we typically use the term \textit{loss} to talk about a function that contains the error function, along with other functions, possibly also called loss functions.\\
+
+A popular loss function is called the $L_1$ norm. For each weight $w$, we add the value $\lambda \vert w \vert$ to the loss. The $L_1$ norm is then defined as such:
+\begin{equation}
+    L_1(\overrightarrow{w}) = \lambda \sum_{i=1}^k \vert w_i \vert
+\end{equation}
+Where $k$ is the number of weights of the network and $\lambda$ is a parameter determining the regularization strength.
+As loss, we then get:
+\begin{equation}
+    L(\overrightarrow{w}) = E(\overrightarrow{w}) + L_1(\overrightarrow{w})
+\end{equation}
+\todo{Citation}
+This norm has the property of leading to sparse weight vectors (i.e. weight values close to zero). \\
+%neurons with L1 regularization end up using only a sparse subset of their most important inputs and become nearly invariant to the “noisy” inputs
+
+Instead of using the absolute value, the $L_2$ norm sums over squared weights. It has the following form:
+\begin{equation}
+    L_2(\overrightarrow{w}) = \frac{1}{2} \sum_{i=1}^k w_i^2
+\end{equation}
+The fraction $\frac{1}{2}$ is often used such that the derivative is $\lambda w$ instead of $2 \lambda w$. The $L_2$ loss focuses more on penalizing high weights and can indirectly force the network to use all the units of the network to form the correct output.
+% notice that during gradient descent parameter update, using the L2 regularization ultimately means that every weight is decayed linearly: W += -lambda * W towards zero.
+
+The $L_1$ and $L_2$ can also be combined, called elastic net regularization \citep{hastie2012ElasticNet}:
+\begin{align}
+    L_E (\overrightarrow{w}) &= L_1(\overrightarrow{w}) + L_2(\overrightarrow{w})\\
+    &= \sum_{i=1}^k \lambda_1 \vert w_i \vert + \lambda_2 w_i^2
+\end{align}
+
+% paragraph different_error_functions (end)
+
+\paragraph{Different weight updates} % (fold)
+\label{par:different_weight_updates}
+Here we discuss methods that, given an error function, update the weights in different ways.\\
+
 One of the most common extensions to backpropagation is to add a fraction of the previous weight update to the new weight update. This extension is called \textit{momentum}.\\
 To apply this, we change the equation on line~\ref{algo:backpropagation:deltaweight} of Algorithm \ref{algo:backpropagation} to the following:
 \begin{equation}
@@ -297,15 +333,11 @@ Where $\Delta w_{ji}(t)$ is a weight update executed at iteration $t$ and $\alph
 Thanks to momentum, it is possible to get past regions where the gradient is zero and the weights would not change without momentum.
 This is analogous to a ball rolling down a surface but keeps rolling a bit on a flat surface afterwards. In the real world, an object in motion will stay in motion, unless there is a force applied to it.
 Here, that force is the gradient. It is also possible to get past small local minima and it can speed up learning when the gradient does not change. Again, this is analogous to a ball that goes downhill and keeps gaining speed.\\
-% paragraph momentum (end)
-
-\paragraph{RMSProp} % (fold)
-\label{par:rmsprop}
 
 The weight update of Root Mean Square Propagation (RMSProp) is quite different from stochastic gradient descent and only uses the sign of the gradient to update the weights \citep{Tieleman2012LectureMagnitude.}.
 This allows us to escape from plateaus more quickly. Furthermore, the learning rate can be different for each weight.
 For example, we can multiply the learning rate of a certain weight by a factor greater than one if its last 2 gradients agreed on the sign, and multiply the learning rate by a value less than $1$ otherwise.
-This means that, when the gradients agree on the direction, we give them more influence. If they are not consistent and disagree in subsequent steps, we decrease the influence. We can also put a limit on the learning rate as to not let it grow to excessively low or high amounts.\\
+This means that, when the gradients agree on the direction, we give them more influence. If they are not consistent and disagree in subsequent steps, we decrease the influence. We can also put a limit on the learning rate as to not let it grow to excessively low or high amounts.
 
 However, by just using an adaptive learning rate, we can have the problem of weights themselves growing too high in unwanted situations. For example, when a gradient is for 9 subsequent steps a small positive amount (e.g. $0.1$) and once a large negative amount (e.g. $-0.9$), we don't want to change the weights a lot because they balance each other out.
 Using the current algorithm however, the learning rate and as a result the weights would become too high because we only look at the signs and not the magnitude of the gradients.\\
@@ -317,11 +349,8 @@ MeanSquare(w, t) &= \gamma \cdot MeanSquare(w, t-1) + (1 - \gamma) \cdot \left (
 w(t+1) &= w(t) - \frac{\alpha}{\sqrt{MeanSquare(w,t)}}\frac{\partial E}{\partial w(t)} \label{eq:rmsprop:weightupdate}
 \end{align}
 \end{subequations}
-Where $w(t)$ is a weight at time step $t$, $\frac{\partial E}{\partial w(t)}$ is its gradient, $\alpha$ is the learning rate and $w_{t+1}$ is the new weight value. The past squared gradients are decayed by a value $\gamma$. Usually $\gamma=0.9$. It is also possible to add a small number $\epsilon$ (e.g. $\epsilon = 10^{-8}$) to the denominator in Equation~\ref{eq:rmsprop:weightupdate} to avoid division by zero
-% paragraph rmsprop (end)
+Where $w(t)$ is a weight at time step $t$, $\frac{\partial E}{\partial w(t)}$ is its gradient, $\alpha$ is the learning rate and $w_{t+1}$ is the new weight value. The past squared gradients are decayed by a value $\gamma$. Usually $\gamma=0.9$. It is also possible to add a small number $\epsilon$ (e.g. $\epsilon = 10^{-8}$) to the denominator in Equation~\ref{eq:rmsprop:weightupdate} to avoid division by zero.\\
 
-\paragraph{Adam} % (fold)
-\label{par:adam}
 Adaptive Moment Estimation (Adam) \citep{DBLP:journals/corr/KingmaB14} also uses an adaptive learning rate for each weight and an exponentially decaying average of previous squared gradients (also called the second moment). In addition, an exponentially decaying average of past gradients (also called the first moment) is also stored:
 \begin{subequations}
 \label{eq:adam:means}
@@ -342,7 +371,7 @@ The weight update then becomes:
 \begin{equation}
     w(t+1) = w(t) - \frac{\alpha}{\sqrt{MeanSquare(w,t)} + \epsilon} Mean(w,t)
 \end{equation}
-% paragraph adam (end)
+% paragraph different_weight_updates (end)
 % subsubsection extensions_and_improvements (end)
 % subsection gradient_descent_and_backpropagation (end)
 
