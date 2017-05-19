@@ -285,39 +285,38 @@ Where $E_d$ is the error for a training example $d$, $x_{ji}$ is the $i$'th inpu
 % subsubsection backpropagation (end)
 \subsubsection{Extensions and improvements} % (fold)
 \label{ssub:extensions_and_improvements}
-\paragraph{Different error functions} % (fold)
-\label{par:different_error_functions}
+\paragraph{Different loss functions} % (fold)
+\label{par:loss_functions}
 Besides just the difference between the output of the network and the expected output, additional penalties can be added to indirectly influence the values of the weights.
 \todo{rephrase}
-Here, we typically use the term \textit{loss} to talk about a function that contains the error function, along with other functions, possibly also called loss functions.\\
+Here, we typically use the term loss function instead of an error function. This loss function can contain the error as we already described, along with other functions (typically also called loss functions).\\
 
-A popular loss function is called the $L_1$ norm. For each weight $w$, we add the value $\lambda \vert w \vert$ to the loss. The $L_1$ norm is then defined as such:
+A popular loss function is called the $L_1$ norm (also called Lasso) \citep{tibshirani1996regression}. For each weight $w$, we add the value $\lambda \vert w \vert$ to the loss. The $L_1$ norm is then defined as such:
 \begin{equation}
     L_1(\overrightarrow{w}) = \lambda \sum_{i=1}^k \vert w_i \vert
 \end{equation}
 Where $k$ is the number of weights of the network and $\lambda$ is a parameter determining the regularization strength.
-As loss, we then get:
+As the loss function, we then get:
 \begin{equation}
     L(\overrightarrow{w}) = E(\overrightarrow{w}) + L_1(\overrightarrow{w})
 \end{equation}
-\todo{Citation}
-This norm has the property of leading to sparse weight vectors (i.e. weight values close to zero). \\
+This norm has the property of leading to sparse weight vectors \citep{journals/ftml/BachJMO12}. This means that a lot of weights are zero or close to zero and the focus is on finding a subset of the must important units.
 %neurons with L1 regularization end up using only a sparse subset of their most important inputs and become nearly invariant to the “noisy” inputs
 
 Instead of using the absolute value, the $L_2$ norm sums over squared weights. It has the following form:
 \begin{equation}
     L_2(\overrightarrow{w}) = \frac{1}{2} \sum_{i=1}^k w_i^2
 \end{equation}
-The fraction $\frac{1}{2}$ is often used such that the derivative is $\lambda w$ instead of $2 \lambda w$. The $L_2$ loss focuses more on penalizing high weights and can indirectly force the network to use all the units of the network to form the correct output.
+The fraction $\frac{1}{2}$ is often used such that the derivative is $\lambda w$ instead of $2 \lambda w$. The $L_2$ loss focuses more on penalizing high weights. It leads to diffusion of the weights and can indirectly force the network to use all the units of the network to form the correct output.
 % notice that during gradient descent parameter update, using the L2 regularization ultimately means that every weight is decayed linearly: W += -lambda * W towards zero.
 
-The $L_1$ and $L_2$ can also be combined, called elastic net regularization \citep{hastie2012ElasticNet}:
+The $L_1$ and $L_2$ can also be combined, called \textit{elastic net regularization} \citep{hastie2012ElasticNet}:
 \begin{align}
     L_E (\overrightarrow{w}) &= L_1(\overrightarrow{w}) + L_2(\overrightarrow{w})\\
     &= \sum_{i=1}^k \lambda_1 \vert w_i \vert + \lambda_2 w_i^2
 \end{align}
 
-% paragraph different_error_functions (end)
+% paragraph loss_functions (end)
 
 \paragraph{Different weight updates} % (fold)
 \label{par:different_weight_updates}
