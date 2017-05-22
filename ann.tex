@@ -288,7 +288,6 @@ Where $E_d$ is the error for a training example $d$, $x_{ji}$ is the $i$'th inpu
 \paragraph{Different loss functions} % (fold)
 \label{par:loss_functions}
 Besides just the difference between the output of the network and the expected output, additional penalties can be added to indirectly influence the values of the weights.
-\todo{rephrase}
 Here, we typically use the term loss function instead of an error function. This loss function can contain the error as we already described, along with other functions (typically also called loss functions).\\
 
 A popular loss function is called the $L_1$ norm (also called Lasso) \citep{tibshirani1996regression}. For each weight $w$, we add the value $\lambda \vert w \vert$ to the loss. The $L_1$ norm is then defined as such:
