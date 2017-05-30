@@ -36,11 +36,25 @@ The goal is to minimize the amount of steps necessary to reach the threshold.
 
 \subsection{Method} % (fold)
 \label{sub:method}
-In the experiment, first a number of environments are randomly generated. We try to learn with both 5 and 10 environments.
+Several experiments were executed, depending on the algorithm, the environment, the number of source tasks and which knowledge was transferred to the target task.\\
+
+In the first experiment, first a number of environments are randomly generated. We try to learn with both 5 and 10 environments.
 The environment for each task can differ for a predefined number of attributes, of which the values can each be in a certain range. For a cart-pole task, these are the mass of the cart, the mass of the pole and the length of the pole.\\
 Then a number of source tasks were learned that can update both the shared knowledge base and their own sparse representation. After a number of epochs, i.e. updates to these variables, we stop with learning these tasks.
 Instead, we learn to solve a new task, the target task, for which we hadn't learned its sparse representation yet. Here however, only the sparse representation can be updated and not the shared knowledge base.\\
-This learning process is repeated 100 times, each time using a different set of environments and thus problems to solve.\\
+
+In the second experiment, besides transferring the shared knowledge base, a sparse representation was also transferred.
+This is a sparse representation randomly chosen from the source tasks.
+The target task can then change this sparse representation to improve the performance on its own problem instance.\\
+
+The last experiment involves the \textit{REINFORCE} algorithm and was used as comparison with the results of the other experiments.
+Here, we first run the algorithm on one source task then transfer the same knowledge to the target task.
+In practice, this means that we start learning on the target task with the weights learned using the source task.
+The algorithm can still learn adapt all the weights using the target task.
+No sparseness on the weights was enforced.\\
+
+All three experiments were executed on the cart-pole and acrobot environment.
+Each experiment consisted of 100 runs, each time using a different set of environments and thus problems to solve.\\
 Afterwards the rewards are averaged over all the runs.\\
 Trajectories for both sets of tasks contained of maximally 200 or 500 steps depending on the type of environment. This could be less in case the environment was in an end state. In case of the cart-pole environment, this can mean for example that the cart tried to cross the left or right border or that the pole fell down.\\
 Hyperparameters, such as the learning rate of neural networks, were chosen by iteratively executing the previously mentioned experiment. Possible values for each hyperparameter were chosen manually.
