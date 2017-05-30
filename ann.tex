@@ -174,7 +174,7 @@ Where $n$ is the number of components in $\overrightarrow{w}$. Note that $\nabla
 \end{equation}
 Where $\eta$ is a positive value called the learning rate, which influences how big the changes to the weight vector are.\\
 
-The goal is to set the weights to such values so that the error is minimized. This is called a global minimum. No other combinations of weight values can lead to a lower error an those of the global minima. \\
+The goal is to set the weights to such values so that the error is minimized. This is called a global minimum. No other combinations of weight values can lead to a lower error an those of the global minima.\\
 However, it is possible that, given a combination of weight values, any change in those values does not influence the error, in which case the gradient for every weight component is $0$. Thus, with the current algorithm, there is no incentive to change the weights. This is called a local minimum. Although the algorithm cannot "see" immediate improvements, it is possible that another combination of weight values leads to a lower error. This is analogous to being in a valley in the mountains, where the valley after a mountain (and thus not visible) may lie lower. This is also visualized in Figure~\ref{fig:error_surface}.\\
 \begin{figure}[htb]
     \centering
