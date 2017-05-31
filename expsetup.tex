@@ -71,7 +71,7 @@ For the regular algorithm, we use the \textit{REINFORCE} that was discussed in S
 \begin{figure}[H]
     \centering
     \includegraphics[width=.8\linewidth]{images/results/CartPole/no_sparse_transfer/reward_target_re-akt5-akt10.png}
-    \caption[Learning curves for \textit{REINFORCE} and \textit{TLA} for the \emph{CartPole} environment]{Learning curves for the \textit{CartPole} environment of the \textit{REINFORCE} algorithm and our transfer learning algorithm (\textit{TLA}) with 5 source tasks (shown as \textit{TLA 5}) and 10 source tasks (shown as \textit{TLA 10}). The learning curves are only shown until epoch 60 in order to better show the initial performance of the algorithms. All the algorithms were converged and achieved the same rewards after this epoch.}
+    \caption[Learning curves for \textit{REINFORCE} and \textit{TLA} for the \emph{CartPole} environment]{Learning curves for the \textit{CartPole} environment of the \textit{REINFORCE} algorithm and our transfer learning algorithm (\textit{TLA}) with 5 source tasks (shown as \textit{TLA 5}) and 10 source tasks (shown as \textit{TLA 10}). The learning curves are only shown until epoch 60 in order to better show the initial performance of the algorithms. All the algorithms converged and achieved the same rewards after this epoch.}
     \label{fig:CartPole:reward_target_re-akt5-akt10}
 \end{figure}
 It can be seen visually that, on average, in all the configurations the jumpstart performance is about the same. This is confirmed by using the Wilcoxon signed-rank test. The null-hypothesis is that there is no difference between the jumpstart performance of 2 algorithms.
