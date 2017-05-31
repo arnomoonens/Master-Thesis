@@ -16,3 +16,4 @@
 
 *.sublime-workspace
 .ipynb_checkpoints
+/main.lot
