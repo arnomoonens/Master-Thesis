@@ -328,23 +328,6 @@ Radial basis functions are a generalization of coarse coding that allows for con
 \end{equation}
 The advantage of this method is that they produce approximate functions that vary smoothly and are differentiable. The disadvantage is that $\sigma_i$ and $c_i$ must be tuned manually and that non-linear RBF networks are computationally complex.\\
 
-%Kanerva coding
-\subsubsection{Kanerva coding}
-\label{subs:rl_kc}
-When the states have a high number of attributes, the previous methods can become impractical because of their computational complexity, even if we apply hashing. In the worst case, the complexity of the target function scales with the size of the state space. However, it is possible that some attributes are not useful for the learning algorithm and it would we better if those do not contribute to the complexity. This way, adding dimensions may not lead to an exponential increase in computational complexity.\\
-A way of achieving this is called Kanerva coding, where we choose binary features that correspond to particular prototype states. These are randomly selected from the entire state space. The receptive field of such a feature is all states that are sufficiently close to the prototype. This means that there is a feature for every prototype state and it is set to 1 if the state is close to that prototype state and 0 otherwise. The chosen distance is the hamming distance for a binary state space (e.g. in case of a bitwise representation of states), which is the number of bits at which two states differ.
-Using Kanerva coding, the complexity of the functions depends entirely on the number of used features, i.e. the number of prototype states, instead of the dimensionality. The amount of prototypes can be tuned such that the computational complexity and/or the performance improves.\\
-
-\subsubsection{Function approximation for control}
-\label{subs:rl_facontrol}
-To use function approximation for control, we use the action-value function $Q_t \approx Q^{\pi}$, that is represented as a parametrized functional form with parameter vector $\overrightarrow{\theta}_t$. Instead of only using training examples with $s_t$, they are now of the form $s_t, a_t \mapsto v_t$. The target output $v_t$ can be any approximation of $Q^{\pi}(s_t,a_t)$, including the usual backed-up values such as the full Monte Carlo return $R_t$ or the one-step Sarsa return $r_{t+1} + \gamma Q_t(s_{t+1}, a_{t+1})$. The gradient-descent update is now:
-\begin{equation}
-\overrightarrow{\theta}_{t+1} = \overrightarrow{\theta}_t + \alpha \big[ v_t - Q_t(s_t,a_t) \big] \nabla_{\overrightarrow{\theta}_t} Q_t(s_t,a_t)
-\end{equation}
-To select an action, we can just use a greedy (in off-policy methods) or $\epsilon$-greedy (in on-policy methods) approach.\\
-To use traces along with function approximation methods, we cannot set the trace of a state, because there are only traces for components of $\overrightarrow{\theta}_t$. Instead, we set the trace for each feature $i$ that the the current encountered state has.\\
-We can also set the traces of all non-selected actions to zero in the states encountered. To do this, for each state encountered, we first clear the traces of all features for the state and the actions not selected and then we set to 1 the traces of the features for the state and the action that was selected.\\
-
 %Off-policy bootstrapping
 \subsubsection{Bootstrapping}
 \label{subs:rl_bootstrapping}
