@@ -35,31 +35,30 @@ Or in vector format:
 \end{equation}
 From hereon we will denote the weighted sum as $z \equiv \sum_i^n w_{ij} x_i \equiv \overrightarrow{w} \cdot \overrightarrow{x}$.\\
 
-Here, we will discuss the most commonly used activation functions.
 \subsection{Perceptron} % (fold)
 \label{ssub:perceptron}
-A perceptron, defined by \cite{Rosenblatt58}, gives as output either $-1$ or $+1$:
+A perceptron unit, defined by \cite{Rosenblatt58}, gives as output either $-1$ or $+1$ depending on the linear combination of the input and the weights:
 \begin{equation}
-o(z) = \begin{cases}
-+1 & \text{if $z> 0$}\\
+o(\overrightarrow{x}) = \begin{cases}
++1 & \text{if $ \overrightarrow{w} \cdot \overrightarrow{x} > 0$}\\
 -1 & \text{otherwise}
 \end{cases}
 \end{equation}
 It can be seen as a hyperplane where the output is $-1$ or $+1$ depending on which side the input lies.
 Using $-1$ as \texttt{false} and $+1$ as \texttt{true}, it is also possible to represent boolean functions such as \textit{AND}, \textit{OR}, \textit{NAND} and \textit{NOR}. However, some boolean functions, such as \textit{XOR} cannot be represented by a single perceptron \citep{ML}.
 
-A schematic using the perceptron function is shown in Figure~\ref{fig:perceptron}.\\
+A schematic using the perceptron unit is shown in Figure~\ref{fig:perceptron}.\\
 \begin{figure}[htb]
     \centering
     \includegraphics[width=\linewidth]{images/activation_functions/perceptron.png}
-    \caption[The perceptron function]{The perceptron function.}
+    \caption[The perceptron unit]{The perceptron unit. Source: \cite{Demant2013}.}
     \label{fig:perceptron}
 \end{figure}
 % subsection perceptron (end)
 
 \subsection{Sigmoid} % (fold)
 \label{ssub:sigmoid}
-A disadvantage of the perceptron function is that it is not differentiable in the whole domain (specifically at $x=0$). Why this is a problem will become clear in Section~\ref{sec:gradient_descent_and_backpropagation}.\\
+A disadvantage of the perceptron unit is that it is not differentiable in the whole domain (specifically at $x=0$). Why this is a problem will become clear in Section~\ref{sec:gradient_descent_and_backpropagation}.\\
 To solve this problem, a sigmoid function can be used. A sigmoid function is a differentiable function that is monotonically increasing and approaches an asymptote for $x \to \pm\infty$ \citep{series/lncs/LeCunBOM12}. As a result, these can still separate the input space in 2 parts.\\
 In the artificial neural networks domain, the \textit{sigmoid function} generally refers to a variation of the logistic function and is denoted by $\sigma(x)$. Its formula is:
 \begin{align}
