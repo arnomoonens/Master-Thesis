@@ -1,4 +1,5 @@
-\section{Deep learning}
+\chapter{Deep learning}
+\label{cha:deep_learning}
 %Review by \cite{LeCun2015DeepLearning}.\\
 
 Deep learning methods are methods able to learn multiple levels of representations of raw data without human guidance. Before deep learning methods were used, complex features needed to be crafted manually.\\
@@ -10,10 +11,10 @@ A simple algorithm like a linear unit can only separate the input in 2 regions, 
 Generally, feature extractors need to be developed manually in order to represent the aspects of the input that are important. This, however, requires more work and requires knowledge about the domain and the task.
 
 In deep learning, the important aspects of the input can be detected automatically by combining different modules that have different functions in order to get higher abstractions and to eventually generate output.
-Most of these modules contain weights an can be trained, like explained in Section~\ref{sub:gradient_descent_and_backpropagation}.\\
+Most of these modules contain weights an can be trained, like explained in Section~\ref{sec:gradient_descent_and_backpropagation}.\\
 Here, we explain artificial neural networks capable of learning representations using multi-dimensional arrays and sequential data.
 
-\subsection{Convolutional neural networks}
+\section{Convolutional neural networks}
 Convolutional neural networks are neural networks that are inspired by the way the visual cortex of an animal works. These networks get as input data in multi-dimensional arrays, such as 2-dimensional images with pixel intensities as the third dimension for example.\\
 A convolutional neural network is structured as a series of stages, which are combinations of layers. In the first stages, convolutional layers and pooling layers are used.
 In a convolutional layer, units are organized in feature maps. Each of these units is connected to a patch in the feature maps of the previous layer through a matrix of weights that is called the filter bank. The filter bank matrix then slides over the feature map, does an element-wise computation of the 2 matrices and sums the results. The filter bank is then moved by a certain amount, called the stride. All units in a specific feature map of a layer use the same filter bank.
@@ -38,7 +39,7 @@ A typical layout of a convolutional neural network is shown in Figure~\ref{fig:c
 
 An example of a convolutional neural network is ConvNet, a convolutional network architecture that achieved many successes. Here, two or three of these convolutions, non-linearities and poolings are stacked. Afterwards, a convolutional layer and fully-connected layer follow.\\
 
-\subsection{Recurrent Neural Networks}
+\section{Recurrent Neural Networks}
 Recurrent neural networks (RNNs) are used to process sequential data such as speech and language. Here, an input sequence is processed one element at a time. The first RNNs used a state vector in their units that contains history about the past elements in the sequence. This is visualized in Figure \ref{fig:rnnunrolled}.
 \begin{figure}[htb]
 \centering
@@ -68,7 +69,7 @@ An LSTM architecture consists of different parts:
 \item An output gate $o$ that determines how much of the internal hidden state you want to output to the next layer: $o = \sigma (x_tU^o + s_{t-1}W^o)$.
 \item A candidate hidden state $g$ that is based on the input of the current time step and the state of the previous time step: $g = tanh(x_tU^g + s_{t-1}W^g)$.
 \item An internal memory $c_t$ that is the sum of a fraction of the memory of the previous time step (determined by the forget gate) and a fraction of the candidate state (determined by the input gate): $c_t = c_{t-1} \circ f + g \circ i$.
-\item Finally, the output hidden state $s_t$ is a fraction of the $tanh$ of the memory $c_t$, determined by the output gate: $s_t = tanh(c_t) \circ o$
+\item Finally, the output hidden state $s_t$ is a fraction of the $tanh$ of the memory $c_t$, determined by the output gate: $s_t = tanh(c_t) \circ o$.
 \end{itemize}
 Here, $U^i$ is for example one of the weight vectors for the input gate. The $\sigma$ function means the sigmoid function. $\circ$ refers to the dot product, i.e. $x \circ y = \sum_i^N x_i y_i$.\\
 We can almost get the original RNN by setting the input and output gate weights to 1 and the forget gate weights to 0. The only difference is the $tanh$ function used to compute the output hidden state, which squashes the result more (along with the $tanh$ used to compute the candidate hidden state).\\
@@ -97,7 +98,7 @@ As we can see, the non-linearity function $tanh$ is only used once here. We also
 Other networks with memory include a Neural Turing Machine, in which a tape-like memory is used from which the network can read or write.\\
 Another kind is a memory network, in which a normal network is augmented by a associative memory.\\
 
-\subsection{Dropout}
+\section{Dropout}
 Dropout is a way to prevent overfitting. It does so by randomly leaving out some visible or hidden units. As a result, all incoming and outgoing connections to these temporarily removed units are also removed and the algorithm can't rely on these connections. The simplest way of determining if a unit has to be removed is by removing it with a certain probability $p$, e.g. $p=0.5$. This value can also be determined by validation. As each unit can be present or not when using the network, for $n$ units there are $2^n$ possible networks.
 By learning each time using a possibly different network, we have a way of combining multiple models where each model is trained only a few times and most weights are shared between other models. Dropout is only used when training. In the testing phase, no units are removed. Here, however, we multiple the outgoing weights of each unit by there probability $p$.
 This is done to make sure that the the \textit{expected} output for any hidden unit is the same as the actual output at test time.

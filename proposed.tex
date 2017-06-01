@@ -1,5 +1,5 @@
-\section{Proposed algorithm}
-\label{sec:proposed_algorithm} % (fold)
+\chapter{Proposed algorithm}
+\label{cha:proposed_algorithm} % (fold)
 Our approach only uses a latent basis over the policy space instead of using one over the policy space and another one over the descriptor space like in \cite{Isele2016UsingLearning}.\\
 Again, for a task $(t)$, we can reconstruct the policy using the shared basis $L$ and the sparse coefficients over this basis for that specific task $s^{(t)}$: $\theta^{(t)} = Ls^{(t)}$, with $\theta^{(t)} \in \mathbb{R}^d$, $L \in \mathbb{R}^{d \times k}$ and $s^{(t)} \in \mathbb{R}^k$.\\
 The architecture of the network used for one task is visualized in Figure~\ref{fig:algonn}.

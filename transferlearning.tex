@@ -1,10 +1,10 @@
-\section{Transfer learning}
+\chapter{Transfer learning}
 %\cite{Taylor2009TransferSurvey}.
 Transfer learning involves the use of experience gained when learning one or more tasks, to improve the performance on a different but related task. Each task is represented by a Markov Decision Process (MDP).\\  Here, we discuss a framework for transfer methods that can be used for reinforcement learning, closely following \cite{Taylor2009TransferSurvey}.\\
 
 As already said, the transfer of knowledge always happens between one or more source tasks and a target task. First, an appropriate set of tasks must be selected. Afterwards, the transfer learning algorithm must learn how these source tasks are related to the target task. Then, the appropriate knowledge can be transferred.\\
 
-\subsection{Transfer learning dimensions} % (fold)
+\section{Transfer learning dimensions} % (fold)
 \label{sub:transfer_learning_dimensions}
 To be able to transfer knowledge, some assumptions must be made about differences between the source tasks and the target task. This can be for example in the underlying dynamics of the environment, which can make the task harder or easier to solve, or different sets of possible actions at certain states.
 These differences define between which type of source and target tasks knowledge can be transferred. The differences between the source task(s) and target task can also make the knowledge transfer easier or harder, requiring the appropriate guidance by a human or a method that can overcome these differences in case of a fully autonomous transfer learner.\\
@@ -21,9 +21,9 @@ In multi-task learning, states and variables are the same and have the same mean
 Task learning methods can also differ in the type of knowledge that is transferred between source and target tasks. This knowledge can be for example an action-value function, transitions or policy gradient parameters. For tasks that are closely related, detailed knowledge may be useful. Otherwise, high-level information may result in a better learning performance. The type of knowledge that is transferred can also depend on the type of source and target tasks and on the task mappings.\\
 
 Last, the task learning method may also restrict which reinforcement learning algorithms that can be used. It is possible for example that only a class of reinforcement learning algorithms or only one specific reinforcement learning algorithm can be used with the task learning method or that the algorithm is the same for both the source and target tasks. Ideally, the reinforcement learning algorithms can be chosen freely and may be selected based on the characteristics of the task at hand.\\
-% subsection transfer_learning_dimensions (end)
+% section transfer_learning_dimensions (end)
 
-\subsection{Metrics}
+\section{Metrics}
 \label{sub:tl_metrics}
 Several metrics exist to evaluate the learning performance and solution quality of transfer learning algorithms. Generally, one metric does not give a complete representation of the overall performance of the algorithm. Because of this, often multiple metrics are used.\\
 Here we will list the most popular ones:
@@ -44,7 +44,7 @@ A graph with 3 of the 5 metrics is shown in Figure~\ref{fig:TLmetrics}.
 \end{figure}
 Instead of comparing the transfer learning algorithm with a algorithm that doesn't use knowledge transfer, it is also possible to compare the algorithm with the performance of humans (by averaging their performances). However, metrics must be chosen carefully such that they don't favor the algorithm or the human and they can be abused.
 
-\subsection{Related work}
+\section{Related work}
 % Types of knowledge that is transferred: Value functions, features extracted from value functions, heuristics, policies
 % Different representation types: Graphs, relational representation, tables
 
@@ -88,8 +88,8 @@ Besides mimicking using the expert's output, the AMN also tries to mimic the hid
 After learning for a pre-determined number of frames on each task, the weights of the AMN are transferred to a DQN and the algorithm trains on an unseen target task.
 Note that each task is a different game here (i.e. the state space, action space, transition function and reward function can be different). However, the algorithm can also be applied to tasks with the same state and action space.
 
-\todo{Put the following subsubsection somewhere else in the subsection above?}
-\subsubsection{Using Task Features for Zero-Shot Knowledge Transfer in Lifelong Learning}
+\todo{Put the following subsection somewhere else in the section above?}
+\subsection{Using Task Features for Zero-Shot Knowledge Transfer in Lifelong Learning}
 An extra problem is to learn multiple variations of environment instead of just one. This means that for each of these tasks the transition function is slightly different, while keeping the same action space and state space.
 In \cite{Isele2016UsingLearning}, a method is presented that learns these task simultaneously by using a predefined description for each task.
 When a new task arrives along with its features, obtained from its task descriptor, a policy can be generated that immediately results in a good performance, even though the algorithm was not applied on that task before and the task descriptor, task order and task distribution was not known on beforehand.

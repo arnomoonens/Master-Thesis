@@ -1,7 +1,7 @@
-\section{Experimental setup}
+\chapter{Experimental setup}
 Experiments were executed on variations of the \textit{Cart-pole} environment and on variations of the \textit{Acrobot} environment.\\
 
-\subsection{CartPole environment} % (fold)
+\section{CartPole environment} % (fold)
 \label{sub:cartpole_environment}
 In the 2-dimensional Cart-Pole environment, a pole is placed vertically on a cart. The goal in this environment is to keep the pole balanced vertically (i.e. keep the angle of the pole between thresholds) and to keep the cart between 2 borders.
 The state is defined by 4 continuous-valued attributes: the position of the cart, the velocity of the cart, the angle of the pole and the angular velocity of the pole.
@@ -16,9 +16,9 @@ The environment is visualized in Figure~\ref{fig:cartpole}.
     \label{fig:cartpole}
 \end{figure}
 For executing the experiments, an implementation of this environment by \cite{Brockman2016OpenAIGym} was used.\\
-% subsection cartpole_environment (end)
+% section cartpole_environment (end)
 
-\subsection{Acrobot environment} % (fold)
+\section{Acrobot environment} % (fold)
 \label{sub:acrobot_environment}
 The goal in the \textit{Acrobot} environment, visualized in Figure~\ref{fig:acrobot} is to swing up  the tip of 2 joined arms above a certain point \cite{spong1995swing}.
 This can be done by applying a force on the joint between the 2 arms.
@@ -32,9 +32,9 @@ The goal is to minimize the amount of steps necessary to reach the threshold.
     \caption[Acrobot environment]{Acrobot environment. $\theta_1$ and $\dot{\theta_1}$ are respectively the angle and angular velocity of the arm attached to the central fixed point. $\theta_2$ and $\dot{\theta_2}$ are respectively the angle and angular velocity of the outermost arm. Source: \cite{fremaux2013reinforcement}}
     \label{fig:acrobot}
 \end{figure}
-% subsection acrobot_environment (end)
+% section acrobot_environment (end)
 
-\subsection{Methodology} % (fold)
+\section{Methodology} % (fold)
 \label{sub:methodology}
 Several experiments were executed, depending on the algorithm, the environment, the number of source tasks and which knowledge was transferred to the target task.\\
 
@@ -58,14 +58,14 @@ Each experiment consisted of 100 runs, each time using a different set of enviro
 Afterwards the rewards are averaged over all the runs.\\
 Trajectories for both sets of tasks contained of maximally 200 or 500 steps depending on the type of environment. This could be less in case the environment was in an end state. In case of the cart-pole environment, this can mean for example that the cart tried to cross the left or right border or that the pole fell down.\\
 Hyperparameters, such as the learning rate of neural networks, were chosen by iteratively executing the previously mentioned experiment. Possible values for each hyperparameter were chosen manually.
-% subsection methodology (end)
+% section methodology (end)
 
-\subsection{Results}
+\section{Results}
 Here we compare the results of our transfer learning algorithm with those of the \textit{REINFORCE} algorithm.
-\subsubsection{CartPole} % (fold)
+\subsection{CartPole} % (fold)
 \label{sub:cartpole}
-\paragraph{Without sparse representation transfer} % (fold)
-\label{par:cartpole:without_sparse_representation_transfer}
+\subsubsection{Without sparse representation transfer} % (fold)
+\label{ssub:cartpole:without_sparse_representation_transfer}
 We first explore the differences between learning directly on a target task and first learning on source tasks (i.e. using our transfer learning algorithm), using the metrics that we defined in Section~\ref{sub:tl_metrics}. We consider both 5 and 10 source tasks. The algorithms using 5 source tasks and 10 source tasks are referred to as respectively \textit{TLA 5} and \textit{TLA 10}.
 For the regular algorithm, we use the \textit{REINFORCE} that was discussed in Section~\ref{sub:rl_policy_gradient}. The learning curve of both algorithms on the target task is visualized in Figure~\ref{fig:CartPole:reward_target_re-akt5-akt10}.
 \begin{figure}[H]
@@ -105,23 +105,23 @@ In every configuration, the maximum reward ($200$) is reached eventually and as 
 % \end{figure}
 % We can see that, although the mean jumpstart performances are different, there is little difference between the medians: $22.774$ for \textit{REINFORCE} and $23.459$ for our algorithm. However, our algorithm is able to reach a higher initial performance more often. In 75\% of the cases, the jumpstart performance for \textit{REINFORCE} is below $55.535$, while it is $160.595$ for our algorithm.
 
-% paragraph cartpole:without_sparse_representation_transfer (end)
-\paragraph{With sparse representation transfer} % (fold)
-\label{par:cartpole:with_sparse_representation_transfer}
+% subsubsection cartpole:without_sparse_representation_transfer (end)
+\subsubsection{With sparse representation transfer} % (fold)
+\label{ssub:cartpole:with_sparse_representation_transfer}
 \begin{figure}[H]
     \centering
     \includegraphics[width=.8\linewidth]{images/results/CartPole/sparse_transfer/reward_target_re-akt5-akt10.png}
     \caption[Learning curves for the \textit{CartPole} environment of \textit{REINFORCE} and \textit{TLA} using sparse representation transfer]{Learning curves for the \emph{CartPole} environment of the \textit{REINFORCE} algorithm and our transfer learning algorithm (\textit{TLA}) with 5 source tasks (shown as \textit{TLA 5}) and 10 source tasks (shown as \textit{TLA 10}). The sparse representation of a randomly chosen source task was transferred to the target task.}
     \label{fig:CartPole:st:reward_target_re-akt5-akt10}
 \end{figure}
-% paragraph with_sparse_representation_transfer (end)
-% subsubsection cartpole (end)
+% subsubsection with_sparse_representation_transfer (end)
+% subsection cartpole (end)
 
-\subsubsection{Acrobot} % (fold)
+\subsection{Acrobot} % (fold)
 \label{sub:acrobot}
-\paragraph{Without sparse representation transfer} % (fold)
-\label{par:acrobot:without_sparse_representation_transfer}
-We will start with the same experiment as in Section~\ref{par:cartpole:without_sparse_representation_transfer}, but with the \textit{Acrobot} environment.
+\subsubsection{Without sparse representation transfer} % (fold)
+\label{ssub:acrobot:without_sparse_representation_transfer}
+We will start with the same experiment as in Section~\ref{ssub:cartpole:without_sparse_representation_transfer}, but with the \textit{Acrobot} environment.
 As can be seen in Figure~\ref{fig:Acrobot:reward_target_re-akt5-akt10}, the average performance of  the \textit{REINFORCE} algorithm on the target task is different from \textit{TLA 5} and \textit{TLA 10}.
 \begin{figure}[H]
     \centering
@@ -172,23 +172,23 @@ With a significance level of $0.05$, we can say that there is a difference betwe
 \end{figure}
 We can see that the median for the \textit{REINFORCE} algorithm is still the lowest possible reward for this environment. The medians of \textit{TLA 5} and \textit{TLA 10} are respectively $-105.3053$ and $-98.3911$. Only some outliers of these algorithms don't get past the minimum reward.
 
-% paragraph acrobot:without_sparse_representation_transfer (end)
-\paragraph{With sparse representation transfer} % (fold)
-\label{par:acrobot:with_sparse_representation_transfer}
+% subsubsection acrobot:without_sparse_representation_transfer (end)
+\subsubsection{With sparse representation transfer} % (fold)
+\label{ssub:acrobot:with_sparse_representation_transfer}
 \begin{figure}[H]
     \centering
     \includegraphics[width=.8\linewidth]{images/results/Acrobot/sparse_transfer/reward_target_re-akt5-akt10.png}
     \caption[Learning curves for the \textit{Acrobot} environment of \textit{REINFORCE} and \textit{TLA} using sparse representation transfer]{Learning curves for the \emph{Acrobot} environment of the \textit{REINFORCE} algorithm and our transfer learning algorithm (\textit{TLA}) with 5 source tasks (shown as \textit{TLA 5}) and 10 source tasks (shown as \textit{TLA 10}). The sparse representation of a randomly chosen source task was transferred to the target task.}
     \label{fig:Acrobot:st:reward_target_re-akt5-akt10}
 \end{figure}
-% paragraph acrobot:with_sparse_representation_transfer (end)
-\paragraph{REINFORCE using a source and target task} % (fold)
-\label{par:reinforce_using_a_source_and_target_task}
+% subsubsection acrobot:with_sparse_representation_transfer (end)
+\subsubsection{REINFORCE using a source and target task} % (fold)
+\label{ssub:reinforce_using_a_source_and_target_task}
 \begin{figure}[H]
     \centering
     \includegraphics[width=.8\linewidth]{images/results/Acrobot/reinforce_2tasks.png}
     \caption{\textit{REINFORCE} applied for 100 epochs to a randomly chosen source task and afterwards to the target task, using the same network and weight values.}
     \label{fig:Acrobot:reward_reinforce_2tasks}
 \end{figure}
-% paragraph reinforce_using_a_source_and_target_task (end)
-% subsubsection acrobot (end)
+% subsubsection reinforce_using_a_source_and_target_task (end)
+% subsection acrobot (end)

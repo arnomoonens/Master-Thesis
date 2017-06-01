@@ -1,9 +1,8 @@
-\documentclass[a4paper, 11pt]{article}
+\documentclass[a4paper, 12pt]{report}
 \usepackage{natbib}
 \usepackage[english]{babel}
 \usepackage[utf8x]{inputenc}
 \usepackage{amsmath}
-\usepackage{hyperref} % To show urls
 \usepackage{graphicx}
 \usepackage[colorinlistoftodos]{todonotes}
 \usepackage{float}
@@ -11,7 +10,7 @@
 \usepackage{amssymb}
 \usepackage[linesnumbered, ruled]{algorithm2e}
 \usepackage{titlesec}
-\usepackage{pdfpages}
+\usepackage{hyperref} % To show urls
 
 \numberwithin{equation}{section}
 
@@ -30,15 +29,18 @@
 \titlespacing*{\paragraph}
 {0pt}{3.25ex plus 1ex minus .2ex}{1.5ex plus .2ex}
 
+\usepackage{vub}
+
 \begin{document}
-\pagenumbering{roman}
-\includepdf[pages={1-}]{titlepage.pdf}
+\input{titlepage}
+\pagenumbering{Alph}
 \begin{abstract}
 Abstract
 \end{abstract}
 \clearpage
 %\keywords{reinforcement learning, knowledge transfer}
 
+\pagenumbering{roman}
 \tableofcontents
 \clearpage
 
@@ -56,8 +58,8 @@ Abstract
 \pagenumbering{arabic}
 
 \include{introduction}
-\include{reinforcementlearning}
 \include{ann}
+\include{reinforcementlearning}
 \include{deeplearning}
 \include{deeprl}
 \include{transferlearning}

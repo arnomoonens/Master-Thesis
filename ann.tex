@@ -1,5 +1,5 @@
-\section{Artificial neural networks} % (fold)
-\label{sec:artificial_neural_networks}
+\chapter{Artificial neural networks} % (fold)
+\label{cha:artificial_neural_networks}
 % What is it
 Artificial neural networks are models that can approximate discrete-valued, real-valued and vector-valued functions.
 They are composed of interconnected units that can activate others using connections of varying strength.
@@ -9,8 +9,8 @@ The higher the strength, also called weight, of connections between units, the m
 The combination of artificial neural networks and backpropagation led to successful applications, for example to recognize handwritten characters \citep{journals/neco/LeCunBDHHHJ89}, for face recognition \citep{cottrell1990extracting} and to recognize spoken words \citep{journals/nn/LangWH90}.
 However, early applications also include reinforcement learning, for example to learn to balance a pendulum \citep{anderson:ieeecsm89} or to play the game \textit{Backgammon} \citep{Tesauro:92}.
 
-\subsection{Basics} % (fold)
-\label{sub:basics}
+\section{Basics} % (fold)
+\label{sec:basics}
 As said, artificial neural networks are made up of units. These units can be divided into layers, where the values of each layer are propagated to the next layer depending on connections with weights. These weights define the model.
 Input units receive information that is available externally and provide information to other units. Output units are the opposite and receive information from the network itself and provide information externally. Hidden units both receive information from and provide information to units inside the network.\\
 A simple artificial neural network is visualized in Figure~\ref{fig:ann}.\\
@@ -21,10 +21,10 @@ A simple artificial neural network is visualized in Figure~\ref{fig:ann}.\\
     \label{fig:ann}
 \end{figure}
 As a non-input unit gets weighted activations from multiple units, these need to be combined to determine if the unit can be activated or not. This is done by applying a linear or non-linear function, called an activation function, to the weighted sum.
-% subsection basics (end)
+% section basics (end)
 
-\subsection{Activation functions} % (fold)
-\label{sub:activation_functions}
+\section{Activation functions} % (fold)
+\label{sec:activation_functions}
 Formally, an activation function $\phi$ will compute for unit $j$ with inputs from layer $x$:
 \begin{equation}
     o = \phi\big(\sum_i^n w_{ij} x_i\big)
@@ -36,7 +36,7 @@ Or in vector format:
 From hereon we will denote the weighted sum as $z \equiv \sum_i^n w_{ij} x_i \equiv \overrightarrow{w} \cdot \overrightarrow{x}$.\\
 
 Here, we will discuss the most commonly used activation functions.
-\subsubsection{Perceptron} % (fold)
+\subsection{Perceptron} % (fold)
 \label{ssub:perceptron}
 A perceptron, defined by \cite{Rosenblatt58}, gives as output either $-1$ or $+1$:
 \begin{equation}
@@ -55,11 +55,11 @@ A schematic using the perceptron function is shown in Figure~\ref{fig:perceptron
     \caption[The perceptron function]{The perceptron function.}
     \label{fig:perceptron}
 \end{figure}
-% subsubsection perceptron (end)
+% subsection perceptron (end)
 
-\subsubsection{Sigmoid} % (fold)
+\subsection{Sigmoid} % (fold)
 \label{ssub:sigmoid}
-A disadvantage of the perceptron function is that it is not differentiable in the whole domain (specifically at $x=0$). Why this is a problem will become clear in Section~\ref{sub:gradient_descent_and_backpropagation}.\\
+A disadvantage of the perceptron function is that it is not differentiable in the whole domain (specifically at $x=0$). Why this is a problem will become clear in Section~\ref{sec:gradient_descent_and_backpropagation}.\\
 To solve this problem, a sigmoid function can be used. A sigmoid function is a differentiable function that is monotonically increasing and approaches an asymptote for $x \to \pm\infty$ \citep{series/lncs/LeCunBOM12}. As a result, these can still separate the input space in 2 parts.\\
 In the artificial neural networks domain, the \textit{sigmoid function} generally refers to a variation of the logistic function and is denoted by $\sigma(x)$. Its formula is:
 \begin{align}
@@ -75,9 +75,9 @@ The behavior of this function is visualized in Figure~\ref{fig:sigmoid}.
     \caption[The sigmoid function]{The sigmoid function.}
     \label{fig:sigmoid}
 \end{figure}
-% subsubsection sigmoid (end)
+% subsection sigmoid (end)
 
-\subsubsection{Hyperbolic tangent} % (fold)
+\subsection{Hyperbolic tangent} % (fold)
 \label{ssub:hyperbolic_tangent}
 Another popular function and another kind of sigmoid function is the hyperbolic tangent function, also called \textit{tanh}. While the output of the sigmoid function ranges between $0$ and $+1$, here the output ranges between $-1$ and $+1$, just like the range (and the only possible values) of the perceptron.
 The formula of the hyperbolic tangent function, which can also be written in terms of the sigmoid function, is:
@@ -95,9 +95,9 @@ This function is visualized in Figure~\ref{fig:tanh}.
     \caption{Hyperbolic tangent function.}
     \label{fig:tanh}
 \end{figure}
-% subsubsection hyperbolic_tangent (end)
+% subsection hyperbolic_tangent (end)
 
-\subsubsection{Rectified Linear Unit} % (fold)
+\subsection{Rectified Linear Unit} % (fold)
 \label{ssub:rectified_linear_unit}
 A rectified linear unit, also called a ReLU, is another popular and more recent activation function. It was first defined by \cite{conf/icml/NairH10}. The output is the identity function if $z \ge 0$ and $0$ otherwise:
 \begin{equation}
@@ -106,7 +106,7 @@ A rectified linear unit, also called a ReLU, is another popular and more recent 
         0 & \text{otherwise}
         \end{cases}
 \end{equation}
-As can be seen, this function requires less computations than the sigmoid and hyperbolic tangent function. However, the derivative for $z<0$ is always $0$. Why this can be a problem is also explained in Section~\ref{sub:gradient_descent_and_backpropagation}.\\
+As can be seen, this function requires less computations than the sigmoid and hyperbolic tangent function. However, the derivative for $z<0$ is always $0$. Why this can be a problem is also explained in Section~\ref{sec:gradient_descent_and_backpropagation}.\\
 The ReLU function is shown in Figure~\ref{fig:relu}.
 \begin{figure}[htb]
     \centering
@@ -130,8 +130,8 @@ An example of a Leaky ReLU is shown in Figure~\ref{fig:lrelu}.\\
     \caption[Leaky ReLU function]{Leaky ReLU function with $\alpha = 0.2$.}
     \label{fig:lrelu}
 \end{figure}
-% subsubsection rectified_linear_unit (end)
-% subsection activation_functions (end)
+% subsection rectified_linear_unit (end)
+% section activation_functions (end)
 
 A variation of a Leaky ReLU, called Parametric Rectified Unit, also has a small slope for $x<0$, but with an $\alpha$ that can be learned \citep{journals/corr/HeZR015}. Other variants use a random slope for values below zero \citep{journals/corr/XuWCL15}, add noise a ReLU \citep{conf/icml/NairH10} or use an exponential function for values below zero \citep{journals/corr/ClevertUH15}:
 \begin{equation}
@@ -143,8 +143,8 @@ A variation of a Leaky ReLU, called Parametric Rectified Unit, also has a small 
 
 %Optional: add softmax and maxout definitions
 
-\subsection{Gradient descent and backpropagation} % (fold)
-\label{sub:gradient_descent_and_backpropagation}
+\section{Gradient descent and backpropagation} % (fold)
+\label{sec:gradient_descent_and_backpropagation}
 %Also something about linearly separable?
 %Why no algebraic solution?
 If we choose the weights of our network correctly, we might succeed in approximating a function.
@@ -152,7 +152,7 @@ However, it is not always possible to separate the input space and have the righ
 In that case, we might want the best solution, e.g. one that has the least amount of errors in producing outputs w.r.t. the correct outputs, also called the target outputs. Furthermore, choosing the weights manually can be a tedious process.\\
 For these reasons, we use an algorithm called called backpropagation, which uses a variation of gradient descent. We will first discuss gradient descent as this provides the basis of the backpropagation algorithm.
 
-\subsubsection{Gradient descent} % (fold)
+\subsection{Gradient descent} % (fold)
 \label{ssub:gradient_descent}
 In gradient descent, we search in the weight vector space, also called hypothesis space, to find weights that can approximate a function as best as possible. A tuple containing the input and output of the target function is called a training example.
 
@@ -207,7 +207,7 @@ We then get the following derivation:
         &= \sum_{j=0}^N (y_j - o_j)(-x_{ij})
     \end{split}
 \end{align}
-Where $x_{ij}$ is the $i$'th input component of training example $j$ and $o_j \equiv f(x_j; \overrightarrow{w})$. Instead of just using a linear unit, the function $f$ can of course be more complex and use for example on of the activation functions from Section~\ref{sub:activation_functions}. However, we can now see that we cannot use the perceptron because it is not differentiable.\\
+Where $x_{ij}$ is the $i$'th input component of training example $j$ and $o_j \equiv f(x_j; \overrightarrow{w})$. Instead of just using a linear unit, the function $f$ can of course be more complex and use for example on of the activation functions from Section~\ref{sec:activation_functions}. However, we can now see that we cannot use the perceptron because it is not differentiable.\\
 
 Using the resulting formula of Equation~\ref{eq:gradderiv} along with Equation~\ref{eq:weightcomponentupdate}, we can also define how to update each component of the weight vector:
 \begin{equation}
@@ -216,9 +216,9 @@ Using the resulting formula of Equation~\ref{eq:gradderiv} along with Equation~\
 As we can see, for each weight vector, we need to apply the model to the input of each training example. For this reason, this version of gradient descent is also often called \textit{batch gradient descent}. Of course, the outputs only need to be computed once per weight vector update as they do not depend on which specific weight vector component that we are updating.\\
 
 Still, each time using every training example for the weight vector update can lead to slow convergence to a local minimum. Furthermore, in case of multiple local minima in the error surface, it is possible that the gradient descent algorithm does not stop at the global minimum \citep{ML}.
-% subsubsection gradient_descent (end)
+% subsection gradient_descent (end)
 
-\subsubsection{Stochastic gradient descent} % (fold)
+\subsection{Stochastic gradient descent} % (fold)
 \label{ssub:stochastic_gradient_descent}
 A popular variation of batch gradient descent that tries to solve the previously mentioned issues is \textit{stochastic gradient descent}. Instead of summing using all training examples, we do a weight update using only one training example. To do this, we first use a different error function for each example $j$:
 \begin{equation}
@@ -233,9 +233,9 @@ The idea here is that these weight updates, when having iterated over all the tr
 By making the learning rate small enough, usually smaller than with batch gradient descent, it is possible to approximate true gradient descent arbitrarily closely \citep{ML}.
 It is also computationally cheaper because each time we only handle one training example.
 Additionally, stochastic gradient descent can sometimes avoid being stuck in local minima because it uses various $\nabla E_j(\overrightarrow{w})$ instead of just $\nabla E(\overrightarrow{w})$ to move in the hypothesis space.
-% subsubsection stochastic_gradient_descent (end)
+% subsection stochastic_gradient_descent (end)
 
-\subsubsection{Backpropagation} % (fold)
+\subsection{Backpropagation} % (fold)
 \label{ssub:backpropagation}
 The backpropagation algorithm uses gradient descent and can learn weights of a multilayer network with possibly multiple units in each layer \citep{rumelhart1986learning}.
 
@@ -282,8 +282,8 @@ Where $E_d$ is the error for a training example $d$, $x_{ji}$ is the $i$'th inpu
 \caption[Backpropagation]{Backpropagation algorithm. Source: \cite[Chapter~4]{ML}.}
 \label{algo:backpropagation}
 \end{algorithm}
-% subsubsection backpropagation (end)
-\subsubsection{Extensions and improvements} % (fold)
+% subsection backpropagation (end)
+\subsection{Extensions and improvements} % (fold)
 \label{ssub:extensions_and_improvements}
 \paragraph{Different loss functions} % (fold)
 \label{par:loss_functions}
@@ -370,8 +370,8 @@ The weight update then becomes:
     w(t+1) = w(t) - \frac{\alpha}{\sqrt{MeanSquare(w,t)} + \epsilon} Mean(w,t)
 \end{equation}
 % paragraph different_weight_updates (end)
-% subsubsection extensions_and_improvements (end)
-% subsection gradient_descent_and_backpropagation (end)
+% subsection extensions_and_improvements (end)
+% section gradient_descent_and_backpropagation (end)
 
 % Inspired by biology
 
