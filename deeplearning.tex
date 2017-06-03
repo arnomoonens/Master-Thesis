@@ -1,18 +1,18 @@
 \chapter{Deep learning}
 \label{cha:deep_learning}
 %Review by \cite{LeCun2015DeepLearning}.\\
-\todo{Say better that deep learning is a way of function approximation.}
-Deep learning methods are methods able to learn multiple levels of representations of raw data without human guidance. Before deep learning methods were used, complex features needed to be crafted manually.\\
 
+As was briefly mentioned in Section~\ref{sub:rl:gfa}, artificial neural networks can be used as function approximators.
+However, feedforward artificial neural networks may lack capabilities to represent complex functions and might be unusable for certain kinds of input. They also lack granularity and can be influenced by variance in the input that is irrelevant for the task (e.g. in a classification task, shifted objects in a picture should still be classified correctly). Because of this, they are not suitable for complex tasks like image recognition, unless an adequate feature extractor is applied first. Generic methods like kernel methods can be applied but are not guaranteed to work well for the task.\\
+Generally, feature extractors need to be developed manually in order to represent the aspects of the input that are important. This, however, requires more work and requires knowledge about the domain and the task.\\
+
+In contrast, deep learning methods are able to learn multiple levels of representations of raw data without human guidance.
 Each level of features builds upon the previous one, starting from the input itself, and represents it in a more abstract way. These abstractions are generated as to recognize aspects of the input that are important for the task. Because of this, it is possible that small variations in the input have no influence on the abstraction and output.
-As these abstractions are learned automatically, there is no need anymore to create internal representations manually, which require more work as it is different for every kind of task. The generated abstractions may also recognize useful patterns in the data that might not be represented using the hand-crafted features.\\
-
-A simple algorithm like a linear unit can only separate the input in 2 regions, namely half-spaces separated by a hyperplane. This lack of granularity and influence of variance in input that is irrelevant for the classification task (e.g. shifted objects in a picture should still be classified correctly) is not suitable for complex tasks like image recognition, unless an adequate feature extractor is applied first. Generic methods like kernel methods can be applied but are not guaranteed to work well for the task.
-Generally, feature extractors need to be developed manually in order to represent the aspects of the input that are important. This, however, requires more work and requires knowledge about the domain and the task.
+As these abstractions are learned automatically, there is no need anymore to create internal representations manually, which require more work as it is different for every kind of task. The generated abstractions may also recognize useful patterns in the data that might not be intuitive to a human and would not have been represented using the hand-crafted features.\\
 
 In deep learning, the important aspects of the input can be detected automatically by combining different modules that have different functions in order to get higher abstractions and to eventually generate output.
 Most of these modules contain weights an can be trained, like explained in Section~\ref{sec:gradient_descent_and_backpropagation}.\\
-Here, we explain artificial neural networks capable of learning representations using multi-dimensional arrays and sequential data.
+Here, we explain artificial neural networks capable of learning representations using multi-dimensional arrays and sequential data, following the explanation by \cite{LeCun2015DeepLearning}.
 
 \section{Convolutional neural networks}
 Convolutional neural networks are neural networks that are inspired by the way the visual cortex of an animal works. These networks get as input data in multi-dimensional arrays, such as 2-dimensional images with pixel intensities as the third dimension for example.\\
