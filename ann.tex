@@ -158,9 +158,9 @@ In gradient descent, we search in the weight vector space, also called hypothesi
 
 To be able to update weights, we first need to know how wrong our outputs were relative to those of our training examples.
 This is called the training error and depends on the learning algorithm (in our case an artificial neural network), its parameters and the training examples. However, here we assume that the learning algorithm and the training examples are fixed while learning.
-A common measure for the training error is:
+A common measure for the training error, the mean squared error (MSE), is defined as:
 \begin{equation}
-    E(\overrightarrow{w}) \equiv \frac{1}{2} \sum_{i=0}^N (y_i - f(x_i;\overrightarrow{w}))^2
+    E(\overrightarrow{w}) \equiv \frac{1}{N} \sum_{i=0}^N (y_i - f(x_i;\overrightarrow{w}))^2
 \end{equation}
 Where $N$ is the number of training examples, $x_i$ is the input of a training example, $y_i$ is the target output of the training example and $f$ is our learning algorithm, which depends on the weight vector $\overrightarrow{w}$.\\
 
@@ -200,18 +200,18 @@ We then get the following derivation:
 \begin{align}
     \label{eq:gradderiv}
     \begin{split}
-        \frac{\delta E}{\delta w_i} &= \frac{\delta}{\delta w_i} \frac{1}{2} \sum_{j=0}^N (y_j - o_j)^2\\
-        &= \frac{1}{2} \sum_{j=0}^N \frac{\delta}{\delta w_i} (y_j - o_j)^2\\
-        &= \frac{1}{2} \sum_{j=0}^N 2 (y_j - o_j) \frac{\delta}{\delta w_i} (y_j - o_j)\\
-        &= \sum_{j=0}^N (y_j - o_j) \frac{\delta}{\delta w_i} (y_i - \overrightarrow{x_i} \cdot \overrightarrow{w})\\
-        &= \sum_{j=0}^N (y_j - o_j)(-x_{ij})
+        \frac{\delta E}{\delta w_i} &= \frac{\delta}{\delta w_i} \frac{1}{N} \sum_{j=0}^N (y_j - o_j)^2\\
+        &= \frac{1}{N} \sum_{j=0}^N \frac{\delta}{\delta w_i} (y_j - o_j)^2\\
+        &= \frac{1}{N} \sum_{j=0}^N 2 (y_j - o_j) \frac{\delta}{\delta w_i} (y_j - o_j)\\
+        &= \frac{2}{N} \sum_{j=0}^N (y_j - o_j) \frac{\delta}{\delta w_i} (y_i - \overrightarrow{x_i} \cdot \overrightarrow{w})\\
+        &= \frac{2}{N} \sum_{j=0}^N (y_j - o_j)(-x_{ij})
     \end{split}
 \end{align}
 Where $x_{ij}$ is the $i$'th input component of training example $j$ and $o_j \equiv f(x_j; \overrightarrow{w})$. Instead of just using a linear unit, the function $f$ can of course be more complex and use for example on of the activation functions from Section~\ref{sec:activation_functions}. However, we can now see that we cannot use the perceptron because it is not differentiable.\\
 
 Using the resulting formula of Equation~\ref{eq:gradderiv} along with Equation~\ref{eq:weightcomponentupdate}, we can also define how to update each component of the weight vector:
 \begin{equation}
-    w_i \gets w_i + \eta \sum_{j=0}^N (y_j - o_j)x_{ij}
+    w_i \gets w_i + \eta \frac{2}{N} \sum_{j=0}^N (y_j - o_j)x_{ij}
 \end{equation}
 As we can see, for each weight vector, we need to apply the model to the input of each training example. For this reason, this version of gradient descent is also often called \textit{batch gradient descent}. Of course, the outputs only need to be computed once per weight vector update as they do not depend on which specific weight vector component that we are updating.\\
 
@@ -222,11 +222,11 @@ Still, each time using every training example for the weight vector update can l
 \label{ssub:stochastic_gradient_descent}
 A popular variation of batch gradient descent that tries to solve the previously mentioned issues is \textit{stochastic gradient descent}. Instead of summing using all training examples, we do a weight update using only one training example. To do this, we first use a different error function for each example $j$:
 \begin{equation}
-    E_j(\overrightarrow{w}) = \frac{1}{2}(y_j - o_j)^2
+    E_j(\overrightarrow{w}) = (y_j - o_j)^2
 \end{equation}
 The update for a single weight vector component when using a linear unit is then:
 \begin{equation}
-    w_i \gets w_i + \eta (y_j- o_j)x_{ij}
+    w_i \gets w_i + 2 \eta(y_j- o_j)x_{ij}
 \end{equation}
 The idea here is that these weight updates, when having iterated over all the training examples, will be a decent approximation relative to using our original error function. Note that the update using one training example affects the error of the next training example.\\
 
@@ -243,7 +243,7 @@ We say that, for multilayer networks, $L>2$, with $L$ the number of layers in th
 
 As multiple output units are also possible, we need a new training error measure that sums over all of the output units of the network:
 \begin{equation}
-    E(\overrightarrow{w}) \equiv \frac{1}{2} \sum_{i=0}^N \sum_{k \in outputs} (y_{ki} - o_{ki})^2
+    E(\overrightarrow{w}) \equiv \frac{1}{N} \sum_{i=0}^N \sum_{k \in outputs} (y_{ki} - o_{ki})^2
 \end{equation}
 Where $outputs$ are the output units of the network and $y_{ki}$ and $o_{ki}$ is the value of the $k$'th output unit of respectively the $i$'th training example and network output.\\
 
@@ -279,7 +279,7 @@ Where $E_d$ is the error for a training example $d$, $x_{ji}$ is the $i$'th inpu
         }
     }
 }
-\caption[Backpropagation]{Backpropagation algorithm. Source: \cite[Chapter~4]{ML}.}
+\caption[Backpropagation]{Backpropagation algorithm. For simplicity, the squared error ($E_j(\overrightarrow{w}) = \frac{1}{2} (y_j - o_j)^2$ for training example $j$) was used. Source: \cite[Chapter~4]{ML}.}
 \label{algo:backpropagation}
 \end{algorithm}
 % subsection backpropagation (end)
