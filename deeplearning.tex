@@ -23,6 +23,7 @@ The result of this convolutional operation (which is linear) operation is again 
 
 These convolutional layers are then combined with pooling layers. Instead of detecting local conjunctions of features from the previous layer, pooling tries to merge semantically similar features into one. This is necessary because the positions of features that form a motif are not exact and can vary somewhat. It may not matter for example that an object is close or far in an image.
 To detect the motifs more reliably, we course-grain their features. The typical pooling units compute the maximum or average of a local patch of units in one or a few feature maps. The neighboring pooling units do the same for patches that are shifted by one or more rows and/or columns and as such creating an invariance to small shifts and distortions.\\
+Popular convolutional networks, often using multiple layers of different types, include "AlexNet" \citep{conf/nips/KrizhevskySH12}, "LeNet" \citep{lecun-gradientbased-learning-applied-1998} and "GoogLeNet" \citep{DBLP:journals/corr/SzegedyLJSRAEVR14}.\\
 A typical layout of a convolutional neural network is shown in Figure~\ref{fig:cnnlayout}, while a hierarchy of features extracted using a convolutional neural network is shown in Figure~\ref{fig:cnnfeatures}.\\
 \begin{figure}[htb]
     \centering
@@ -36,8 +37,6 @@ A typical layout of a convolutional neural network is shown in Figure~\ref{fig:c
     \caption[Convolutional neural network features hierarchy]{A hierarchy of features with as low-level features contours of faces. A more complex layer represents parts of faces. The final layer shows whole faces and can be used for classification or regression. Note that these features don't always have an intuitive meaning. Source: \cite{conf/icml/LeeGRN09}.}
     \label{fig:cnnfeatures}
 \end{figure}
-
-An example of a convolutional neural network is ConvNet, a convolutional network architecture that achieved many successes. Here, two or three of these convolutions, non-linearities and poolings are stacked. Afterwards, a convolutional layer and fully-connected layer follow.\\
 
 \section{Recurrent Neural Networks}
 Recurrent neural networks (RNNs) are used to process sequential data such as speech and language. Here, an input sequence is processed one element at a time. The first RNNs used a state vector in their units that contains history about the past elements in the sequence. This is visualized in Figure \ref{fig:rnnunrolled}.
