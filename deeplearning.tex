@@ -96,10 +96,3 @@ As we can see, the non-linearity function $tanh$ is only used once here. We also
 
 Other networks with memory include a Neural Turing Machine, in which a tape-like memory is used from which the network can read or write.\\
 Another kind is a memory network, in which a normal network is augmented by a associative memory.\\
-
-\section{Dropout}
-Dropout is a way to prevent overfitting. It does so by randomly leaving out some visible or hidden units. As a result, all incoming and outgoing connections to these temporarily removed units are also removed and the algorithm can't rely on these connections. The simplest way of determining if a unit has to be removed is by removing it with a certain probability $p$, e.g. $p=0.5$. This value can also be determined by validation. As each unit can be present or not when using the network, for $n$ units there are $2^n$ possible networks.
-By learning each time using a possibly different network, we have a way of combining multiple models where each model is trained only a few times and most weights are shared between other models. Dropout is only used when training. In the testing phase, no units are removed. Here, however, we multiple the outgoing weights of each unit by there probability $p$.
-This is done to make sure that the the \textit{expected} output for any hidden unit is the same as the actual output at test time.
-
-In deep learning there are usually millions of these weights which can each be adjusted and can influence the output.

@@ -286,8 +286,8 @@ Where $E_d$ is the error for a training example $d$, $x_{ji}$ is the $i$'th inpu
 
 \subsection{Extensions and improvements} % (fold)
 \label{ssub:extensions_and_improvements}
-\paragraph{Different loss functions} % (fold)
-\label{par:loss_functions}
+\subsubsection{Different loss functions} % (fold)
+\label{ssub:loss_functions}
 Besides just the difference between the output of the network and the expected output, additional penalties can be added to indirectly influence the values of the weights.
 Here, we typically use the term loss function instead of an error function. This loss function can contain the error as we already described, along with other functions (typically also called loss functions).\\
 
@@ -316,10 +316,10 @@ The $L_1$ and $L_2$ can also be combined, called \textit{elastic net regularizat
     &= \sum_{i=1}^k \lambda_1 \vert w_i \vert + \lambda_2 w_i^2
 \end{align}
 
-% paragraph loss_functions (end)
+% subsubsection loss_functions (end)
 
-\paragraph{Different weight updates} % (fold)
-\label{par:different_weight_updates}
+\subsubsection{Different weight updates} % (fold)
+\label{ssub:different_weight_updates}
 Here we discuss methods that, given an error function, update the weights in different ways.\\
 
 One of the most common extensions to backpropagation is to add a fraction of the previous weight update to the new weight update. This extension is called \textit{momentum}.\\
@@ -370,10 +370,16 @@ The weight update then becomes:
 \begin{equation}
     w(t+1) = w(t) - \frac{\alpha}{\sqrt{MeanSquare(w,t)} + \epsilon} Mean(w,t)
 \end{equation}
-% paragraph different_weight_updates (end)
+% subsubsection different_weight_updates (end)
+
+\subsubsection{Dropout} % (fold)
+\label{ssub:dropout}
+Dropout is a way to prevent overfitting and is mostly applied to deep learning methods, which are explained in Chapter~\ref{cha:deep_learning}. It does so by randomly leaving out some visible or hidden units. As a result, all incoming and outgoing connections to these temporarily removed units are also removed and the algorithm can't rely on these connections. The simplest way of determining if a unit has to be removed is by removing it with a certain probability $p$, e.g. $p=0.5$. This value can also be determined by validation. As each unit can be present or not when using the network, for $n$ units there are $2^n$ possible networks.
+By learning each time using a possibly different network, we have a way of combining multiple models where each model is trained only a few times and most weights are shared between other models. Dropout is only used when training. In the testing phase, no units are removed. Here, however, we multiply the outgoing weights of each unit by their probability $p$.
+This is done to make sure that the \textit{expected} output for any hidden unit is the same as the actual output at test time.
+% subsubsection dropout (end)
+
 % subsection extensions_and_improvements (end)
 % section gradient_descent_and_backpropagation (end)
-
-% Inspired by biology
 
 % section artificial_neural_networks (end)
