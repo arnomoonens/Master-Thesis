@@ -27,8 +27,8 @@ All units in a specific feature map of a layer use the same filter bank.
 An example of this process is shown in Figure~\ref{fig:cnnfilter}.
 \begin{figure}[htb]
     \centering
-    \includegraphics[width=\linewidth]{images/cnnfilter.png}
-    \caption[An example of a 3-by-3 filter applied to an image]{An example of a 3-by-3 filter applied to an image. The filter is first applied using an element-wise computation and summation on the red square shown in the image, resulting in the value on the right. Then, because the stride is $1$, we move the filter one pixel to the right (shown in the blue square) and perform the same computation. Zeros are added in order to get a feature map of the same size as the input.}
+    \includegraphics[width=.8\linewidth]{images/cnnfilter.png}
+    \caption[An example of a 3-by-3 filter applied to an image]{An example of a 3-by-3 filter applied to an image. The filter is first applied using an element-wise computation and summation on the red square shown in the image, resulting in the value on the right. Then, because the stride is $1$, we move the filter one pixel to the right (shown in the blue square) and perform the same computation. Zeros are added in order to get a feature map of the same size as the input. Source: \cite{pavlovsky2017}.}
     \label{fig:cnnfilter}
 \end{figure}
 
