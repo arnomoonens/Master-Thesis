@@ -12,7 +12,9 @@
 	    	"preview_math_template_preamble": [
 			"\\DeclareMathOperator*{\\argmax}{arg\\,max}",
 			"\\DeclareMathOperator*{\\ex}{\\mathop{{}\\mathbb{E}}}"
-		]
+		],
+	    	"binary_file_patterns": ["*.jpg", "*.jpeg", "*.png", "*.gif", "*.ttf", "*.tga", "*.dds", "*.ico", "*.eot", "*.pdf", "*.swf", "*.jar", "*.zip", ".aux", ".bbl", ".bcf", ".blg", ".loa", ".lof", ".log", ".lot", ".out", ".gz", ".xml", ".toc"],
+	    	"file_exclude_patterns": ["*.pyc", "*.pyo", "*.exe", "*.dll", "*.obj","*.o", "*.a", "*.lib", "*.so", "*.dylib", "*.ncb", "*.sdf", "*.suo", "*.pdb", "*.idb", ".DS_Store", "*.class", "*.psd", "*.db", "*.sublime-workspace", ".aux", ".bbl", ".bcf", ".blg", ".loa", ".lof", ".log", ".lot", ".out", ".gz", ".xml", ".toc"]
 	}
 
 }
