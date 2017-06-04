@@ -8,6 +8,7 @@
 	"settings": {
 		 "TEXroot": "main.tex",
 	    	"build_on_save": 1,
+	    	"use_biblatex": true,
 	    	"preview_math_template_preamble": [
 			"\\DeclareMathOperator*{\\argmax}{arg\\,max}",
 			"\\DeclareMathOperator*{\\ex}{\\mathop{{}\\mathbb{E}}}"

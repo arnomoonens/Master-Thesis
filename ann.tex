@@ -6,8 +6,8 @@ They are composed of interconnected units that can activate others using connect
 %citation?
 Artificial neural networks are loosely inspired by biological neural networks, where these units are called neurons, which are connected by axons.\\
 The higher the strength, also called weight, of connections between units, the more influence the unit has on the next one. These strengths can be manually defined. However, thanks to a method called backpropagation, weights can be learned systematically.
-The combination of artificial neural networks and backpropagation led to successful applications, for example to recognize handwritten characters \citep{journals/neco/LeCunBDHHHJ89}, for face recognition \citep{cottrell1990extracting} and to recognize spoken words \citep{journals/nn/LangWH90}.
-However, early applications also include reinforcement learning, for example to learn to balance a pendulum \citep{anderson:ieeecsm89} or to play the game \textit{Backgammon} \citep{Tesauro:92}.
+The combination of artificial neural networks and backpropagation led to successful applications, for example to recognize handwritten characters \parencite{journals/neco/LeCunBDHHHJ89}, for face recognition \parencite{cottrell1990extracting} and to recognize spoken words \parencite{journals/nn/LangWH90}.
+However, early applications also include reinforcement learning, for example to learn to balance a pendulum \parencite{anderson:ieeecsm89} or to play the game \textit{Backgammon} \parencite{Tesauro:92}.
 
 \section{Basics} % (fold)
 \label{sec:basics}
@@ -45,7 +45,7 @@ o(\overrightarrow{x}) = \begin{cases}
 \end{cases}
 \end{equation}
 It can be seen as a hyperplane where the output is $-1$ or $+1$ depending on which side the input lies.
-Using $-1$ as \texttt{false} and $+1$ as \texttt{true}, it is also possible to represent boolean functions such as \textit{AND}, \textit{OR}, \textit{NAND} and \textit{NOR}. However, some boolean functions, such as \textit{XOR} cannot be represented by a single perceptron \citep{ML}.
+Using $-1$ as \texttt{false} and $+1$ as \texttt{true}, it is also possible to represent boolean functions such as \textit{AND}, \textit{OR}, \textit{NAND} and \textit{NOR}. However, some boolean functions, such as \textit{XOR} cannot be represented by a single perceptron \parencite{ML}.
 
 A schematic using the perceptron unit is shown in Figure~\ref{fig:perceptron}.\\
 \begin{figure}[htb]
@@ -59,7 +59,7 @@ A schematic using the perceptron unit is shown in Figure~\ref{fig:perceptron}.\\
 \subsection{Sigmoid} % (fold)
 \label{ssub:sigmoid}
 A disadvantage of the perceptron unit is that it is not differentiable in the whole domain (specifically at $x=0$). Why this is a problem will become clear in Section~\ref{sec:gradient_descent_and_backpropagation}.\\
-To solve this problem, a sigmoid function can be used. A sigmoid function is a differentiable function that is monotonically increasing and approaches an asymptote for $x \to \pm\infty$ \citep{series/lncs/LeCunBOM12}. As a result, these can still separate the input space in 2 parts.\\
+To solve this problem, a sigmoid function can be used. A sigmoid function is a differentiable function that is monotonically increasing and approaches an asymptote for $x \to \pm \infty$ \parencite{lecun2012neural}. As a result, these can still separate the input space in 2 parts.\\
 In the artificial neural networks domain, the \textit{sigmoid function} generally refers to a variation of the logistic function and is denoted by $\sigma(x)$. Its formula is:
 \begin{align}
     \begin{split}
@@ -114,7 +114,7 @@ The ReLU function is shown in Figure~\ref{fig:relu}.
     \label{fig:relu}
 \end{figure}
 
-To solve the problem of the derivative being zero at $z<0$, the Leaky ReLU was invented \citep{maas2013rectifier}. Here, instead of the output being zero for $z<0$, the output has a small slope, defined by a constant $\alpha$:
+To solve the problem of the derivative being zero at $z<0$, the Leaky ReLU was invented \parencite{maas2013rectifier}. Here, instead of the output being zero for $z<0$, the output has a small slope, defined by a constant $\alpha$:
 \begin{equation}
     f(z) = \begin{cases}
         z & \text{if $z \ge 0$}\\
@@ -132,7 +132,7 @@ An example of a Leaky ReLU is shown in Figure~\ref{fig:lrelu}.\\
 % subsection rectified_linear_unit (end)
 % section activation_functions (end)
 
-A variation of a Leaky ReLU, called Parametric Rectified Unit, also has a small slope for $x<0$, but with an $\alpha$ that can be learned \citep{journals/corr/HeZR015}. Other variants use a random slope for values below zero \citep{journals/corr/XuWCL15}, add noise a ReLU \citep{conf/icml/NairH10} or use an exponential function for values below zero \citep{journals/corr/ClevertUH15}:
+A variation of a Leaky ReLU, called Parametric Rectified Unit, also has a small slope for $x<0$, but with an $\alpha$ that can be learned \parencite{journals/corr/HeZR015}. Other variants use a random slope for values below zero \parencite{journals/corr/XuWCL15}, add noise a ReLU \parencite{conf/icml/NairH10} or use an exponential function for values below zero \parencite{journals/corr/ClevertUH15}:
 \begin{equation}
     f(z) = \begin{cases}
         z & \text{if $z \ge 0$}\\
@@ -184,7 +184,7 @@ However, it is possible that, given a combination of weight values, any change i
 \end{figure}
 
 For artificial neural networks without a hidden layer, such as a single perceptron unit, that use the MSE when updating weights, every local minimum is also a global minimum. However, when using hidden layers, this might not always be the case.\\
-These local minima might seem like a problem for artificial neural networks, but in practice they rarely are, according to theoretical and empirical results \citep{choromanska2015loss}.
+These local minima might seem like a problem for artificial neural networks, but in practice they rarely are, according to theoretical and empirical results \parencite{choromanska2015loss}.
 Instead, there are more saddle points. Here, the gradient is zero and the error goes up when some weights are changed and goes down for others. Generally a lot of such points are present, but they all have the same value for the objective function (i.e. the error function).\\
 
 A small value of $\eta$ leads to slow convergence, while a high value can cause the algorithm to overstep a local minimum. Because of this, the some algorithms gradually decrease the learning rate as the number of weight updates grows.\\
@@ -217,7 +217,7 @@ Using the resulting formula of Equation~\ref{eq:gradderiv} along with Equation~\
 \end{equation}
 As we can see, for each weight vector, we need to apply the model to the input of each training example. For this reason, this version of gradient descent is also often called \textit{batch gradient descent}. Of course, the outputs only need to be computed once per weight vector update as they do not depend on which specific weight vector component that we are updating.\\
 
-Still, each time using every training example for the weight vector update can lead to slow convergence to a local minimum. Furthermore, in case of multiple local minima in the error surface, it is possible that the gradient descent algorithm does not stop at the global minimum \citep{ML}.
+Still, each time using every training example for the weight vector update can lead to slow convergence to a local minimum. Furthermore, in case of multiple local minima in the error surface, it is possible that the gradient descent algorithm does not stop at the global minimum \parencite{ML}.
 % subsection gradient_descent (end)
 
 \subsection{Stochastic gradient descent} % (fold)
@@ -232,14 +232,14 @@ The update for a single weight vector component when using a linear unit is then
 \end{equation}
 The idea here is that these weight updates, when having iterated over all the training examples, will be a decent approximation relative to using our original error function. Note that the update using one training example affects the error of the next training example.\\
 
-By making the learning rate small enough, usually smaller than with batch gradient descent, it is possible to approximate true gradient descent arbitrarily closely \citep{ML}.
+By making the learning rate small enough, usually smaller than with batch gradient descent, it is possible to approximate true gradient descent arbitrarily closely \parencite{ML}.
 It is also computationally cheaper because each time we only handle one training example.
 Additionally, stochastic gradient descent can sometimes avoid being stuck in local minima because it uses various $\nabla E_j(\overrightarrow{w})$ instead of just $\nabla E(\overrightarrow{w})$ to move in the hypothesis space.
 % subsection stochastic_gradient_descent (end)
 
 \subsection{Backpropagation} % (fold)
 \label{ssub:backpropagation}
-The backpropagation algorithm uses gradient descent and can learn weights of a multilayer network with possibly multiple units in each layer \citep{rumelhart1986learning}.
+The backpropagation algorithm uses gradient descent and can learn weights of a multilayer network with possibly multiple units in each layer \parencite{rumelhart1986learning}.
 
 We say that, for multilayer networks, $L>2$, with $L$ the number of layers in the network. This means that there are other (hidden) layers besides the input and output layer. Such a network was already depicted in Figure~\ref{fig:ann}.
 
@@ -293,7 +293,7 @@ Where $E_d$ is the error for a training example $d$, $x_{ji}$ is the $i$'th inpu
 Besides just the difference between the output of the network and the expected output, additional penalties can be added to indirectly influence the values of the weights. This is generally done in order to prevent overfitting. Overfitting means that the performance of the algorithm on the data on which we trained (called \textit{training data}) is significantly better than the performance on held-out data on which we didn't train (called \textit{test data}). The algorithm captures too much details or noise in the training data. Using penalties, we can force the algorithm to focus on generalization rather than specialization.\\
 Here, we typically use the term \emph{loss function} instead of an error function. This loss function can contain the error as we already described, along with other functions (typically also called loss functions).\\
 
-A popular loss function is called the $L_1$ norm (also called Lasso) \citep{tibshirani1996regression}. For each weight $w$, we add the value $\lambda \vert w \vert$ to the loss. The $L_1$ norm is then defined as such:
+A popular loss function is called the $L_1$ norm (also called Lasso) \parencite{tibshirani1996regression}. For each weight $w$, we add the value $\lambda \vert w \vert$ to the loss. The $L_1$ norm is then defined as such:
 \begin{equation}
     L_1(\overrightarrow{w}) = \lambda \sum_{i=1}^k \vert w_i \vert
 \end{equation}
@@ -302,7 +302,7 @@ As the loss function, we then get:
 \begin{equation}
     L(\overrightarrow{w}) = E(\overrightarrow{w}) + L_1(\overrightarrow{w})
 \end{equation}
-This norm has the property of leading to sparse weight vectors \citep{journals/ftml/BachJMO12}. This means that a lot of weights are zero or close to zero and the focus is on finding a subset of the must important units.
+This norm has the property of leading to sparse weight vectors \parencite{journals/ftml/BachJMO12}. This means that a lot of weights are zero or close to zero and the focus is on finding a subset of the must important units.
 %neurons with L1 regularization end up using only a sparse subset of their most important inputs and become nearly invariant to the “noisy” inputs
 
 Instead of using the absolute value, the $L_2$ norm sums over squared weights. It has the following form:
@@ -312,7 +312,7 @@ Instead of using the absolute value, the $L_2$ norm sums over squared weights. I
 The fraction $\frac{1}{2}$ is often used such that the derivative is $\lambda w$ instead of $2 \lambda w$. The $L_2$ loss focuses more on penalizing high weights. It leads to diffusion of the weights and can indirectly force the network to use all the units of the network to form the correct output.
 % notice that during gradient descent parameter update, using the L2 regularization ultimately means that every weight is decayed linearly: W += -lambda * W towards zero.
 
-The $L_1$ and $L_2$ can also be combined, called \textit{elastic net regularization} \citep{hastie2012ElasticNet}:
+The $L_1$ and $L_2$ can also be combined, called \textit{elastic net regularization} \parencite{hastie2012ElasticNet}:
 \begin{align}
     L_E (\overrightarrow{w}) &= L_1(\overrightarrow{w}) + L_2(\overrightarrow{w})\\
     &= \sum_{i=1}^k \lambda_1 \vert w_i \vert + \lambda_2 w_i^2
@@ -335,7 +335,7 @@ Thanks to momentum, it is possible to get past regions where the gradient is zer
 This is analogous to a ball rolling down a surface but keeps rolling a bit on a flat surface afterwards. In the real world, an object in motion will stay in motion, unless there is a force applied to it.
 Here, that force is the gradient. It is also possible to get past small local minima and it can speed up learning when the gradient does not change. Again, this is analogous to a ball that goes downhill and keeps gaining speed.\\
 
-The weight update of Root Mean Square Propagation (RMSProp) is quite different from stochastic gradient descent and only uses the sign of the gradient to update the weights \citep{Tieleman2012LectureMagnitude.}.
+The weight update of Root Mean Square Propagation (RMSProp) is quite different from stochastic gradient descent and only uses the sign of the gradient to update the weights \parencite{Tieleman2012LectureMagnitude.}.
 This allows us to escape from plateaus more quickly. Furthermore, the learning rate can be different for each weight.
 For example, we can multiply the learning rate of a certain weight by a factor greater than one if its last 2 gradients agreed on the sign, and multiply the learning rate by a value less than $1$ otherwise.
 This means that, when the gradients agree on the direction, we give them more influence. If they are not consistent and disagree in subsequent steps, we decrease the influence. We can also put a limit on the learning rate as to not let it grow to excessively low or high amounts.
@@ -352,7 +352,7 @@ w(t+1) &= w(t) - \frac{\alpha}{\sqrt{MeanSquare(w,t)}}\frac{\partial E}{\partial
 \end{subequations}
 Where $w(t)$ is a weight at time step $t$, $\frac{\partial E}{\partial w(t)}$ is its gradient, $\alpha$ is the learning rate and $w_{t+1}$ is the new weight value. The past squared gradients are decayed by a value $\gamma$. Usually $\gamma=0.9$. It is also possible to add a small number $\epsilon$ (e.g. $\epsilon = 10^{-8}$) to the denominator in Equation~\ref{eq:rmsprop:weightupdate} to avoid division by zero.\\
 
-Adaptive Moment Estimation (Adam) \citep{DBLP:journals/corr/KingmaB14} also uses an adaptive learning rate for each weight and an exponentially decaying average of previous squared gradients (also called the second moment). In addition, an exponentially decaying average of past gradients (also called the first moment) is also stored:
+Adaptive Moment Estimation (Adam) \parencite{DBLP:journals/corr/KingmaB14} also uses an adaptive learning rate for each weight and an exponentially decaying average of previous squared gradients (also called the second moment). In addition, an exponentially decaying average of past gradients (also called the first moment) is also stored:
 \begin{subequations}
 \label{eq:adam:means}
 \begin{align}

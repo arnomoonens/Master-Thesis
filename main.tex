@@ -1,7 +1,6 @@
 \documentclass[a4paper, 12pt]{report}
-\usepackage{natbib}
-\usepackage[english]{babel}
-\usepackage[utf8x]{inputenc}
+\usepackage[american]{babel}
+\usepackage[utf8]{inputenc}
 \usepackage{amsmath}
 \usepackage{graphicx}
 \usepackage[colorinlistoftodos]{todonotes}
@@ -31,6 +30,10 @@
 {0pt}{3.25ex plus 1ex minus .2ex}{1.5ex plus .2ex}
 
 \usepackage{vub}
+\usepackage{csquotes}
+\usepackage[backend=biber, style=apa]{biblatex}
+\DeclareLanguageMapping{american}{american-apa}
+\addbibresource{Mendeley.bib}
 
 \begin{document}
 \input{titlepage}
@@ -72,6 +75,5 @@ Abstract
 
 \include{appendices}
 
-\bibliographystyle{apalike}
-\bibliography{Mendeley.bib}
+\printbibliography
 \end{document}
