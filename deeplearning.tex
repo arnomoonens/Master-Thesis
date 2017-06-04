@@ -15,10 +15,24 @@ Most of these modules contain weights an can be trained, like explained in Secti
 Here, we explain artificial neural networks capable of learning representations using multi-dimensional arrays and sequential data, following the explanation by \cite{LeCun2015DeepLearning}.
 
 \section{Convolutional neural networks}
-Convolutional neural networks are neural networks that are inspired by the way the visual cortex of an animal works. These networks get as input data in multi-dimensional arrays, such as 2-dimensional images with pixel intensities as the third dimension for example.\\
-A convolutional neural network is structured as a series of stages, which are combinations of layers. In the first stages, convolutional layers and pooling layers are used.
-In a convolutional layer, units are organized in feature maps. Each of these units is connected to a patch in the feature maps of the previous layer through a matrix of weights that is called the filter bank. The filter bank matrix then slides over the feature map, does an element-wise computation of the 2 matrices and sums the results. The filter bank is then moved by a certain amount, called the stride. All units in a specific feature map of a layer use the same filter bank.
-This is done because local groups of values may be correlated and as such may have the same weights. This reduces the amount of weights that need to be trained. Furthermore, certain concepts and local statistics (of images) may be invariant to the location. A certain pattern or motif in an image might appear in different places of the image but may have the same meaning.\\
+Convolutional neural networks are neural networks that are inspired by the way the visual cortex of an animal works.
+These networks get as input data in multi-dimensional arrays, such as 2-dimensional images with pixel intensities as the third dimension for example.\\
+A convolutional neural network is structured as a series of stages, which are combinations of layers.
+In the first stages, convolutional layers and pooling layers are used.
+In a convolutional layer, units are organized in feature maps.
+Each of these units is connected to a patch in the feature maps of the previous layer through a matrix of weights that is called the \emph{filter bank} or the \textit{kernel}.
+The filter bank matrix then slides over the feature map, does an element-wise computation of the 2 matrices and sums the results.
+The filter bank is then moved by a certain amount, called the stride.
+All units in a specific feature map of a layer use the same filter bank.
+An example of this process is shown in Figure~\ref{fig:cnnfilter}.
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=\linewidth]{images/cnnfilter.png}
+    \caption[An example of a 3-by-3 filter applied to an image]{An example of a 3-by-3 filter applied to an image. The filter is first applied using an element-wise computation and summation on the red square shown in the image, resulting in the value on the right. Then, because the stride is $1$, we move the filter one pixel to the right (shown in the blue square) and perform the same computation. Zeros are added in order to get a feature map of the same size as the input.}
+    \label{fig:cnnfilter}
+\end{figure}
+
+These filters are used because local groups of values may be correlated and as such may have the same weights. This reduces the amount of weights that need to be trained. Furthermore, certain concepts and local statistics (of images) may be invariant to the location. A certain pattern or motif in an image might appear in different places of the image but may have the same meaning.\\
 The result of this convolutional operation (which is linear) operation is again a feature map and can then be passed to a non-linear function such as a \textit{ReLU}.\\
 
 These convolutional layers are then combined with pooling layers. Instead of detecting local conjunctions of features from the previous layer, pooling tries to merge semantically similar features into one. This is necessary because the positions of features that form a motif are not exact and can vary somewhat. It may not matter for example that an object is close or far in an image.
