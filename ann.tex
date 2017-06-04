@@ -140,8 +140,15 @@ A variation of a Leaky ReLU, called Parametric Rectified Unit, also has a small 
         \end{cases}
 \end{equation}
 
-\todo{Add softmax (used in my network)}
-
+\subsection{Softmax} % (fold)
+\label{sub:softmax}
+The softmax activation function is different from the previous activation functions that were described because here the output of one neuron depends on other neurons of the same layer:
+\begin{equation}
+    f(z_i) = \frac{e^{z_i}}{\sum_j e{^z_j}}
+\end{equation}
+Where $z_i$ is the weighted sum for the current output to be computed and $z_j$ is another weighted sum of another neuron in the same layer.\\
+ As we can see, the softmax function normalizes the outputs and results in outputs ranging between $0$ and $1$. Because of this, we can use the outputs as if they are probabilities. This is useful in a task where an action needs to be taken probabilistically and each such action is tied to a probability which is the output of the artificial neural network.
+% subsection softmax (end)
 
 \section{Gradient descent and backpropagation} % (fold)
 \label{sec:gradient_descent_and_backpropagation}
