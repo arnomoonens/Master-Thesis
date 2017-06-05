@@ -1,20 +1,91 @@
 {
+	"build_systems":
+	[
+		{
+			"file_regex": "^[ ]*File \"(...*?)\", line ([0-9]*)",
+			"name": "Anaconda Python Builder",
+			"selector": "source.python",
+			"shell_cmd": "\"python\" -u \"$file\""
+		}
+	],
 	"folders":
 	[
 		{
 			"path": "."
 		}
 	],
-	"settings": {
-		 "TEXroot": "main.tex",
-	    	"build_on_save": 1,
-	    	"use_biblatex": true,
-	    	"preview_math_template_preamble": [
+	"settings":
+	{
+		"TEXroot": "main.tex",
+		"binary_file_patterns":
+		[
+			"*.jpg",
+			"*.jpeg",
+			"*.png",
+			"*.gif",
+			"*.ttf",
+			"*.tga",
+			"*.dds",
+			"*.ico",
+			"*.eot",
+			"*.pdf",
+			"*.swf",
+			"*.jar",
+			"*.zip",
+			".aux",
+			".bbl",
+			".bcf",
+			".blg",
+			".loa",
+			".lof",
+			".log",
+			".lot",
+			".out",
+			".gz",
+			".xml",
+			".toc"
+		],
+		"build_on_save": 1,
+		"file_exclude_patterns":
+		[
+			"*.pyc",
+			"*.pyo",
+			"*.exe",
+			"*.dll",
+			"*.obj",
+			"*.o",
+			"*.a",
+			"*.lib",
+			"*.so",
+			"*.dylib",
+			"*.ncb",
+			"*.sdf",
+			"*.suo",
+			"*.pdb",
+			"*.idb",
+			".DS_Store",
+			"*.class",
+			"*.psd",
+			"*.db",
+			"*.sublime-workspace",
+			".aux",
+			".bbl",
+			".bcf",
+			".blg",
+			".loa",
+			".lof",
+			".log",
+			".lot",
+			".out",
+			".gz",
+			".xml",
+			".toc"
+		],
+		"preview_math_template_preamble":
+		[
 			"\\DeclareMathOperator*{\\argmax}{arg\\,max}",
 			"\\DeclareMathOperator*{\\ex}{\\mathop{{}\\mathbb{E}}}"
 		],
-	    	"binary_file_patterns": ["*.jpg", "*.jpeg", "*.png", "*.gif", "*.ttf", "*.tga", "*.dds", "*.ico", "*.eot", "*.pdf", "*.swf", "*.jar", "*.zip", ".aux", ".bbl", ".bcf", ".blg", ".loa", ".lof", ".log", ".lot", ".out", ".gz", ".xml", ".toc"],
-	    	"file_exclude_patterns": ["*.pyc", "*.pyo", "*.exe", "*.dll", "*.obj","*.o", "*.a", "*.lib", "*.so", "*.dylib", "*.ncb", "*.sdf", "*.suo", "*.pdb", "*.idb", ".DS_Store", "*.class", "*.psd", "*.db", "*.sublime-workspace", ".aux", ".bbl", ".bcf", ".blg", ".loa", ".lof", ".log", ".lot", ".out", ".gz", ".xml", ".toc"]
+		"use_biblatex": true
 	}
-
 }
