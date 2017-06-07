@@ -2,6 +2,7 @@
 \usepackage[american]{babel}
 \usepackage[utf8]{inputenc}
 \usepackage{amsmath}
+\usepackage{bm} % To put math text in bold
 \usepackage{graphicx}
 \usepackage[colorinlistoftodos]{todonotes}
 \usepackage{float}
@@ -39,8 +40,12 @@
 \begin{document}
 \frontmatter
 \include{titlepage}
-\chapter{Abstract}
+\chapter*{Abstract}
 Deep reinforcement learning allows for learning to perform a task using high-dimensional input such as images. However, it is sometimes necessary to learn variations of a task, for which certain knowledge can be transferred. In this thesis, we learn multiple variations of a task in parallel using both shared knowledge and task-specific knowledge. This knowledge is then transferred to a new task. In experiments, we saw that learning first on a set of source tasks significantly improves performance on a new task.
+
+\chapter*{Acknowledgments}
+% I would like to thank my promotor Prof. Dr. Peter Vrancx for always giving useful feedback and helping me when I was stuck.
+% I would also like to thank my friends and family for always supporting me.
 
 %\keywords{reinforcement learning, knowledge transfer}
 
@@ -64,8 +69,6 @@ Deep reinforcement learning allows for learning to perform a task using high-dim
 \include{expsetup}
 \include{conclusion}
 \backmatter
-\subsubsection*{Acknowledgments}
-I would like to thank my promotor Prof. Dr. Peter Vrancx for always giving useful feedback and helping me when I was stuck. I would also like to thank my friends and family for supporting me.
 \include{appendices}
 
 \printbibliography
