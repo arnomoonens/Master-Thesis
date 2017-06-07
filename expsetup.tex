@@ -1,9 +1,10 @@
 \chapter{Experimental setup}
 Experiments were executed on variations of the \textit{Cart-pole} environment and on variations of the \textit{Acrobot} environment.\\
 
-\section{CartPole environment} % (fold)
+\section{Cart-pole environment} % (fold)
 \label{sub:cartpole_environment}
-In the 2-dimensional Cart-Pole environment, a pole is placed vertically on a cart. The goal in this environment is to keep the pole balanced vertically (i.e. keep the angle of the pole between thresholds) and to keep the cart between 2 borders.
+In the 2-dimensional Cart-pole environment, a pole is placed vertically on a cart.
+The goal in this environment is to keep the pole balanced vertically (i.e. keep the angle of the pole between thresholds) and to keep the cart between 2 borders.
 The state is defined by 4 continuous-valued attributes: the position of the cart, the velocity of the cart, the angle of the pole and the angular velocity of the pole.
 A discrete value of $1$ is given as a reward each time the pole is balanced and the cart is between bounds.
 The episode ends either when these requirements are not fulfilled anymore or 200 steps have been executed.
@@ -12,7 +13,7 @@ The environment is visualized in Figure~\ref{fig:cartpole}.
 \begin{figure}[htb]
     \centering
     \includegraphics[width=.6\linewidth]{images/cartpole.png}
-    \caption[Cart-Pole environment]{Cart-Pole environment. $F$ is the force applied to the cart when taking an action. $x$ is the distance of the cart from the center and $\dot{x}$ is its velocity. $\theta$ is the angle of the pole and $\dot{\theta}$ refers to its angular velocity. Source: \cite{grant1990modelling}.}
+    \caption[Cart-pole environment]{Cart-pole environment. $F$ is the force applied to the cart when taking an action. $x$ is the distance of the cart from the center and $\dot{x}$ is its velocity. $\theta$ is the angle of the pole and $\dot{\theta}$ refers to its angular velocity. Source: \cite{grant1990modelling}.}
     \label{fig:cartpole}
 \end{figure}
 For executing the experiments, an implementation of this environment by \cite{Brockman2016OpenAIGym} was used.\\
@@ -40,7 +41,8 @@ Several experiments were executed, depending on the algorithm, the environment, 
 
 In the first experiment, first a number of environments are randomly generated. We try to learn with both 5 and 10 environments.
 The environment for each task can differ for a predefined number of attributes, of which the values can each be in a certain range. For a cart-pole task, these are the mass of the cart, the mass of the pole and the length of the pole.\\
-Then a number of source tasks are learned that can update both the shared knowledge base and their own sparse representation. After a number of epochs, i.e. updates to these variables, we stop with learning these tasks.
+Then a number of source tasks are learned that can update both the shared knowledge base and their own sparse representation.
+After a number of epochs, i.e. updates to these variables, we stop with learning these tasks.
 Instead, we learn to solve a new task, the target task, for which we hadn't learned its sparse representation yet. Here however, only the sparse representation can be updated and not the shared knowledge base.\\
 
 In the second experiment, besides transferring the shared knowledge base, a sparse representation was also transferred.
@@ -56,87 +58,140 @@ No sparseness on the weights was enforced.\\
 All three experiments were executed on the cart-pole and acrobot environment.
 Each experiment consisted of 100 runs, each time using a different set of environments and thus problems to solve.\\
 Afterwards the rewards are averaged over all the runs.\\
-Trajectories for both sets of tasks contained of maximally 200 or 500 steps depending on the type of environment. This could be less in case the environment was in an end state. In case of the cart-pole environment, this can mean for example that the cart tried to cross the left or right border or that the pole fell down.\\
+Trajectories for both sets of tasks contained of maximally 200 or 500 steps depending on the type of environment.
+This could be less in case the environment was in an end state.
+In case of the cart-pole environment, this can mean for example that the cart tried to cross the left or right border or that the pole fell down.\\
 Hyperparameters, such as the learning rate of neural networks, were chosen by iteratively executing the previously mentioned experiment. Possible values for each hyperparameter were chosen manually.
 % section methodology (end)
 
 \section{Results}
+\todo{Improve this}
 Here we compare the results of our transfer learning algorithm with those of the \textit{REINFORCE} algorithm.
+
+\subsection{Parallel and sequential knowledge transfer} % (fold)
+\label{sub:parallel_and_sequential_knowledge_transfer}
+We first compare the performance of the algorithm that learns the source tasks in parallel with the one that learns them sequentially. We do this for the cart-pole environment in order to determine which version of the algorithm to use for further experiments.
+
+The performance of both versions of the algorithm and for both the source tasks and target task is shown in Figure~\ref{fig:CartPole:reward_akt-kt_all_5tasks}.
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=.8\linewidth]{images/results/CartPole/kt_akt/reward_source-target_5tasks.png}
+    \caption[Learning curves for the parallel and sequential version of our algorithm applied to the \textit{cart-pole} environment]{Learning curves for the parallel and sequential version of our algorithm applied to the \textit{cart-pole} environment. Until epoch 100, the mean performance on the source tasks is shown. Afterwards, the performance on the target task is shown.}
+    \label{fig:CartPole:reward_akt-kt_all_5tasks}
+\end{figure}
+Here, we see that, on average, the parallel version of our algorithm converges faster than the sequential version.
+To find out which version is better, we first compare the median of the area under curve (AUC) over all the runs.
+For the sequential version, the AUC is $19446.096$, while it is $19655.268$ for the parallel version.
+We now use a Wilcoxon rank-sum test with the null-hypothesis that there is no.
+We get $W=8.244$ and $1.665*10^{-16}$.
+With a significance level of $0.05$, we can reject the null-hypothesis and say that the medians of the 2 versions are different.
+By observing those medians, we can say that the parallel version is better.\\
+For the following experiments, when referring to "our transfer learning algorithm", the parallel version will be used.
+% subsection parallel_and_sequential_knowledge_transfer (end)
+
 \subsection{Without sparse representation transfer} % (fold)
 \label{sub:cartpole:without_sparse_representation_transfer}
-We first explore the differences between learning directly on a target task and first learning on source tasks (i.e. using our transfer learning algorithm), using the metrics that we defined in Section~\ref{sub:tl_metrics}. We consider both 5 and 10 source tasks. The algorithms using 5 source tasks and 10 source tasks are referred to as respectively \textit{TLA 5} and \textit{TLA 10}.
+We first explore the differences between learning directly on a target task and first learning on source tasks (i.e. using our transfer learning algorithm), using the metrics that we defined in Section~\ref{sub:tl_metrics}.
+We consider both 5 and 10 source tasks.
+The algorithms using 5 source tasks and 10 source tasks are referred to as respectively \textit{TLA 5} and \textit{TLA 10}.
 For the regular algorithm, we use the \textit{REINFORCE} that was discussed in Section~\ref{sub:rl_policy_gradient}.
 
-\subsubsection{CartPole} % (fold)
+\subsubsection{Cart-pole} % (fold)
 \label{ssub:without_sparse_representation_transfer:cartpole}
 The learning curve of both algorithms on the target task is visualized in Figure~\ref{fig:CartPole:reward_target_re-akt5-akt10}.
-\begin{figure}[H]
+\begin{figure}[htb]
     \centering
     \includegraphics[width=.8\linewidth]{images/results/CartPole/no_sparse_transfer/reward_target_re-akt5-akt10.png}
-    \caption[Learning curves for \textit{REINFORCE} and \textit{TLA} for the \emph{CartPole} environment]{Learning curves for the \textit{CartPole} environment of the \textit{REINFORCE} algorithm and our transfer learning algorithm (\textit{TLA}) with 5 source tasks (shown as \textit{TLA 5}) and 10 source tasks (shown as \textit{TLA 10}). The learning curves are only shown until epoch 60 in order to better show the initial performance of the algorithms. All the algorithms converged and achieved the same rewards after this epoch.}
+    \caption[Learning curves for \textit{REINFORCE} and \textit{TLA} for the \emph{Cart-pole} environment]{Learning curves for the \textit{Cart-pole} environment of the \textit{REINFORCE} algorithm and our transfer learning algorithm (\textit{TLA}) with 5 source tasks (shown as \textit{TLA 5}) and 10 source tasks (shown as \textit{TLA 10}). The learning curves are only shown until epoch 60 in order to better show the initial performance of the algorithms. All the algorithms converged and achieved the same rewards after this epoch.}
     \label{fig:CartPole:reward_target_re-akt5-akt10}
 \end{figure}
-It can be seen visually that, on average, in all the configurations the jumpstart performance is about the same. This is confirmed by using the Wilcoxon signed-rank test. The null-hypothesis is that there is no difference between the jumpstart performance of 2 algorithms.
-\todo[inline]{Complete table}
-The p-values for all combinations are shown in Table~\ref{tab:nosparse:pvalues}:
+It can be seen visually that, on average, in all the configurations the jumpstart performance is about the same. We now compare the means, standard deviations and the medians of the jumpstart performances of the algorithms. This is shown in Table~\ref{tab:cartpole:nosparse:stats}.
 \begin{table}[htb]
     \centering
     \begin{tabular}{llccc}
     \hline
-    Algorithm & \textit{REINFORCE} & \textit{TLA 5} & \textit{TLA 10} \\
+    Algorithm & Mean & Standard deviation & Median \\
     \hline
-       \textit{REINFORCE}  & NA & & \\
-       \textit{TLA 5} & $0.413$ & NA & \\
-       \textit{TLA 10} & $0.097$ & $0.415$ & NA \\
+       REINFORCE  & $86.060$ & $25.330$ & $86.886$ \\
+       \textit{TLA 5} & $158.237$ & $23.153$ & $163.840$ \\
+       \textit{TLA 10} & $\bm{165.120}$ & $\bm{21.955}$ & $\bm{169.034}$ \\
     \hline
     \end{tabular}
-    \caption{P-values for the Wilcoxon signed-rank test using different algorithms.}
-    \label{tab:nosparse:pvalues}
+    \caption{Mean, standard deviation and median of the jumpstart performances for \textit{REINFORCE}, \textit{TLA 5} and \textit{TLA 10} applied to the cart-pole environment.}
+    \label{tab:nosparse:stats}
 \end{table}
+It can be seen that the best jumpstart performance is achieved using \textit{TLA 10}, as it has the highest mean and median and varies the least. As it learned on more source tasks, it has more samples from the distribution of environment parameters and thus it can cover more kinds of task variations. \textit{REINFORCE} performs the worst, as it must learn without any prior learned knowledge.
 
-With a significance level of $0.05$, we can say that the null-hypotheses should be retained and there is no difference between the jumpstart performances of any of the algorithms.\\
-However, we can see again in Figure~\ref{fig:CartPole:reward_target_re-akt5-akt10} that \textit{REINFORCE} takes a lot longer on average to reach the maximum reward (which is $200$ in this environment). As a result, the area under curve for \textit{REINFORCE} is $18170.243$ whereas it is $19603.523$ and $19329.318$ for respectively \textit{TLA 5} and \textit{TLA 10}.\\
+% \todo[inline]{Remove table}
+% The p-values for all combinations are shown in Table~\ref{tab:nosparse:pvalues}.
+% \begin{table}[htb]
+%     \centering
+%     \begin{tabular}{llccc}
+%     \hline
+%     Algorithm & \textit{REINFORCE} & \textit{TLA 5} & \textit{TLA 10} \\
+%     \hline
+%        \textit{REINFORCE}  & NA & & \\
+%        \textit{TLA 5} & $0.413$ & NA & \\
+%        \textit{TLA 10} & $0.097$ & $0.415$ & NA \\
+%     \hline
+%     \end{tabular}
+%     \caption{P-values for the Wilcoxon signed-rank test using different algorithms.}
+%     \label{tab:nosparse:pvalues}
+% \end{table}
+% This is confirmed by using the Wilcoxon signed-rank test.
+% The null-hypothesis is that there is no difference between the jumpstart performance of 2 algorithms.
+% With a significance level of $0.05$, we can say that the null-hypotheses should be retained and there is no difference between the jumpstart performances of any of the algorithms.\\
+We can also see in Figure~\ref{fig:CartPole:reward_target_re-akt5-akt10} that \textit{REINFORCE} takes longer on average to reach the maximum reward (which is $200$ in this environment). As a result, the area under curve for \textit{REINFORCE} is $18170.243$ whereas it is $19130.824$ and $19329.318$ for respectively \textit{TLA 5} and \textit{TLA 10}.\\
 In every configuration, the maximum reward ($200$) is reached eventually and as such they have the same asymptotic performance.\\
 
 \subsubsection{Acrobot} % (fold)
 \label{ssub:without_sparse_representation_transfer:acrobot}
-We will start with the same experiment as in Section~\ref{ssub:without_sparse_representation_transfer:cartpole}, but with the \textit{Acrobot} environment.
-As can be seen in Figure~\ref{fig:Acrobot:reward_target_re-akt5-akt10}, the average performance of  the \textit{REINFORCE} algorithm on the target task is different from \textit{TLA 5} and \textit{TLA 10}.
-\begin{figure}[H]
+We will do with the same experiment as in Section~\ref{ssub:without_sparse_representation_transfer:cartpole}, but with the \textit{Acrobot} environment.
+As can be seen in Figure~\ref{fig:Acrobot:reward_target_re-akt5-akt10}, the average performance of the \textit{REINFORCE} algorithm on the target task is different from \textit{TLA 5} and \textit{TLA 10}.
+\begin{figure}[htb]
     \centering
     \includegraphics[width=.8\linewidth]{images/results/Acrobot/no_sparse_transfer/reward_target_re-akt5-akt10.png}
     \caption[Learning curves for the \textit{Acrobot} environment of \textit{REINFORCE} and \textit{TLA} for the \emph{Acrobot} environment]{Learning curves of the \textit{REINFORCE} algorithm and our transfer learning algorithm (\textit{TLA}) with 5 source tasks (shown as \textit{TLA 5}) and 10 source tasks (shown as \textit{TLA 10}).}
     \label{fig:Acrobot:reward_target_re-akt5-akt10}
 \end{figure}
-
-We will now discuss how exactly the behavior of these algorithms differ.\\
-We start by looking at the jumpstart performances. Again, we use the Wilcoxon signed-rank test with the null-hypothesis that there is no difference between the initial performances of the algorithms. The resulting p-values are shown in Table~\ref{tab:sparse:pvalues}.
+We will now discuss how exactly the behavior of these algorithms differ, starting by looking at the jumpstart performances. Statistics of the jumpstart performances are shown in Table~\ref{tab:acrobot:nosparse:stats}.
+\begin{table}[htb]
+    \centering
+    \begin{tabular}{llccc}
+    \hline
+    Algorithm & Mean & Standard deviation & Median \\
+    \hline
+       \textit{REINFORCE}  & $-361.209$ & $\bm{159.760}$ & $-490.063$ \\
+       \textit{TLA 5} & $-380.222$ & $160.589$ & $-500.000$ \\
+       \textit{TLA 10} & $\bm{-339.530}$ & $168.845$ & $\bm{-419.571}$ \\
+    \hline
+    \end{tabular}
+    \caption{Mean, standard deviation and median of the jumpstart performances for \textit{REINFORCE}, \textit{TLA 5} and \textit{TLA 10} applied to the Acrobot environment.}
+    \label{tab:acrobot:nosparse:stats}
+\end{table}
+We see that \textit{TLA 10} performs the best. However, as seen by the standard deviations, the results can differ considerably. We will see if the differences in medians are significant by using a Wilcoxon rank-sum test with for each pair of algorithms the null-hypothesis that there is no difference between them.
+The resulting p-values are shown in Table~\ref{tab:sparse:pvalues}.
 \begin{table}[htb]
     \centering
     \begin{tabular}{llccc}
     \hline
     Algorithm & \textit{REINFORCE} & \textit{TLA 5} & \textit{TLA 10} \\
     \hline
-       \textit{REINFORCE}  & NA & & \\
-       \textit{TLA 5} & $0.0047$ & NA & \\
-       \textit{TLA 10} & $0.8143$ & $0.0032$ & NA \\
+       \textit{REINFORCE}  & & & \\
+       \textit{TLA 5} & $0.512$ & & \\
+       \textit{TLA 10} & $0.426$ & $0.179$ & \\
     \hline
     \end{tabular}
     \caption{P-values for the Wilcoxon signed-rank test using different algorithms where the \textit{TLA} algorithms use sparse representation transfer.}
     \label{tab:sparse:pvalues}
 \end{table}
-We see that, with a significance level of $0.05$, the jumpstart performance of \textit{TLA 5} is different from the jumpstart performance of the other configurations. To discuss, this further, we look at boxplots of the jumpstart performances of all algorithms, over all their runs. These are shown in Figure~\ref{fig:Acrobot:jumpstart_target_re-akt5-akt10}.
-\begin{figure}[htb]
-    \centering
-    \includegraphics[width=\linewidth]{images/results/Acrobot/no_sparse_transfer/jumpstart_target_re-akt5-akt10.png}
-    \caption{Boxplots of the jumpstart performances of \textit{REINFORCE}, \textit{TLA 5} and \textit{TLA 10} using the \textit{Acrobot} environment.}
-    \label{fig:Acrobot:jumpstart_target_re-akt5-akt10}
-\end{figure}
-Indeed, although the medians in all configurations are $-500$ (the lowest reward possible for this environment), the initial performances seem to be spread more for \textit{REINFORCE} and \textit{TLA 10} than for \textit{TLA 5}.\\
+We can say using each time a significance level of $0.05$ that there is no difference between any combination of algorithms.\\
 
-As we could already see in Figure~\ref{fig:Acrobot:reward_target_re-akt5-akt10}, the performance of the \textit{REINFORCE} algorithms seems to be lower on average than the other algorithms. This is also visible when looking at the area under curve, which is $-30810.360$ for \textit{REINFORCE} algorithm and $-19437.733$ and $-16223.803$ for respectively \textit{TLA 5} and \textit{TLA 10}.\\
+As we could already see in Figure~\ref{fig:Acrobot:reward_target_re-akt5-akt10}, the learning performance of the \textit{REINFORCE} algorithm seems to be lower on average than the other algorithms.
+This is also visible when looking at the area under curve, which is $-30810.360$ for \textit{REINFORCE} algorithm and $-19437.733$ and $-16223.803$ for respectively \textit{TLA 5} and \textit{TLA 10}.\\
 
-Last, we compare the asymptotic performances, again with the same test and the null-hypotheses that there are no differences between the asymptotic performances. We get the following p-values:
+Last, we compare the asymptotic performances, again with the same test and the null-hypotheses that there are no differences between the asymptotic performances.
+We get the following p-values:
 \begin{itemize}
     \item \textit{REINFORCE} and \textit{TLA 5}: $0.0000$
     \item \textit{REINFORCE} and \textit{TLA 10}: $0.0000$
@@ -145,7 +200,7 @@ Last, we compare the asymptotic performances, again with the same test and the n
 With a significance level of $0.05$, we can say that there is a difference between \textit{REINFORCE} and \textit{TLA 5} and between \textit{REINFORCE} and \textit{TLA 10}. With the same significance level, we retain the null-hypothesis for \textit{TLA 5} and \textit{TLA 10}. To further discuss these differences, we again look at the boxplots of the asymptotic performances for the three configurations. These are shown in Figure~\ref{fig:Acrobot:asymp_target_re-akt5-akt10}.
 \begin{figure}[htb]
     \centering
-    \includegraphics[width=\linewidth]{images/results/Acrobot/no_sparse_transfer/asymp_target_re-akt5-akt10.png}
+    \includegraphics[width=.8\linewidth]{images/results/Acrobot/no_sparse_transfer/asymp_target_re-akt5-akt10.png}
     \caption{Boxplots of the asymptotic performances of \textit{REINFORCE}, \textit{TLA 5} and \textit{TLA 10} using the \textit{Acrobot} environment.}
     \label{fig:Acrobot:asymp_target_re-akt5-akt10}
 \end{figure}
@@ -153,7 +208,7 @@ We can see that the median for the \textit{REINFORCE} algorithm is still the low
 % subsubsection acrobot (end)
 
 % To further explore the jumpstart performance, we will look at boxplots of the jumpstarts of both algorithms, computed using all the 100 runs of both algorithms. These are shown in Figure~\ref{fig:boxplot_tla_re_5envs}.
-% \begin{figure}[H]
+% \begin{figure}[htb]
 %     \centering
 %     \includegraphics[width=.8\linewidth]{images/results/CartPole/no_sparse_transfer/jumpstart_target_re-akt5-akt10.png}
 %     \caption{Boxplot of the jumpstart performance of \textit{REINFORCE} and our transfer learning algorithm (\textit{TLA}).}
@@ -164,18 +219,19 @@ We can see that the median for the \textit{REINFORCE} algorithm is still the low
 % subsubsection cartpole:without_sparse_representation_transfer (end)
 \subsection{With sparse representation transfer} % (fold)
 \label{sub:cartpole:with_sparse_representation_transfer}
-\subsubsection{CartPole} % (fold)
+We now explore the results of transferring a sparse representation. After learning on the source tasks, we initialize the sparse representation weights with those of a randomly chosen sparse representation of a source task. The algorithm can then change this sparse representation to improve its performance on the target task. We first discuss the results of this experiment applied to the cart-pole environment.
+\subsubsection{Cart-pole} % (fold)
 \label{ssub:with_sparse_representation_transfer:cartpole}
-\begin{figure}[H]
+\begin{figure}[htb]
     \centering
     \includegraphics[width=.8\linewidth]{images/results/CartPole/sparse_transfer/reward_target_re-akt5-akt10.png}
-    \caption[Learning curves for the \textit{CartPole} environment of \textit{REINFORCE} and \textit{TLA} using sparse representation transfer]{Learning curves for the \emph{CartPole} environment of the \textit{REINFORCE} algorithm and our transfer learning algorithm (\textit{TLA}) with 5 source tasks (shown as \textit{TLA 5}) and 10 source tasks (shown as \textit{TLA 10}). The sparse representation of a randomly chosen source task was transferred to the target task.}
+    \caption[Learning curves for the \textit{Cart-pole} environment of \textit{REINFORCE} and \textit{TLA} using sparse representation transfer]{Learning curves for the \emph{Cart-pole} environment of the \textit{REINFORCE} algorithm and our transfer learning algorithm (\textit{TLA}) with 5 source tasks (shown as \textit{TLA 5}) and 10 source tasks (shown as \textit{TLA 10}). The sparse representation of a randomly chosen source task was transferred to the target task.}
     \label{fig:CartPole:st:reward_target_re-akt5-akt10}
 \end{figure}
 % subsubsection cartpole (end)
 \subsubsection{Acrobot} % (fold)
 \label{ssub:with_sparse_representation_transfer:acrobot}
-\begin{figure}[H]
+\begin{figure}[htb]
     \centering
     \includegraphics[width=.8\linewidth]{images/results/Acrobot/sparse_transfer/reward_target_re-akt5-akt10.png}
     \caption[Learning curves for the \textit{Acrobot} environment of \textit{REINFORCE} and \textit{TLA} using sparse representation transfer]{Learning curves for the \emph{Acrobot} environment of the \textit{REINFORCE} algorithm and our transfer learning algorithm (\textit{TLA}) with 5 source tasks (shown as \textit{TLA 5}) and 10 source tasks (shown as \textit{TLA 10}). The sparse representation of a randomly chosen source task was transferred to the target task.}
@@ -188,7 +244,7 @@ We can see that the median for the \textit{REINFORCE} algorithm is still the low
 \label{sub:reinforce_using_a_source_and_target_task}
 \subsubsection{Acrobot} % (fold)
 \label{ssub:reinforce_source_target:acrobot}
-\begin{figure}[H]
+\begin{figure}[htb]
     \centering
     \includegraphics[width=.8\linewidth]{images/results/Acrobot/reinforce_2tasks.png}
     \caption{\textit{REINFORCE} applied for 100 epochs to a randomly chosen source task and afterwards to the target task, using the same network and weight values.}
