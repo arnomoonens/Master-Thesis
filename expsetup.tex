@@ -65,8 +65,9 @@ Hyperparameters, such as the learning rate of neural networks, were chosen by it
 % section methodology (end)
 
 \section{Results}
-\todo{Improve this}
-Here we compare the results of our transfer learning algorithm with those of the \textit{REINFORCE} algorithm.
+\todo{Add with more experiments}
+To evaluate our proposed algorithm, we use different experiments. First we compare the sequential and parallel version of our algorithm. Afterwards, we see if transferring a sparse representation from a random source task to the target task yields improvements.
+When discussing the jumpstart and asymptotic performance, we use the mean reward at respectively the first 5 and the last 5 epochs (updates to the artificial neural network parameters).
 
 \subsection{Parallel and sequential knowledge transfer} % (fold)
 \label{sub:parallel_and_sequential_knowledge_transfer}
@@ -89,9 +90,14 @@ By observing those medians, we can say that the parallel version is better.\\
 For the following experiments, when referring to "our transfer learning algorithm", the parallel version will be used.
 % subsection parallel_and_sequential_knowledge_transfer (end)
 
+\subsection{Feature extraction} % (fold)
+\label{sub:feature_extraction}
+In this experiment, we evaluate the use of feature extraction on the states. We compare the performance of an artificial neural network that uses feature extraction with one that doesn't.
+% subsection feature_extraction (end)
+
 \subsection{Without sparse representation transfer} % (fold)
 \label{sub:cartpole:without_sparse_representation_transfer}
-We first explore the differences between learning directly on a target task and first learning on source tasks (i.e. using our transfer learning algorithm), using the metrics that we defined in Section~\ref{sub:tl_metrics}.
+We now explore the differences between learning directly on a target task and first learning on source tasks (i.e. using our transfer learning algorithm), using the metrics that we defined in Section~\ref{sub:tl_metrics}.
 We consider both 5 and 10 source tasks.
 The algorithms using 5 source tasks and 10 source tasks are referred to as respectively \textit{TLA 5} and \textit{TLA 10}.
 For the regular algorithm, we use the \textit{REINFORCE} that was discussed in Section~\ref{sub:rl_policy_gradient}.
@@ -118,7 +124,7 @@ It can be seen visually that, on average, in all the configurations the jumpstar
     \hline
     \end{tabular}
     \caption{Mean, standard deviation and median of the jumpstart performances for \textit{REINFORCE}, \textit{TLA 5} and \textit{TLA 10} applied to the cart-pole environment.}
-    \label{tab:nosparse:stats}
+    \label{tab:cartpole:nosparse:stats}
 \end{table}
 It can be seen that the best jumpstart performance is achieved using \textit{TLA 10}, as it has the highest mean and median and varies the least. As it learned on more source tasks, it has more samples from the distribution of environment parameters and thus it can cover more kinds of task variations. \textit{REINFORCE} performs the worst, as it must learn without any prior learned knowledge.
 
@@ -135,10 +141,10 @@ It can be seen that the best jumpstart performance is achieved using \textit{TLA
 %        \textit{TLA 10} & $0.097$ & $0.415$ & NA \\
 %     \hline
 %     \end{tabular}
-%     \caption{P-values for the Wilcoxon signed-rank test using different algorithms.}
+%     \caption{P-values for the Wilcoxon rank-sum test using different algorithms.}
 %     \label{tab:nosparse:pvalues}
 % \end{table}
-% This is confirmed by using the Wilcoxon signed-rank test.
+% This is confirmed by using the Wilcoxon rank-sum test.
 % The null-hypothesis is that there is no difference between the jumpstart performance of 2 algorithms.
 % With a significance level of $0.05$, we can say that the null-hypotheses should be retained and there is no difference between the jumpstart performances of any of the algorithms.\\
 We can also see in Figure~\ref{fig:CartPole:reward_target_re-akt5-akt10} that \textit{REINFORCE} takes longer on average to reach the maximum reward (which is $200$ in this environment). As a result, the area under curve for \textit{REINFORCE} is $18170.243$ whereas it is $19130.824$ and $19329.318$ for respectively \textit{TLA 5} and \textit{TLA 10}.\\
@@ -182,7 +188,7 @@ The resulting p-values are shown in Table~\ref{tab:sparse:pvalues}.
        \textit{TLA 10} & $0.426$ & $0.179$ & \\
     \hline
     \end{tabular}
-    \caption{P-values for the Wilcoxon signed-rank test using different algorithms where the \textit{TLA} algorithms use sparse representation transfer.}
+    \caption{P-values for the Wilcoxon rank-sum test of the jumpstart performances using different algorithms, applied to the Acrobot environment, where the \textit{TLA} algorithms use sparse representation transfer.}
     \label{tab:sparse:pvalues}
 \end{table}
 We can say using each time a significance level of $0.05$ that there is no difference between any combination of algorithms.\\
@@ -190,21 +196,33 @@ We can say using each time a significance level of $0.05$ that there is no diffe
 As we could already see in Figure~\ref{fig:Acrobot:reward_target_re-akt5-akt10}, the learning performance of the \textit{REINFORCE} algorithm seems to be lower on average than the other algorithms.
 This is also visible when looking at the area under curve, which is $-30810.360$ for \textit{REINFORCE} algorithm and $-19437.733$ and $-16223.803$ for respectively \textit{TLA 5} and \textit{TLA 10}.\\
 
-Last, we compare the asymptotic performances, again with the same test and the null-hypotheses that there are no differences between the asymptotic performances.
-We get the following p-values:
-\begin{itemize}
-    \item \textit{REINFORCE} and \textit{TLA 5}: $0.0000$
-    \item \textit{REINFORCE} and \textit{TLA 10}: $0.0000$
-    \item \textit{TLA 5} and \textit{TLA 10}: $0.2902$
-\end{itemize}
-With a significance level of $0.05$, we can say that there is a difference between \textit{REINFORCE} and \textit{TLA 5} and between \textit{REINFORCE} and \textit{TLA 10}. With the same significance level, we retain the null-hypothesis for \textit{TLA 5} and \textit{TLA 10}. To further discuss these differences, we again look at the boxplots of the asymptotic performances for the three configurations. These are shown in Figure~\ref{fig:Acrobot:asymp_target_re-akt5-akt10}.
+Last, we compare the asymptotic performances, again with the same test and the null-hypotheses that there are no differences between the asymptotic performances. The resulting p-values are shown in Table~\ref{tab:sparse:asymp:pvalues}.
+\begin{table}[htb]
+    \centering
+    \begin{tabular}{llccc}
+    \hline
+    Algorithm & \textit{REINFORCE} & \textit{TLA 5} & \textit{TLA 10} \\
+    \hline
+       \textit{REINFORCE}  & & & \\
+       \textit{TLA 5} & $1.034*10^{-4}$ & & \\
+       \textit{TLA 10} & $7.091*10^{-6}$ & $0.449$ & \\
+    \hline
+    \end{tabular}
+    \caption{P-values for the Wilcoxon rank-sum test using different algorithms where the \textit{TLA} algorithms use sparse representation transfer.}
+    \label{tab:sparse:asymp:pvalues}
+\end{table}
+
+With a significance level of $0.05$, we can say that there is a difference between \textit{REINFORCE} and \textit{TLA 5} and between \textit{REINFORCE} and \textit{TLA 10}.
+With the same significance level, we retain the null-hypothesis for \textit{TLA 5} and \textit{TLA 10}.
+Thus, we can say that using knowledge transfer yields a significant difference in the resulting performance, when applied to the Acrobot environment.
+To further discuss these differences, we look at the boxplots of the asymptotic performances for the three configurations. These are shown in Figure~\ref{fig:Acrobot:asymp_target_re-akt5-akt10}.
 \begin{figure}[htb]
     \centering
     \includegraphics[width=.8\linewidth]{images/results/Acrobot/no_sparse_transfer/asymp_target_re-akt5-akt10.png}
     \caption{Boxplots of the asymptotic performances of \textit{REINFORCE}, \textit{TLA 5} and \textit{TLA 10} using the \textit{Acrobot} environment.}
     \label{fig:Acrobot:asymp_target_re-akt5-akt10}
 \end{figure}
-We can see that the median for the \textit{REINFORCE} algorithm is still the lowest possible reward for this environment. The medians of \textit{TLA 5} and \textit{TLA 10} are respectively $-105.3053$ and $-98.3911$. Only some outliers of these algorithms don't get past the minimum reward.
+We can see that the median for the \textit{REINFORCE} algorithm is still the lowest possible reward for this environment. This means that in half of the cases, the \textit{REINFORCE} algorithm cannot improve and cannot get past the minimum reward. The medians of \textit{TLA 5} and \textit{TLA 10} are respectively $-105.305$ and $-98.391$. Only some outliers of these algorithms don't get past the minimum reward.
 % subsubsection acrobot (end)
 
 % To further explore the jumpstart performance, we will look at boxplots of the jumpstarts of both algorithms, computed using all the 100 runs of both algorithms. These are shown in Figure~\ref{fig:boxplot_tla_re_5envs}.
@@ -219,24 +237,63 @@ We can see that the median for the \textit{REINFORCE} algorithm is still the low
 % subsubsection cartpole:without_sparse_representation_transfer (end)
 \subsection{With sparse representation transfer} % (fold)
 \label{sub:cartpole:with_sparse_representation_transfer}
-We now explore the results of transferring a sparse representation. After learning on the source tasks, we initialize the sparse representation weights with those of a randomly chosen sparse representation of a source task. The algorithm can then change this sparse representation to improve its performance on the target task. We first discuss the results of this experiment applied to the cart-pole environment.
+We now explore the results of transferring a sparse representation. After learning on the source tasks, we initialize the sparse representation weights with those of a randomly chosen sparse representation of a source task. The algorithm can then change this sparse representation to improve its performance on the target task. We compare the results to those when not transferring the sparse representation, both for the cart-pole and the acrobot environment.
 \subsubsection{Cart-pole} % (fold)
 \label{ssub:with_sparse_representation_transfer:cartpole}
+To see how both version of the algorithm differ on average in terms of learning performance, we take a look at the learning curves, which are shown in Figure~\ref{fig:CartPole:st:reward_target_without-with}.
 \begin{figure}[htb]
     \centering
-    \includegraphics[width=.8\linewidth]{images/results/CartPole/sparse_transfer/reward_target_re-akt5-akt10.png}
-    \caption[Learning curves for the \textit{Cart-pole} environment of \textit{REINFORCE} and \textit{TLA} using sparse representation transfer]{Learning curves for the \emph{Cart-pole} environment of the \textit{REINFORCE} algorithm and our transfer learning algorithm (\textit{TLA}) with 5 source tasks (shown as \textit{TLA 5}) and 10 source tasks (shown as \textit{TLA 10}). The sparse representation of a randomly chosen source task was transferred to the target task.}
-    \label{fig:CartPole:st:reward_target_re-akt5-akt10}
+    \includegraphics[width=.8\linewidth]{images/results/CartPole/sparse_transfer/reward_target_without_with.png}
+    \caption[Learning curves for the \textit{Cart-pole} environment of \textit{TLA} with and without sparse representation transfer]{Learning curves for the \emph{Cart-pole} environment of our transfer learning algorithm (\textit{TLA}) with 5 source tasks (shown as \textit{TLA 5}) and 10 source tasks (shown as \textit{TLA 10}), both with and without sparse representation transfer.}
+    \label{fig:CartPole:st:reward_target_without-with}
 \end{figure}
+It can be seen that the versions using sparse representation transfer need little to no update to reach the maximum reward. However, all versions converge to the maximum as all the medians of the asymptotic performances are $200$.
+% It can be seen that, on average, the version using sparse representation transfer can start with a high reward but improves little afterwards. However, the rewards stay superior to those using the version without sparse representation transfer.
+
+We now compare the jumpstart performances of these algorithms using statistics, shown in Table~\ref{tab:cartpole:sparse:jumpstart:stats}.
+\begin{table}[htb]
+    \centering
+    \begin{tabular}{llccc}
+    \hline
+    Algorithm & Sparse repr. transfer & Mean & Standard deviation & Median \\
+    \hline
+       \textit{TLA 5} & No & $158.237$ & $23.153$ & $163.840$ \\
+       \textit{TLA 10} & No & $165.120$ & $21.955$ & $169.034$ \\
+       \textit{TLA 5} & Yes & $\bm{199.997}$ & $0.0220$ & $\bm{200.000}$ \\
+       \textit{TLA 10} & Yes & $194.260$ & $23.742$ & $\bm{200.000}$ \\
+    \hline
+    \end{tabular}
+    \caption{Mean, standard deviation and median of the jumpstart performances for \textit{TLA 5} and \textit{TLA 10}, with without and with sparse representation transfer, applied to the cart-pole environment.}
+    \label{tab:cartpole:sparse:jumpstart:stats}
+\end{table}
+As shown, the version using sparse representation transfer performs better initially.
+
+% We now determine if the jumpstart performances differ significantly, again using a Wilcoxon rank-sum test with the null-hypothesis that there is no difference. The resulting p-values are shown in
 % subsubsection cartpole (end)
 \subsubsection{Acrobot} % (fold)
 \label{ssub:with_sparse_representation_transfer:acrobot}
 \begin{figure}[htb]
     \centering
-    \includegraphics[width=.8\linewidth]{images/results/Acrobot/sparse_transfer/reward_target_re-akt5-akt10.png}
-    \caption[Learning curves for the \textit{Acrobot} environment of \textit{REINFORCE} and \textit{TLA} using sparse representation transfer]{Learning curves for the \emph{Acrobot} environment of the \textit{REINFORCE} algorithm and our transfer learning algorithm (\textit{TLA}) with 5 source tasks (shown as \textit{TLA 5}) and 10 source tasks (shown as \textit{TLA 10}). The sparse representation of a randomly chosen source task was transferred to the target task.}
-    \label{fig:Acrobot:st:reward_target_re-akt5-akt10}
+    \includegraphics[width=.8\linewidth]{images/results/Acrobot/sparse_transfer/reward_target_without_with.png}
+    \caption[Learning curves for the \textit{acrobot} environment of \textit{TLA} with and without sparse representation transfer]{Learning curves for the \emph{acrobot} environment of our transfer learning algorithm (\textit{TLA}) with 5 source tasks (shown as \textit{TLA 5}) and 10 source tasks (shown as \textit{TLA 10}), both with and without sparse representation transfer.}
+    \label{fig:Acrobot:st:reward_target_without-with}
 \end{figure}
+
+\begin{table}[htb]
+    \centering
+    \begin{tabular}{llccc}
+    \hline
+    Algorithm & Sparse repr. transfer & Mean & Standard deviation & Median \\
+    \hline
+       \textit{TLA 5} & No & $-380.222$ & $160.589$ & $-500.000$ \\
+       \textit{TLA 10} & No & $\-339.530$ & $168.845$ & $\bm{-419.571}$ \\
+       \textit{TLA 5} & No & $-141.236$ & $101.567$ & $-110.482$ \\
+       \textit{TLA 10} & No & $\bm{-136.400}$ & $97.188$ & $\bm{-108.157}$ \\
+    \hline
+    \end{tabular}
+    \caption{Mean, standard deviation and median of the jumpstart performances for \textit{REINFORCE}, \textit{TLA 5} and \textit{TLA 10} applied to the Acrobot environment.}
+    \label{tab:acrobot:sparse:stats}
+\end{table}
 % subsubsection acrobot (end)
 % subsection with_sparse_representation_transfer (end)
 
