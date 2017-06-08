@@ -75,32 +75,20 @@ The problem of vanishing gradients can be solved by a better initialization of t
 For this function, the derivative is either 0 (when $z<0$) or 1 ($\frac{\partial z}{\partial z} = 1$).\\
 
 A way of solving this is using a long short-term memory. This is a combination of different units and has an explicit memory. One of the units has a connection with itself and is used to accumulate or forget the stored information. It can be learned using another unit to know when to forget something and when to remember past information.\\
-An LSTM architecture consists of different parts:
-\begin{itemize}
-\item An input gate $i$ that determines how much of the newly calculated state should be let through into the memory: $i = \sigma (x_tU^i + s_{t-1}W^i)$.
-\item A forget gate $f$ that determines how much of the previous state you want to let through: $f = \sigma (x_tU^f + s_{t-1}W^f)$.
-\item An output gate $o$ that determines how much of the internal hidden state you want to output to the next layer: $o = \sigma (x_tU^o + s_{t-1}W^o)$.
-\item A candidate hidden state $g$ that is based on the input of the current time step and the state of the previous time step: $g = tanh(x_tU^g + s_{t-1}W^g)$.
-\item An internal memory $c_t$ that is the sum of a fraction of the memory of the previous time step (determined by the forget gate) and a fraction of the candidate state (determined by the input gate): $c_t = c_{t-1} \circ f + g \circ i$.
-\item Finally, the output hidden state $s_t$ is a fraction of the $tanh$ of the memory $c_t$, determined by the output gate: $s_t = tanh(c_t) \circ o$.
-\end{itemize}
-Here, $U^i$ is for example one of the weight vectors for the input gate. The $\sigma$ function means the sigmoid function. $\circ$ refers to the dot product, i.e. $x \circ y = \sum_i^N x_i y_i$.\\
-We can almost get the original RNN by setting the input and output gate weights to 1 and the forget gate weights to 0. The only difference is the $tanh$ function used to compute the output hidden state, which squashes the result more (along with the $tanh$ used to compute the candidate hidden state).\\
+First, the input is passed to an input gate $i_t$ that determines how much of the input to let through into the memory. By also both adding and forgetting a part, determined using a forget gate $f_t$, the internal memory is updated. An output gate $o_t$ then determines how much of the internal memory to output to the next layer.
 The architecture of an LSTM cell is shown in Figure~\ref{fig:lstm}.
 \begin{figure}[htb]
     \centering
-    \includegraphics[width=\linewidth]{images/lstm.png}
+    \includegraphics[width=.8\linewidth]{images/lstm.png}
     \caption[Long short-term memory cell]{The architecture of an LSTM cell. Source: \cite{journals/corr/Graves13}.}
     \label{fig:lstm}
 \end{figure}
-Another kind of recurrent unit is the Gated Recurrent Unit (GRU), which was introduced by \cite{Cho2014LearningTranslation}. It is simpler than LSTM but yields similar results. A GRU unit consists of the following parts:
-\begin{itemize}
-\item The update gate $z$ determines how much of the previous memory we want to keep, based on the input and the previous hidden state: $z = \sigma (x_tU^z + s_{t-1}W^z)$.
-\item The reset gate $r$ says how much of the previous hidden state we want to combine with the current input, based on the previous hidden state and the input themselves: $z = \sigma (x_tU^r + s_{t-1}W^r)$.
-\item Again a candidate hidden state $h$ that actually combines the previous hidden state and the input, using its own weights and the information from the reset gate: $h = tanh(x_tU^h + (s_{t-1} \circ r)W^h)$.
-\item A new output hidden state based that combines all the previous information: $s_t = (1-z) \circ h + z \circ s_{t-1}$.
-\end{itemize}
-As we can see, the non-linearity function $tanh$ is only used once here. We also have no internal memory $c_t$ here. Instead, we use the update gate $z$ to combine the forget and input gate of the LSTM. The reset gate here is applied to the previous hidden state. As such, resetting in the LSTM architecture is done here using both the update gate and the reset gate. By always setting the reset gate to $1$ and the update gate to $0$ we get again the classic RNN architecture. The architecture of a GRU cell is visualized in Figure~\ref{fig:gru}.\\
+\\
+
+Another kind of recurrent unit is the Gated Recurrent Unit (GRU), which was introduced by \cite{Cho2014LearningTranslation}. It is simpler than LSTM but yields similar results.
+It also uses an internal memory, here called the \textit{hidden state} and denoted by $h$. An update gate $z$ determines how much of the previous memory we want to keep, depending on the previous hidden state and the input. A reset gate $r$ says how much of the previous hidden state we want to keep in the new hidden state, depending on the hidden state and the input. The new hidden state is then a combination of the partly "reset" previous hidden state and the input. The output is the sum of the previous hidden state and the new one, weighted by the reset gate.\\
+By always setting the reset gate to $1$ and the update gate to $0$ we get again the classic RNN architecture.\\
+The architecture of a GRU cell is visualized in Figure~\ref{fig:gru}.\\
 \begin{figure}[htb]
     \centering
     \includegraphics[width=0.6\linewidth]{images/gru.png}
