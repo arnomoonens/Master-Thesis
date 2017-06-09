@@ -28,8 +28,8 @@ Last, the task learning method may also restrict which reinforcement learning al
 Several metrics exist to evaluate the learning performance and solution quality of transfer learning algorithms. Generally, one metric does not give a complete representation of the overall performance of the algorithm. Because of this, often multiple metrics are used.\\
 Here we will list the most popular ones:
 \begin{itemize}
-    \item \textit{Jumpstart}: This is the initial improvement that the target task has over an algorithm that doesn't use knowledge transfer. However, no learning has occurred yet. Because of this, learning performance can't be measured. The metric also does not give an indication about the final performance, i.e. the performance after having learned.
-    \item \textit{Asymptotic performance}: This is the opposite of \textit{jumpstart} performance and measures the performance improvement after having learned the target task. However, this is hard to measure because one has to know when the task learning algorithm converged. Furthermore, the task learning algorithm and the algorithm that doesn't use knowledge transfer may require a different training time in order to converge.
+    \item \textit{Jumpstart}: This is the initial improvement that the target task has over an algorithm that doesn't use knowledge transfer. However, little to no learning has occurred yet. Because of this, learning performance can't be measured. The metric also does not give an indication about the final performance, i.e. the performance after having learned.
+    \item \textit{Asymptotic performance}: This is the opposite of \textit{jumpstart} performance and measures the performance improvement after having learned the target task or during the last time steps of the algorithm. However, this is hard to measure because one has to know when the task learning algorithm converged. Furthermore, the task learning algorithm and the algorithm that doesn't use knowledge transfer may require a different training time in order to converge.
     \item \textit{Total reward}: This is the total reward that the algorithm has accumulated during learning, i.e. the area under the learning curve. In case of improvement, this area is bigger than when transfer learning isn't used. This can be achieved when the transfer learning algorithm has a higher learning rate.
     However, convergence is again an issue here. An algorithm that learns slower and thus takes more time to converge may accumulate a higher total reward than a faster algorithm, although the latter may even reach a higher performance. This metric is only useful for task that always have the same duration.
     \item \textit{Transfer ratio}: This is the ratio of the total reward improvement that the transfer learning algorithm has over the other algorithm. Because it uses the \textit{total reward} metric, it suffers from the same issues. Furthermore, it is also influenced by the reward structure. For example, an agent always receiving a reward of $+1$ at the end of the episode may result in a different ratio.
@@ -38,7 +38,7 @@ Here we will list the most popular ones:
 A graph with 3 of the 5 metrics is shown in Figure~\ref{fig:TLmetrics}.
 \begin{figure}[htb]
     \centering
-    \includegraphics[width=\linewidth]{images/tlmetrics.png}
+    \includegraphics[width=.9\linewidth]{images/tlmetrics.png}
     \caption[Transfer learning metrics]{A graph comparing the \textit{jumpstart}, \textit{time to threshold} and \textit{asymptotic performance} metrics between the algorithm that uses knowledge transfer and the one that doesn't. Note that here the transfer learning algorithm performs better on all three metrics. It can also be seen that the total reward is higher. Source: \cite{Taylor2009TransferSurvey}.}
     \label{fig:TLmetrics}
 \end{figure}

@@ -102,7 +102,7 @@ Eligibility traces are used in order to only influence eligible states or action
 %$n$-Step TD prediction
 Monte Carlo methods perform a backup for each state based on the entire sequence of observed rewards from that state until the end of the episode. The backup of more simple methods is only based on the next reward of a state, using the state value one step later as a proxy for the remaining rewards. An intermediate method would perform a backup based on an intermediate number of rewards. Then, we use the rewards of the intermediate steps and the estimated value of the last state. A visualization can be seen in Figure \ref{fig:nStepTD}.
 \begin{figure}[htb]
-\includegraphics[width=\linewidth]{images/nStepTD.png}
+\includegraphics[width=.8\linewidth]{images/nStepTD.png}
 \caption[$n$-step returns]{Returns each based on a different amount of rewards and by using the state value as a proxy afterwards. This is not needed for Monte Carlo methods as they use all the future rewards. Source: \cite{Sutton1998ReinforcementIntroduction}.}
 \label{fig:nStepTD}
 \end{figure}
@@ -128,7 +128,7 @@ After a terminal state has been reached, all subsequent $n$-step returns are equ
 \end{equation}
 In this forward view, we look for each state visited forward in time to all the future rewards and decide how best to combine them. After looking forward from and updating one state, we move to the next and don't work with that state anymore. Future states, however, are viewed and processed repeatedly. This way of thinking is visualized in Figure \ref{fig:TDForwardView}.
 \begin{figure}[htb]
-\includegraphics[width=\linewidth]{images/TDForwardView.png}
+\includegraphics[width=.9\linewidth]{images/TDForwardView.png}
 \caption[TD forward view]{The forward view, where each state value is updated by looking forward to the states and their rewards that follow. Source: \cite{Sutton1998ReinforcementIntroduction}.}
 \label{fig:TDForwardView}
 \end{figure}
@@ -144,7 +144,7 @@ Here we have an additional memory variable associated with each state, the eligi
 \end{subequations}
 Here we work backwards and update backward to each prior state according to the state's eligibility trace at that time. This is visualized in Figure \ref{fig:TDBackwardView}.
 \begin{figure}[htb]
-\includegraphics[width=\linewidth]{images/TDBackwardView.png}
+\includegraphics[width=.9\linewidth]{images/TDBackwardView.png}
 \caption[TD backward view]{The backward view, where the value of visited states are updated based on their eligibility values. Source: \cite{Sutton1998ReinforcementIntroduction}.}
 \label{fig:TDBackwardView}
 \end{figure}

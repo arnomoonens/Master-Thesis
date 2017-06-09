@@ -50,7 +50,7 @@ Using $-1$ as \texttt{false} and $+1$ as \texttt{true}, it is also possible to r
 A schematic using the perceptron unit is shown in Figure~\ref{fig:perceptron}.\\
 \begin{figure}[htb]
     \centering
-    \includegraphics[width=\linewidth]{images/activation_functions/perceptron.png}
+    \includegraphics[width=.8\linewidth]{images/activation_functions/perceptron.png}
     \caption[The perceptron unit]{The perceptron unit. Source: \cite{Demant2013}.}
     \label{fig:perceptron}
 \end{figure}
@@ -185,7 +185,7 @@ The goal is to set the weights to such values so that the error is minimized. Th
 However, it is possible that, given a combination of weight values, any change in those values does not influence the error, in which case the gradient for every weight component is $0$. Thus, with the current algorithm, there is no incentive to change the weights. This is called a local minimum. Although the algorithm cannot "see" immediate improvements, it is possible that another combination of weight values leads to a lower error. This is analogous to being in a valley in the mountains, where the valley after a mountain (and thus not visible) may lie lower. This is also visualized in Figure~\ref{fig:error_surface}.\\
 \begin{figure}[htb]
     \centering
-    \includegraphics[width=\linewidth]{images/error_surface.png}
+    \includegraphics[width=.8\linewidth]{images/error_surface.png}
     \caption[An example of an error surface]{An example of an error surface using only one weight $w_0$. \textit{A}, \textit{B} and \textit{C} are local minima, while \textit{D} is the global minimum.}
     \label{fig:error_surface}
 \end{figure}
