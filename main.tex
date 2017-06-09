@@ -44,7 +44,7 @@
 \hypersetup{pageanchor=true}
 \setcounter{page}{1}
 \chapter*{Abstract}
-Deep reinforcement learning allows for learning to perform a task using high-dimensional input such as images. However, it is sometimes necessary to learn variations of a task, for which certain knowledge can be transferred. In this thesis, we learn multiple variations of a task in parallel using both shared knowledge and task-specific knowledge. This knowledge is then transferred to a new task. In experiments, we saw that learning first on a set of source tasks significantly improves performance on a new task.
+Deep reinforcement learning allows for learning how to perform a task using high-dimensional input such as images by trial-and-error. However, it is sometimes necessary to learn variations of a task, for which certain knowledge can be transferred. In this thesis, we learn multiple variations of a task in parallel using both shared knowledge and task-specific knowledge. This knowledge is then transferred to a new task. In experiments, we saw that learning first in parallel on a set of source tasks significantly improves performance on a new task compared to not learning on source tasks or only using one. We also found that it is beneficial to start learning on a new task using task-specific knowledge of a source task.
 
 \chapter*{Acknowledgments}
 % I would like to thank my promotor Prof. Dr. Peter Vrancx for always giving useful feedback and helping me when I was stuck.
@@ -53,15 +53,11 @@ Deep reinforcement learning allows for learning to perform a task using high-dim
 %\keywords{reinforcement learning, knowledge transfer}
 
 \tableofcontents
-
-% the caption command provides the option to define a shorter entry displayed in the list of figures only whereas the text of the required argument will be displayed together with the figure. This applies for the list of table in the same way as it does for the list of figures.
-% \caption[short caption for lof/lot]{long figure/table caption}
 \listoffigures
 \listofalgorithms
 \listoftables
 
 \mainmatter
-
 \include{introduction}
 \include{ann}
 \include{reinforcementlearning}
@@ -71,8 +67,8 @@ Deep reinforcement learning allows for learning to perform a task using high-dim
 \include{proposed}
 \include{expsetup}
 \include{conclusion}
-\backmatter
 \include{appendices}
 
+\backmatter
 \printbibliography
 \end{document}

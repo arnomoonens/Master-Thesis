@@ -1,23 +1,29 @@
 \chapter{Proposed algorithm}
 \label{cha:proposed_algorithm} % (fold)
-Our aim is to learn from multiple source tasks simultaneously in order to have a better performance on a target task than when we wouldn't train on source tasks.
+Our aim is to learn from multiple source tasks in order to have a better performance on a target task than when we wouldn't train on source tasks.
+While a version of the algorithm was implemented where the source tasks are executed sequentially for each episode, the focus is on a version where source tasks are learned simultaneously.
 More specifically, we combine the A3C algorithm \parencite{Mnih2016AsynchronousLearning} with the transfer learning algorithm in \cite{Isele2016UsingLearning}.
 This is done by executing A3C using tasks defined by different parameters instead of exactly the same ones and training them using both shared knowledge and knowledge specific to the task.\\
 
 Our approach only uses a latent basis over the policy space instead of using one over the policy space and another one over the descriptor space like in \cite{Isele2016UsingLearning}.\\
-For a task $(t)$, we can reconstruct the policy using the shared basis $L$ and the sparse coefficients over this basis for that specific task $s^{(t)}$: $\theta^{(t)} = Ls^{(t)}$, with $\theta^{(t)} \in \mathbb{R}^d$, $L \in \mathbb{R}^{d \times k}$ and $s^{(t)} \in \mathbb{R}^k$.\\
-The architecture of the network used for one task is visualized in Figure~\ref{fig:algonn}.\\
+For a task $t$, we can reconstruct the policy using the shared basis $L$ and the sparse coefficients over this basis for that specific task $s^{(t)}$: $\theta^{(t)} = Ls^{(t)}$, with $\theta^{(t)} \in \mathbb{R}^d$, $L \in \mathbb{R}^{d \times k}$ and $s^{(t)} \in \mathbb{R}^k$.\\
+The architecture of the network used for one task is visualized in Figure~\ref{fig:algonn}.
 \begin{figure}[htb]
     \centering
     \includegraphics[width=.9\linewidth]{images/knowledge_transfer.png}
-    \caption[Artificial neural network architecture used in our approach]{Artificial neural network architecture used in our approach. The sparse representation $\theta^{(t)}$ is different for every task $(t)$, while the same knowledge base is used for every task.}
+    \caption[Artificial neural network architecture used in our approach]{Artificial neural network architecture used in our approach. The sparse representation $\theta^{(t)}$ is different for every task $t$, while the same knowledge base is used for every task.}
     \label{fig:algonn}
-\end{figure}
+\end{figure}\\
 
-The source tasks can be learned in two ways. They can be learned either sequentially or in parallel.
-In the sequential way, we collect trajectories and calculate the gradients for every task after another. These gradients include both those for the sparse representation and for the knowledge base. They are calculated for every episode of a task like in the \texttt{REINFORCE} algorithm (explained in Section~\ref{sub:rl_policy_gradient}), i.e. with likelihood ratios using discounted rewards as a sample for the $Q$ values of the policy.\\
-After evaluating every task, we sum and apply all of their gradients. The learning process for the source tasks then stops when a certain number of updates have been applied.\\
-In the parallel way, all source tasks are learned at the same time, each executing a certain number of updates. Trajectories are collected for each task continuously and its gradients are applied immediately after they are calculated. This means that they are not first summed up like in the sequential method.\\
+The source tasks can be learned in two ways, either sequentially or in parallel.
+In the sequential way, we collect trajectories and calculate the gradients for every task after another.
+These gradients include both those for the sparse representation and for the knowledge base.
+They are calculated for every episode of a task like in the \texttt{REINFORCE} algorithm (explained in Section~\ref{sub:rl:policy_gradient}), i.e. with likelihood ratios using discounted rewards as a sample for the $Q$ values of the policy.\\
+After evaluating every task, we sum and apply all of their gradients.
+The learning process for the source tasks then stops when a certain number of updates have been applied.\\
+In the parallel way, all source tasks are learned at the same time, each executing a certain number of updates.
+Trajectories are collected for each task continuously and its gradients are applied immediately after they are calculated.
+This means that they are not first summed up like in the sequential method.\\
 The resulting pseudo code for the source tasks learned using the parallel method can be seen in Algorithm~\ref{algo:ownsource}.\\
 \begin{algorithm}[htb]
 \DontPrintSemicolon
@@ -47,7 +53,9 @@ Initialize thread step counter $t\gets 1$\;
 \label{algo:ownsource}
 \end{algorithm}
 
-After learning the source tasks, the knowledge base that they jointly learned is transferred to the target task. This task then separately learns and executes updates for a number of episodes. The pseudo-code for the target task is shown in Algorithm~\ref{algo:owntarget}.\\
+After learning the source tasks, the knowledge base that they jointly learned is transferred to the target task.
+This task then separately learns and executes updates for a number of episodes.
+The pseudo-code for the target task is shown in Algorithm~\ref{algo:owntarget}.\\
 \begin{algorithm}[htb]
 \DontPrintSemicolon
 \emph{// Assume global knowledge base $L$}\;

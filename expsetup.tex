@@ -37,13 +37,19 @@ The goal is to minimize the amount of steps necessary to reach the threshold.
 
 \section{Methodology} % (fold)
 \label{sub:methodology}
-Several experiments were executed, depending on the algorithm, the environment, the number of source tasks and which knowledge was transferred to the target task.\\
+Several experiments were executed with our transfer learning algorithm, using varying types of transferred knowledge and artificial neural networks and a different number of source tasks. However, the structure of the algorithm was always the same.\\
+In some experiments, the performance of our algorithm was also compared to the performance of the \textit{REINFORCE} algorithm described in Section~\ref{sub:rl:policy_gradient}. When necessary, changes to this algorithm are mentioned.\\
+Parameters for both algorithms are described in Appendix~\ref{sec:artificial_neural_network_parameters}.
 
-In the first experiment, first a number of environments are randomly generated. We try to learn with both 5 and 10 environments.
-The environment for each task can differ for a predefined number of attributes, of which the values can each be in a certain range. For a cart-pole task, these are the mass of the cart, the mass of the pole and the length of the pole.\\
+For an experiment with our algorithm, first a number of environments are randomly generated. We try to learn with either 5 or 10 environments.
+The environment for each task can differ for a predefined number of parameters specific to the task, of which the values can each be in a certain range. For a \emph{cart-pole} task, these are the mass of the cart, the mass of the pole and the length of the pole.
+The parameters and the allowed ranges for their values are described for each environment in Appendix~\ref{sec:environment_parameters}.\\
 Then a number of source tasks are learned that can update both the shared knowledge base and their own sparse representation.
 After a number of epochs, i.e. updates to these variables, we stop with learning these tasks.
-Instead, we learn to solve a new task, the target task, for which we hadn't learned its sparse representation yet. Here however, only the sparse representation can be updated and not the shared knowledge base.\\
+Instead, we learn to solve a new task, the target task.
+In some experiments, the sparse representation for the target task is initialized using the sparse representation of a randomly chosen source task.
+In others, the sparse representation is randomly initialized, as explained in Appendix~\ref{sec:artificial_neural_network_parameters}.
+Here however, only the sparse representation can be updated and not the shared knowledge base.\\
 
 In the second experiment, besides transferring the shared knowledge base, a sparse representation was also transferred.
 This is a sparse representation randomly chosen from the source tasks.
@@ -55,12 +61,12 @@ In practice, this means that we start learning on the target task with the weigh
 The algorithm can still learn adapt all the weights using the target task.
 No sparseness on the weights was enforced.\\
 
-All three experiments were executed on the cart-pole and acrobot environment.
+All three experiments were executed on the \emph{cart-pole} and acrobot environment.
 Each experiment consisted of 100 runs, each time using a different set of environments and thus problems to solve.\\
 Afterwards the rewards are averaged over all the runs.\\
 Trajectories for both sets of tasks contained of maximally 200 or 500 steps depending on the type of environment.
 This could be less in case the environment was in an end state.
-In case of the cart-pole environment, this can mean for example that the cart tried to cross the left or right border or that the pole fell down.\\
+In case of the \emph{cart-pole} environment, this can mean for example that the cart tried to cross the left or right border or that the pole fell down.\\
 Hyperparameters, such as the learning rate of neural networks, were chosen by iteratively executing the previously mentioned experiment. Possible values for each hyperparameter were chosen manually.
 % section methodology (end)
 
@@ -70,7 +76,7 @@ When discussing the jumpstart and asymptotic performance, we use the mean reward
 
 \subsection{Parallel and sequential knowledge transfer} % (fold)
 \label{sub:parallel_and_sequential_knowledge_transfer}
-We first compare the performance of the algorithm that learns the source tasks in parallel with the one that learns them sequentially. We do this for the cart-pole environment in order to determine which version of the algorithm to use for further experiments.
+We first compare the performance of the algorithm that learns the source tasks in parallel with the one that learns them sequentially. We do this for the \emph{cart-pole} environment in order to determine which version of the algorithm to use for further experiments.
 
 The performance of both versions of the algorithm and for both the source tasks and target task is shown in Figure~\ref{fig:CartPole:reward_akt-kt_all_5tasks}.
 \begin{figure}[htb]
@@ -109,7 +115,7 @@ For the following experiments, we will focus on the transfer of the knowledge an
 We now explore the differences between learning directly on a target task and first learning on source tasks (i.e. using our transfer learning algorithm), using the metrics that we defined in Section~\ref{sub:tl_metrics}.
 We consider both 5 and 10 source tasks.
 The algorithms using 5 source tasks and 10 source tasks are referred to as respectively \textit{TLA 5} and \textit{TLA 10}.
-For the regular algorithm, we use the \textit{REINFORCE} that was discussed in Section~\ref{sub:rl_policy_gradient}.
+For the regular algorithm, we use the \textit{REINFORCE} that was discussed in Section~\ref{sub:rl:policy_gradient}.
 
 \subsubsection{Cart-pole} % (fold)
 \label{ssub:without_sparse_representation_transfer:cartpole}

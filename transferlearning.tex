@@ -112,10 +112,10 @@ Again, after learning the source tasks, the parameters of the function approxima
 After getting transitions from the target task, the most probable model for the target task transitions is transferred and used.\\
 \cite{conf/icml/WilsonFRT07} use a similar approach, but they don't make a distinction between source and target tasks. Instead, problems (MDPs) are executed sequentially and models are built using an already acquired set of transitions and models of previous tasks.\\
 
-\todo[inline]{Check if it's mentioned that it's zero-shot and lifelong?}
-In \cite{Isele2016UsingLearning}, a multi-task learning method is presented that learns task simultaneously by using a predefined description for each task.
-When a new task arrives along with its features, obtained from its task descriptor, a policy can be generated that immediately results in a good performance, even though the algorithm was not applied on that task before and the task descriptor, task order and task distribution was not known on beforehand.
-This way, knowledge transfer can take place without the need of training data to identify relationships across tasks. For each subsequent task, the policy and feature vector are iteratively improved.\\
+In \cite{Isele2016UsingLearning}, a multi-task learning method is presented that learns tasks simultaneously by using a predefined description for each task.
+When a new task arrives along with its features, obtained from its task descriptor, a policy can be generated that immediately results in a good performance, even though the algorithm was not applied on that task before and the task descriptor, task order and task distribution was not known on beforehand. This is called \textit{zero-shot learning}.
+As such, knowledge transfer can take place without the need of training data to identify relationships across tasks.
+For each subsequent task, the policy and feature vector are iteratively improved.\\
 %factorization: ontbinding in factoren: bijv. 15=3*5
 First, it is assumed that the policy parameters for every task $t$ can be factorized using a shared knowledge base $L \in \mathbb{R}^{d \times k}$: $\theta^{(t)} = Ls^{(t)}$. $s^{(t)} \in \mathbb{R}^{(k)}$ are the sparse coefficients over the basis, i.e. the latent representation of the policy's parameters for task $t$. $L$ is able to capture relationships among policies as this is used to compute every policy, whereas there is a sparse representation for computed for each task separately.\\
 The features of the task are obtained by (possibly non-linear) feature extractors applied on the descriptor of the task: $\phi(m^{(t)}) \in \mathbb{R}^{d_m}$.
@@ -123,7 +123,7 @@ These features can also be linearly factorized using another shared knowledge ba
 Both knowledge bases provide information about the task and because of this they share the same coefficient vectors $S$.
 We then used coupled dictionary optimization techniques from the sparse coding literature to optimize these dictionaries. They are updated iteratively based on trajectories samples from the current task.\\
 When a new task arrives, with its task descriptor, we search for the coefficients $s^{(t_{new})}$ that minimize the difference between the extracted features and the reconstruction of it using the shared knowledge base $D$.
-Using these coefficients, we can compute the policy parameters using $\theta = Ls^{(t_{new})}$. Afterwards, we can iterate again to improve the sparse representation $s$ and the knowledge bases.
+Using these coefficients, we can compute the policy parameters using $\theta = Ls^{(t_{new})}$. Afterwards, we can iterate again to improve the sparse representation $s$ and the knowledge bases.\\
 
 Together with the interest in deep reinforcement learning \parencite{Mnih2015Human-levelLearning,Mnih2016AsynchronousLearning}, the interest in its application to transfer learning also grows.
 In \cite{DBLP:journals/corr/ParisottoBS15}, the algorithm, Actor-Mimic Network (AMN), learns the $Q$ function for source tasks from an expert for each specific task (in this paper a DQN that was trained until convergence).
