@@ -39,7 +39,10 @@
 
 \begin{document}
 \frontmatter
+\hypersetup{pageanchor=false}
 \include{titlepage}
+\hypersetup{pageanchor=true}
+\setcounter{page}{1}
 \chapter*{Abstract}
 Deep reinforcement learning allows for learning to perform a task using high-dimensional input such as images. However, it is sometimes necessary to learn variations of a task, for which certain knowledge can be transferred. In this thesis, we learn multiple variations of a task in parallel using both shared knowledge and task-specific knowledge. This knowledge is then transferred to a new task. In experiments, we saw that learning first on a set of source tasks significantly improves performance on a new task.
 
