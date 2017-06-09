@@ -1,1 +1,23 @@
 \chapter{Conclusion}
+
+We presented an algorithm suitable for learning in parallel or sequentially on a set of source tasks.
+These task share a knowledge base, but they also have their proper sparse representation.
+The learned knowledge can then be transferred to the target task with the goal of having an increased performance over an algorithm that does not use prior knowledge.\\
+
+\todo{Something about applying knowledge immediately in results section}
+In our experiments, we found that source tasks learned in parallel learned faster than when they were learned sequentially.
+In the parallel version, changes to the shared knowledge base are applied immediately instead of summing them and applying the changes after all source tasks have been evaluated.\\
+
+We also discussed to use of feature extraction applied to the input, which is in this case the state of an environment.
+For the cart-pole environment, no feature extraction was necessary and even slowed down learning.
+However, environments with a high-dimensional input space generally require feature extraction in order to obtain the relevant aspects of the input.\\
+
+Our algorithm has better performance on the target task than when just using the \textit{REINFORCE} algorithm on it.
+Our algorithm learns faster and is able to receive higher rewards.
+The performance is even better when we transfer the sparse representation from a randomly chosen source task to the target task.
+The algorithm then only needs to tune the sparse representation for it to work on its own task.\\
+
+To see if multiple source tasks are really necessary, we compared our algorithm with the \textit{REINFORCE} algorithm where it learns on a single source task and transfers all its knowledge to the target task.
+Although the asymptotic performance was similar, our algorithm learned better on the source tasks and has a higher jumpstart performance.\\
+
+We can conclude that it is beneficial to learn on multiple source tasks in parallel and transfer knowledge learned on these tasks to the target task.
