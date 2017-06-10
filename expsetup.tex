@@ -1,14 +1,17 @@
 \chapter{Experimental setup}
-Experiments were executed on variations of the \textit{cart-pole} environment and on variations of the \textit{acrobot} environment. After describing these environments, we describe the methodology of our experiments and the results.\\
+Experiments were executed on variations of the \textit{cart-pole} environment and on variations of the \textit{acrobot} environment.
+For executing algorithms with both environments, a framework by \cite{Brockman2016OpenAIGym} was used.\\
+After describing these environments, we describe the methodology of our experiments and the results.\\
 
 \section{Cart-pole environment} % (fold)
 \label{sub:cartpole_environment}
+\todo{Citation?}
 In the 2-dimensional \textit{cart-pole} environment, a pole is placed vertically on a cart.
-The goal in this environment is to keep the pole balanced vertically (i.e. keep the angle of the pole between thresholds) and to keep the cart between 2 borders.
+The goal in this environment is to keep the pole balanced vertically (i.e.\ keep the angle of the pole between thresholds) and to keep the cart between 2 borders.
+An agent can either move left or right. It can't stay at its current position.
 The state is defined by 4 continuous-valued attributes: the position of the cart, the velocity of the cart, the angle of the pole and the angular velocity of the pole.
 A discrete value of $1$ is given as a reward each time the pole is balanced and the cart is between bounds.
 The episode ends either when these requirements are not fulfilled anymore or 200 steps have been executed.
-An agent can either move left or right. It can't stay at its current position.
 The environment is visualized in Figure~\ref{fig:cartpole}.
 \begin{figure}[htb]
     \centering
@@ -16,12 +19,11 @@ The environment is visualized in Figure~\ref{fig:cartpole}.
     \caption[Visualization of the \emph{cart-pole} environment]{Visualization of the \emph{cart-pole} environment. $F$ is the force applied to the cart when taking an action. $x$ is the distance of the cart from the center and $\dot{x}$ is its velocity. $\theta$ is the angle of the pole and $\dot{\theta}$ refers to its angular velocity. Source: \cite{grant1990modelling}.}
     \label{fig:cartpole}
 \end{figure}
-For executing the experiments, an implementation of this environment by \cite{Brockman2016OpenAIGym} was used.\\
 % section cartpole_environment (end)
 
 \section{Acrobot environment} % (fold)
 \label{sub:acrobot_environment}
-The goal in the \textit{acrobot} environment, visualized in Figure~\ref{fig:acrobot} is to swing up the tip of 2 joined arms above a certain point \cite{spong1995swing}.
+The goal in the \textit{acrobot} environment, visualized in Figure~\ref{fig:acrobot} is to swing up the tip of 2 joined arms above a certain point \parencite{spong1995swing}.
 This can be done by applying a force on the joint between the 2 arms.
 However, this force is not enough to fulfill the goal immediately. Instead, the actuator must apply force to the left and to the right to build up enough speed to get above the horizontal threshold.
 The state consists of the angle and angular velocity of both arms. One can either move the joint clockwise, counter-clockwise or do nothing.
@@ -45,7 +47,7 @@ For an experiment with our algorithm, first a number of environments are randoml
 The environment for each task can differ for a predefined number of parameters specific to the task, of which the values can each be in a certain range. For a \emph{cart-pole} task, these are the mass of the cart, the mass of the pole and the length of the pole.
 The parameters and the allowed ranges for their values are described for each environment in Appendix~\ref{sec:environment_parameters}.\\
 Then a number of source tasks are learned that can update both the shared knowledge base and their own sparse representation.
-After a number of epochs, i.e. updates to these variables, we stop with learning these tasks.
+After a number of epochs, i.e.\ updates to these variables, we stop with learning these tasks.
 Instead, we learn to solve a new task, the target task.
 In some experiments, the sparse representation for the target task is initialized using the sparse representation of a randomly chosen source task.
 In others, the sparse representation is randomly initialized, as explained in Appendix~\ref{sec:artificial_neural_network_parameters}.
@@ -112,7 +114,7 @@ For the following experiments, we will focus on the transfer of the knowledge an
 
 \subsection{Without sparse representation transfer} % (fold)
 \label{sub:without_sparse_representation_transfer}
-We now explore the differences between learning directly on a target task and first learning on source tasks (i.e. using our transfer learning algorithm), using the metrics that we defined in Section~\ref{sub:tl_metrics}.
+We now explore the differences between learning directly on a target task and first learning on source tasks (i.e.\ using our transfer learning algorithm), using the metrics that we defined in Section~\ref{sub:tl_metrics}.
 We consider both 5 and 10 source tasks.
 The algorithms using 5 source tasks and 10 source tasks are referred to as respectively \textit{TLA 5} and \textit{TLA 10}.
 For the regular algorithm, we use the \textit{REINFORCE} that was discussed in Section~\ref{sub:rl:policy_gradient}.

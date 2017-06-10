@@ -18,7 +18,7 @@ The architecture of the network used for one task is visualized in Figure~\ref{f
 The source tasks can be learned in two ways, either sequentially or in parallel.
 In the sequential way, we collect trajectories and calculate the gradients for every task after another.
 These gradients include both those for the sparse representation and for the knowledge base.
-They are calculated for every episode of a task like in the \texttt{REINFORCE} algorithm (explained in Section~\ref{sub:rl:policy_gradient}), i.e. with likelihood ratios using discounted rewards as a sample for the $Q$ values of the policy.\\
+They are calculated for every episode of a task like in the \texttt{REINFORCE} algorithm (explained in Section~\ref{sub:rl:policy_gradient}), i.e.\ with likelihood ratios using discounted rewards as a sample for the $Q$ values of the policy.\\
 After evaluating every task, we sum and apply all of their gradients.
 The learning process for the source tasks then stops when a certain number of updates have been applied.\\
 In the parallel way, all source tasks are learned at the same time, each executing a certain number of updates.
