@@ -2,17 +2,17 @@
 \label{cha:artificial_neural_networks}
 % What is it
 Artificial neural networks are models that can approximate discrete-valued, real-valued and vector-valued functions.
-They are composed of interconnected units that can activate others using connections of varying strength.
+They are composed of interconnected units that can activate other units using connections of varying strength.
 %citation?
 Artificial neural networks are loosely inspired by biological neural networks, where these units are called neurons, which are connected by axons.\\
-The higher the strength, also called weight, of connections between units, the more influence the unit has on the next one. These strengths can be manually defined. However, thanks to a method called backpropagation, weights can be learned systematically.
+The higher the strength, also called weight, of connections between units, the more influence the unit has on the next one. These strengths are numerical values that can be manually defined. However, thanks to a method called backpropagation, weights can be learned systematically.
 The combination of artificial neural networks and backpropagation led to successful applications, for example to recognize handwritten characters \parencite{journals/neco/LeCunBDHHHJ89}, for face recognition \parencite{cottrell1990extracting} and to recognize spoken words \parencite{journals/nn/LangWH90}.
 However, early applications also include reinforcement learning, for example to learn to balance a pendulum \parencite{anderson:ieeecsm89} or to play the game \textit{Backgammon} \parencite{Tesauro:92}.
 
 \section{Basics} % (fold)
 \label{sec:basics}
-As said, artificial neural networks are made up of units. These units can be grouped into layers, where the values of each layer are propagated to the next layer depending on connections with weights. These weights define the model.
-Input units receive information that is available externally and provide information to other units.
+As said, artificial neural networks are made up of units. These units can be grouped into layers, where the values of each layer are propagated to the next layer depending on the weights of their connections. These weights define the model.
+Input units receive external information and provide information to other units.
 Output units are the opposite and receive information from the network itself and provide information externally.
 Hidden units both receive information from and provide information to units inside the network.\\
 A simple artificial neural network is visualized in Figure~\ref{fig:ann}.\\
@@ -22,8 +22,8 @@ A simple artificial neural network is visualized in Figure~\ref{fig:ann}.\\
     \caption[An artificial neural network]{An artificial neural network with 3 input units, 4 hidden units and 2 output units. $w_{ih}$ and $w_{ho}$ are the weights for connections between respectively the input units and hidden units and between the hidden units and output units.}
     \label{fig:ann}
 \end{figure}
-As a non-input unit gets weighted activations from multiple units, these need to be combined to determine if the unit can be activated or not.
-This is done by applying a linear or non-linear function, called an activation function, to the weighted sum.
+As a non-input unit gets information from multiple units, these need to be combined to determine if the unit can be activated or not.
+This is done by applying a linear or non-linear function, called an activation function, to the weighted sum of the connected units.
 % section basics (end)
 
 \section{Activation functions} % (fold)
@@ -152,10 +152,10 @@ The softmax activation function is different from the previous activation functi
 \begin{equation}
     f(z_i) = \frac{e^{z_i}}{\sum_j e{^z_j}}
 \end{equation}
-Where $z_i$ is the weighted sum for the current output to be computed and $z_j$ is another weighted sum of another neuron in the same layer.\\
+Where $z_i$ is the weighted sum for the current output to be computed and $z_j$ is the weighted sum of another neuron in the same layer.\\
  As we can see, the softmax function normalizes the outputs and results in outputs ranging between $0$ and $1$.
  Because of this, we can use the outputs as if they are probabilities.
- This is useful in a task where an action needs to be taken probabilistically and each such action is tied to a probability which is the output of the artificial neural network.
+ This is useful in a task where an action needs to be taken probabilistically based on the output of the artificial neural network.
 % subsection softmax (end)
 
 \section{Gradient descent and backpropagation} % (fold)
@@ -163,27 +163,27 @@ Where $z_i$ is the weighted sum for the current output to be computed and $z_j$ 
 %Also something about linearly separable?
 %Why no algebraic solution?
 If we choose the weights of our network correctly, we might succeed in approximating a function.
-However, it is not always possible to separate the input space and have the right with our artificial neural network.
-In that case, we might want the best solution, e.g.\ one that has the least amount of errors in producing outputs w.r.t. the correct outputs, also called the target outputs.
+However, it is not always possible to separate the input space and have the right outputs using our artificial neural network.
+In that case, we might want the best possible solution, e.g.\ one that has the least amount of errors in producing outputs w.r.t. the correct outputs, also called the target outputs.
 Furthermore, choosing the weights manually can be a tedious process.\\
 For these reasons, we use an algorithm called called backpropagation, which uses a variation of gradient descent.
 We will first discuss gradient descent as this provides the basis of the backpropagation algorithm.
 
 \subsection{Gradient descent} % (fold)
 \label{ssub:gradient_descent}
-In gradient descent, we search in the weight vector space, also called hypothesis space, to find weights that can approximate a function as best as possible.
-A tuple containing the input and output of the target function is called a training example.
+Gradient descent is a technique used to find a local minimum of a function using the gradient of that function with respect to its parameters. These parameters lie in a weight vector space, also called hypothesis space.
 
-To be able to update weights, we first need to know how wrong our outputs were relative to those of our training examples.
-This is called the training error and depends on the learning algorithm (in our case an artificial neural network), its parameters and the training examples.
-However, here we assume that the learning algorithm and the training examples are fixed while learning.
+%A tuple containing the input and output of the target function is called a training example.
+In our case, we want to approximate a function. As such, we want to minimize the differences between our outputs and the outputs of the function, also called the training examples.
+This difference, called the training error is also needed to update the weights. It depends on the learning algorithm (in our case an artificial neural network), its parameters and the training examples.
+However, here we assume that the learning algorithm and the training examples are fixed while learning.\\
 A common measure for the training error, the mean squared error (MSE), is defined as:
 \begin{equation}
     E(\overrightarrow{w}) \equiv \frac{1}{N} \sum_{i=0}^N (y_i - f(x_i;\overrightarrow{w}))^2
 \end{equation}
 Where $N$ is the number of training examples, $x_i$ is the input of a training example, $y_i$ is the target output of the training example and $f$ is our learning algorithm, which depends on the weight vector $\overrightarrow{w}$.\\
 
-Because we now know how the training error and the weight vector are related, we can compute the derivative of the training error $E$ with respect to each component of $\overrightarrow{w}$. This called the gradient and is denoted as $\nabla E(\overrightarrow{w})$:
+Because we now know in which way the training error and the weight vector are related, we can compute the derivative of the training error $E$ with respect to each component of $\overrightarrow{w}$. This called the gradient and is denoted as $\nabla E(\overrightarrow{w})$:
 \begin{equation}
     \nabla E(\overrightarrow{w}) \equiv \left [ \frac{\partial E}{\partial w_0}, \frac{\partial E}{\partial w_1}, \dots, \frac{\partial E}{\partial w_n} \right ]
 \end{equation}
@@ -198,16 +198,16 @@ This is called a global minimum.
 No other combinations of weight values can lead to a lower error than those of the global minima.\\
 However, it is possible that, given a combination of weight values, any change in those values does not influence the error, in which case the gradient for every weight component is $0$.
 Thus, with the current algorithm, there is no incentive to change the weights.
-This is called a local minimum.
+This is the case when every set of weights in the neighborhood of the current ones leads to a higher error. This "position" in the weight vector space is called a local minimum.
 Although the algorithm cannot "see" immediate improvements, it is possible that another combination of weight values leads to a lower error.
 This is analogous to being in a valley in the mountains, where the valley after a mountain (and thus not visible) may lie lower.
-This is also visualized in Figure~\ref{fig:error_surface}.\\
+This is also visualized in Figure~\ref{fig:error_surface}.
 \begin{figure}[htb]
     \centering
     \includegraphics[width=.8\linewidth]{images/error_surface.png}
     \caption[An example of an error surface]{An example of an error surface using only one weight $w_0$. \textit{A}, \textit{B} and \textit{C} are local minima, while \textit{D} is the global minimum.}
     \label{fig:error_surface}
-\end{figure}
+\end{figure}\\
 
 For artificial neural networks without a hidden layer, such as a single perceptron unit, that use the MSE when updating weights, every local minimum is also a global minimum.
 However, when using hidden layers, this might not always be the case.\\
@@ -216,14 +216,15 @@ Instead, there are more saddle points.
 Here, the gradient is zero and the error goes up when some weights are changed and goes down for others.
 Generally a lot of such points are present, but they all have the same value for the objective function (i.e.\ the error function).\\
 
-A small value of $\eta$ leads to slow convergence, while a high value can cause the algorithm to overstep a local minimum. Because of this, the some algorithms gradually decrease the learning rate as the number of weight updates grows.\\
-For a single weight component, we get:
+A small value of $\eta$ leads to slow convergence, while a high value can cause the algorithm to overstep a local minimum. Because of this, some algorithms gradually decrease the learning rate as the number of weight updates grows.\\
+
+For a single weight vector component, the weight vector update becomes:
 \begin{equation}
     \label{eq:weightcomponentupdate}
     w_i \gets w_i - \eta \frac{\delta E}{\delta w_i}
 \end{equation}
 
-Of course, in order to update the weights, we first need to calculate the derivate of $E$ w.r.t. each component $w_i$. As an example, we show the derivative when using a simple linear unit, which defined as:
+Of course, in order to update the weights, we first need to calculate the derivate of $E$ w.r.t. each component $w_i$. As an example, we show the derivative when using a simple linear unit, which is defined as:
 \begin{equation}
     f(\overrightarrow{x};\overrightarrow{w}) = \overrightarrow{x} \cdot \overrightarrow{w}
 \end{equation}
@@ -239,8 +240,8 @@ We then get the following derivation:
     \end{split}
 \end{align}
 Where $x_{ij}$ is the $i$'th input component of training example $j$ and $o_j \equiv f(x_j; \overrightarrow{w})$.
-Instead of just using a linear unit, the function $f$ can of course be more complex and use for example on of the activation functions from Section~\ref{sec:activation_functions}.
-However, we can now see that we cannot use the perceptron because it is not differentiable.\\
+Instead of just using a linear unit, the function $f$ can of course be more complex and use for example one of the activation functions from Section~\ref{sec:activation_functions}.
+However, we can now see that we cannot use the perceptron unit because it is not differentiable over its whole domain.\\
 
 Using the resulting formula of Equation~\ref{eq:gradderiv} along with Equation~\ref{eq:weightcomponentupdate}, we can also define how to update each component of the weight vector:
 \begin{equation}
@@ -251,14 +252,14 @@ For this reason, this version of gradient descent is also often called \textit{b
 Of course, the outputs only need to be computed once per weight vector update as they do not depend on which specific weight vector component that we are updating.\\
 
 Still, each time using every training example for the weight vector update can lead to slow convergence to a local minimum.
-Furthermore, in case of multiple local minima in the error surface, it is possible that the gradient descent algorithm does not stop at the global minimum \parencite{ML}.
+Furthermore, in case of multiple minima in the error surface, it is possible that the gradient descent algorithm does not stop at a global minimum \parencite{ML}.
 % subsection gradient_descent (end)
 
 \subsection{Stochastic gradient descent} % (fold)
 \label{ssub:stochastic_gradient_descent}
 A popular variation of batch gradient descent that tries to solve the previously mentioned issues is \textit{stochastic gradient descent}.
-Instead of summing using all training examples, we do a weight update using only one training example.
-To do this, we first use a different error function for each example $j$:
+Instead of summing using all training examples, we apply a weight update using only one training example.
+To do this, we use a different error function for each example $j$:
 \begin{equation}
     E_j(\overrightarrow{w}) = (y_j - o_j)^2
 \end{equation}
@@ -269,17 +270,17 @@ The update for a single weight vector component when using a linear unit is then
 The idea here is that these weight updates, when having iterated over all the training examples, will be a decent approximation relative to using our original error function.
 Note that the update using one training example affects the error of the next training example.\\
 
-By making the learning rate small enough, usually smaller than with batch gradient descent, it is possible to approximate true gradient descent arbitrarily closely \parencite{ML}.
+By making the learning rate small enough, usually smaller than with batch gradient descent, it is possible to approximate the result of batch gradient descent arbitrarily closely \parencite{ML}.
 It is also computationally cheaper because each time we only handle one training example.
 Additionally, stochastic gradient descent can sometimes avoid being stuck in local minima because it uses various $\nabla E_j(\overrightarrow{w})$ instead of just $\nabla E(\overrightarrow{w})$ to move in the hypothesis space.
 % subsection stochastic_gradient_descent (end)
 
 \subsection{Backpropagation} % (fold)
 \label{ssub:backpropagation}
-The backpropagation algorithm uses gradient descent and can learn weights of a multilayer network with possibly multiple units in each layer \parencite{rumelhart1986learning}.
+The backpropagation algorithm uses gradient descent to learn weights of a multilayer network with possibly multiple units in each layer \parencite{rumelhart1986learning}.
 
 We say that, for multilayer networks, $L>2$, with $L$ the number of layers in the network.
-This means that there are other (hidden) layers besides the input and output layer. Such a network was already depicted in Figure~\ref{fig:ann}.
+This means that there are other layers besides the input and output layer. Such a network was already depicted in Figure~\ref{fig:ann}.
 
 As multiple output units are also possible, we need a new training error measure that sums over all of the output units of the network:
 \begin{equation}
@@ -287,13 +288,15 @@ As multiple output units are also possible, we need a new training error measure
 \end{equation}
 Where $outputs$ are the output units of the network and $y_{ki}$ and $o_{ki}$ is the value of the $k$'th output unit of respectively the $i$'th training example and network output.\\
 
-The difference with calculating the weight changes in artificial neural networks with more than 2 layers is that, starting from the second non-input layer, the input to a unit comes, besides the weights, from other units of which the value itself is also calculated.
+The difference in calculating the gradients in the weights is that it depends on previous layers that aren't input layers. That is, starting from the second non-input layer, the input to a unit comes, besides the weights, from other units of which the value itself is also calculated using weights.
 Thus, units in some layers can depend on units in multiple previous layers.
 This must also be taken into account when calculating the gradient for the output of those units.
 To do this, we can use the chain rule for the gradient of a single weight component:
 \begin{align}
-    \frac{\partial E_d}{\partial w_{ji}} &= \frac{\partial E_d}{\partial net_j} \frac{\partial net_j}{\partial w_{ji}}\\
-    &= \frac{\partial E_d}{\partial net_j} x_{ji}
+    \begin{split}
+        \frac{\partial E_d}{\partial w_{ji}} &= \frac{\partial E_d}{\partial net_j} \frac{\partial net_j}{\partial w_{ji}}\\
+        &= \frac{\partial E_d}{\partial net_j} x_{ji}
+    \end{split}
 \end{align}
 Where $E_d$ is the error for a training example $d$, $x_{ji}$ is the $i$'th input to unit $j$, $w_{ji}$ is the weight associated with this input and $net_j = \sum_i w_{ji} x_{ji}$. The further derivation for all the weights of the network is described in \cite[Chapter~4]{ML}. For an artificial neural network with 1 hidden layer, we get the pseudo-code shown in Algorithm~\ref{algo:backpropagation}.\\
 \begin{algorithm}[htb]
@@ -358,7 +361,7 @@ The fraction $\frac{1}{2}$ is often used such that the derivative is $\lambda w$
 It leads to diffusion of the weights and can indirectly force the network to use all the units of the network to form the correct output.
 % notice that during gradient descent parameter update, using the L2 regularization ultimately means that every weight is decayed linearly: W += -lambda * W towards zero.
 
-The $L_1$ and $L_2$ can also be combined, called \textit{elastic net regularization} \parencite{hastie2012ElasticNet}:
+The $L_1$ norm and $L_2$ norm can also be combined, called \textit{elastic net regularization} \parencite{hastie2012ElasticNet}:
 \begin{align}
     L_E (\overrightarrow{w}) &= L_1(\overrightarrow{w}) + L_2(\overrightarrow{w})\\
     &= \sum_{i=1}^k \lambda_1 \vert w_i \vert + \lambda_2 w_i^2
@@ -375,24 +378,24 @@ To apply this, we change the equation on line~\ref{algo:backpropagation:deltawei
 \begin{equation}
     \Delta w_{ji}(t) = \eta \delta_j x_{ji} + \alpha \Delta w_{ji}(t-1)
 \end{equation}
-Where $\Delta w_{ji}(t)$ is a weight update executed at iteration $t$ and $\alpha$, with $0 \le \alpha < 1$, determines how much of the previous weight update we want to carry to the new one. When $\alpha = 0$, we get again the regular weight update.
+Where $\Delta w_{ji}(t)$ is a weight update executed at iteration $t$ and $\alpha$, with $0 \le \alpha < 1$, which determines how much of the previous weight update we want to carry to the new one. When $\alpha = 0$, we get again the regular weight update.
 
 Thanks to momentum, it is possible to get past regions where the gradient is zero and the weights would not change without momentum.
 This is analogous to a ball rolling down a surface but keeps rolling a bit on a flat surface afterwards.
 In the real world, an object in motion will stay in motion, unless there is a force applied to it.
 Here, that force is the gradient.
-It is also possible to get past small local minima and it can speed up learning when the gradient does not change.
-Again, this is analogous to a ball that goes downhill and keeps gaining speed.\\
+It is also possible to get past small local minima and it can speed up learning when the gradient does not change in subsequent iterations.
+This is analogous to a ball that goes downhill and keeps gaining speed.\\
 
 The weight update of Root Mean Square Propagation (RMSProp) is quite different from stochastic gradient descent and only uses the sign of the gradient to update the weights \parencite{Tieleman2012LectureMagnitude.}.
 This allows us to escape from plateaus more quickly. Furthermore, the learning rate can be different for each weight.
-For example, we can multiply the learning rate of a certain weight by a factor greater than one if its last 2 gradients agreed on the sign, and multiply the learning rate by a value less than $1$ otherwise.
+For example, we can multiply the learning rate of a certain weight by a factor greater than one if its gradient in the last 2 updates agreed on the sign, and multiply the learning rate by a value less than $1$ otherwise.
 This means that, when the gradients agree on the direction, we give them more influence.
 If they are not consistent and disagree in subsequent steps, we decrease the influence. We can also put a limit on the learning rate as to not let it grow to excessively low or high amounts.
 
 However, by just using an adaptive learning rate, we can have the problem of weights themselves growing too high in unwanted situations. For example, when a gradient is for 9 subsequent steps a small positive amount (e.g.\ $0.1$) and once a large negative amount (e.g.\ $-0.9$), we don't want to change the weights a lot because they balance each other out.
 Using the current algorithm however, the learning rate and as a result the weights would become too high because we only look at the signs and not the magnitude of the gradients.\\
-Notice that, right now, we are dividing the gradient by its absolute value in order to just get $+1$ or $-1$ depending on the sign. It is however better to divide each weight by a moving average of the squared weight using the gradients of the past steps:
+Right now, we are dividing the gradient by its absolute value in order to just get $+1$ or $-1$ depending on the sign. It is however better to divide each weight by a moving average of the squared weight using the gradients of the past steps:
 \begin{subequations}
 \label{eq:rmsprop}
 \begin{align}
@@ -426,8 +429,16 @@ The weight update then becomes:
 
 \subsubsection{Dropout} % (fold)
 \label{ssub:dropout}
-Dropout is a way to prevent overfitting and is mostly applied to deep learning methods, which are explained in Chapter~\ref{cha:deep_learning}. It does so by randomly leaving out some visible or hidden units. As a result, all incoming and outgoing connections to these temporarily removed units are also removed and the algorithm can't rely on these connections. The simplest way of determining if a unit has to be removed is by removing it with a certain probability $p$, e.g.\ $p=0.5$. This value can also be determined by validation. As each unit can be present or not when using the network, for $n$ units there are $2^n$ possible networks.
-By learning each time using a possibly different network, we have a way of combining multiple models where each model is trained only a few times and most weights are shared between other models. Dropout is only used when training. In the testing phase, no units are removed. Here, however, we multiply the outgoing weights of each unit by their probability $p$.
+Dropout is a way to prevent overfitting and is mostly applied to deep learning methods, which are explained in Chapter~\ref{cha:deep_learning}.
+It does so by randomly leaving out some visible or hidden units.
+As a result, all incoming and outgoing connections to these temporarily removed units are also removed and the algorithm cannot rely on these connections.
+The simplest way of determining if a unit has to be removed is by removing it with a certain probability $p$, e.g.\ $p=0.5$.
+This value can also be determined by validation.
+As each unit can be present or not when using the network, for $n$ units there are $2^n$ possible networks.
+By learning each time using a possibly different network, we have a way of combining multiple models where each model is trained only a few times and most weights are shared between other models.
+Dropout is only used when training.
+In the testing phase, no units are removed.
+Here, however, we multiply the outgoing weights of each unit by the probability $p$.
 This is done to make sure that the \textit{expected} output for any hidden unit is the same as the actual output at test time.
 % subsubsection dropout (end)
 

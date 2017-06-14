@@ -1,15 +1,20 @@
 \begin{appendices}
-\chapter{Algorithm details}
+\chapter{Experiment details}
+\section{Data collection} % (fold)
+\label{sec:data_collection}
+For each agent, transitions on which to learn were collected in the same way. In each iteration, $5000$ transitions have to be collected. To do this, we keep executing actions and saving the transitions until this threshold is reached. When an end state is reached before reaching this threshold, we reset the environment and keep executing actions.
+% section data_collection (end)
 \section{Artificial neural network parameters} % (fold)
 \label{sec:artificial_neural_network_parameters}
 
 % section artificial_neural_network_parameters (end)
 % \begin{itemize}
-%     \item Softmax
 %     \item number of layers and units
 % \end{itemize}
-Weights are initialized using values drawn from a truncated normal distribution with mean $0$ and standard deviation $0.02$. This means that we draw values from a normal distribution with the same mean and standard deviation, except that only values maximally 2 standard deviations away from the mean can be drawn.\\
-To update weights, I used \textit{RMSProp}, described in Section~\ref{ssub:different_weight_updates}. I always used it with the following parameters for both the sequential and the parallel version of the algorithm:
+Weights are initialized using values drawn from a truncated normal distribution with mean $0$ and standard deviation $0.02$.
+This means that we draw values from a normal distribution with the same mean and standard deviation, except that only values maximally 2 standard deviations away from the mean can be drawn.\\
+To update weights, I used \textit{RMSProp}, described in Section~\ref{ssub:different_weight_updates}.
+The following hyperparameters were always used for both the sequential and the parallel version of the algorithm and for \textit{REINFORCE}:
 \begin{itemize}
     \item $\epsilon = 10^{-9}$
     \item $\alpha = 0.05$
@@ -18,7 +23,9 @@ To update weights, I used \textit{RMSProp}, described in Section~\ref{ssub:diffe
 
 \section{Environment parameters} % (fold)
 \label{sec:environment_parameters}
-Here we describe the range of possible values for each parameter of the CartPole and Acrobot environments. To generate an environment, each parameters is drawn from a uniform distribution with possible values in the defined range. For the CartPole environment, we have:
+Here we describe the range of possible values for each parameter of the \textit{cart-pole} and \textit{acrobot} environments.
+To generate an environment, each parameters is drawn from a uniform distribution with possible values in the defined range.
+For the \textit{cart-pole} environment, we have:
 \begin{table}[H]
     \centering
     \begin{tabular}{l|cc}
@@ -31,7 +38,7 @@ Here we describe the range of possible values for each parameter of the CartPole
     \hline
     \end{tabular}
 \end{table}
-For the Acrobot environment, we have:
+For the \textit{acrobot} environment, we have:
 \begin{table}[H]
     \centering
     \begin{tabular}{l|cc}

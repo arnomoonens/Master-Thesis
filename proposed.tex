@@ -6,7 +6,8 @@ More specifically, we combine the A3C algorithm \parencite{Mnih2016AsynchronousL
 This is done by executing A3C using tasks defined by different parameters instead of exactly the same ones and training them using both shared knowledge and knowledge specific to the task.\\
 
 Our approach only uses a latent basis over the policy space instead of using one over the policy space and another one over the descriptor space like in \cite{Isele2016UsingLearning}.\\
-For a task $t$, we can reconstruct the policy using the shared basis $L$ and the sparse coefficients over this basis for that specific task $s^{(t)}$: $\theta^{(t)} = Ls^{(t)}$, with $\theta^{(t)} \in \mathbb{R}^d$, $L \in \mathbb{R}^{d \times k}$ and $s^{(t)} \in \mathbb{R}^k$.\\
+For a task $t$, we can reconstruct the policy using the shared basis $L$ and the sparse coefficients over this basis for that specific task $s^{(t)}$: $\theta^{(t)} = Ls^{(t)}$, with $\theta^{(t)} \in \mathbb{R}^d$, $L \in \mathbb{R}^{d \times k}$ and $s^{(t)} \in \mathbb{R}^k$. The policy can then be combined with the state or features extracted from it by taking the weighted sum and passing it through a non-linearity, in this case the sigmoid function described in Section~\ref{ssub:sigmoid}.
+This results in a probability for each action.\\
 The architecture of the network used for one task is visualized in Figure~\ref{fig:algonn}.
 \begin{figure}[htb]
     \centering

@@ -1,12 +1,11 @@
 \chapter{Experimental setup}
 Experiments were executed on variations of the \textit{cart-pole} environment and on variations of the \textit{acrobot} environment.
-For executing algorithms with both environments, a framework by \cite{Brockman2016OpenAIGym} was used.\\
+For executing algorithms on both environments, a framework by \cite{Brockman2016OpenAIGym} was used.\\
 After describing these environments, we describe the methodology of our experiments and the results.\\
 
 \section{Cart-pole environment} % (fold)
 \label{sub:cartpole_environment}
-\todo{Citation?}
-In the 2-dimensional \textit{cart-pole} environment, a pole is placed vertically on a cart.
+In the 2-dimensional \textit{cart-pole} environment \parencite{journals/tsmc/BartoSA83}, a pole is placed vertically on a cart.
 The goal in this environment is to keep the pole balanced vertically (i.e.\ keep the angle of the pole between thresholds) and to keep the cart between 2 borders.
 An agent can either move left or right. It can't stay at its current position.
 The state is defined by 4 continuous-valued attributes: the position of the cart, the velocity of the cart, the angle of the pole and the angular velocity of the pole.
@@ -23,12 +22,13 @@ The environment is visualized in Figure~\ref{fig:cartpole}.
 
 \section{Acrobot environment} % (fold)
 \label{sub:acrobot_environment}
-The goal in the \textit{acrobot} environment, visualized in Figure~\ref{fig:acrobot} is to swing up the tip of 2 joined arms above a certain point \parencite{spong1995swing}.
+The goal in the \textit{acrobot} environment, visualized in Figure~\ref{fig:acrobot}, is to swing up the tip of 2 joined arms above a certain point \parencite{spong1995swing}.
 This can be done by applying a force on the joint between the 2 arms.
 However, this force is not enough to fulfill the goal immediately. Instead, the actuator must apply force to the left and to the right to build up enough speed to get above the horizontal threshold.
 The state consists of the angle and angular velocity of both arms. One can either move the joint clockwise, counter-clockwise or do nothing.
 An episode stops either when the tip of the outermost arm is above the threshold or when 500 steps have been executed in the episode.
-The goal is to minimize the amount of steps necessary to reach the threshold.
+At each step, a reward of $-1$ is given.
+The goal is to maximize the reward and as such to minimize the amount of steps necessary to reach the threshold.
 \begin{figure}[htb]
     \centering
     \includegraphics[width=.7\linewidth]{images/acrobot.png}
@@ -39,41 +39,36 @@ The goal is to minimize the amount of steps necessary to reach the threshold.
 
 \section{Methodology} % (fold)
 \label{sub:methodology}
-Several experiments were executed with our transfer learning algorithm, using varying types of transferred knowledge and artificial neural networks and a different number of source tasks. However, the structure of the algorithm was always the same.\\
-In some experiments, the performance of our algorithm was also compared to the performance of the \textit{REINFORCE} algorithm described in Section~\ref{sub:rl:policy_gradient}. When necessary, changes to this algorithm are mentioned.\\
-Parameters for both algorithms are described in Appendix~\ref{sec:artificial_neural_network_parameters}.
+Several experiments were executed with our transfer learning algorithm, using varying types of transferred knowledge and artificial neural networks and a different number of source tasks. However, the structure of the algorithm is always the same.\\
+In some experiments, the performance of our algorithm is also compared to the performance of the \textit{REINFORCE} algorithm described in Section~\ref{sub:rl:policy_gradient}. When necessary, changes to this algorithm are mentioned.\\
+Parameters for both algorithms are described in Appendix~\ref{sec:artificial_neural_network_parameters}.\\
 
-For an experiment with our algorithm, first a number of environments are randomly generated. We try to learn with either 5 or 10 environments.
-The environment for each task can differ for a predefined number of parameters specific to the task, of which the values can each be in a certain range. For a \emph{cart-pole} task, these are the mass of the cart, the mass of the pole and the length of the pole.
+For an experiment with our algorithm, first a number of environments are randomly generated. We try to learn with either 5 or 10 environments and thus source tasks.
+The environment for each task can differ for a predefined number of parameters specific to the task, of which the values can each be in a certain range. For example for a \emph{cart-pole} task, these are the mass of the cart, the mass of the pole and the length of the pole.
 The parameters and the allowed ranges for their values are described for each environment in Appendix~\ref{sec:environment_parameters}.\\
 Then a number of source tasks are learned that can update both the shared knowledge base and their own sparse representation.
 After a number of epochs, i.e.\ updates to these variables, we stop with learning these tasks.
 Instead, we learn to solve a new task, the target task.
 In some experiments, the sparse representation for the target task is initialized using the sparse representation of a randomly chosen source task.
 In others, the sparse representation is randomly initialized, as explained in Appendix~\ref{sec:artificial_neural_network_parameters}.
-Here however, only the sparse representation can be updated and not the shared knowledge base.\\
+However, for the target task only the sparse representation can be updated and not the shared knowledge base.\\
 
-In the second experiment, besides transferring the shared knowledge base, a sparse representation was also transferred.
-This is a sparse representation randomly chosen from the source tasks.
-The target task can then change this sparse representation to improve the performance on its own problem instance.\\
-
-The last experiment involves the \textit{REINFORCE} algorithm and was used as comparison with the results of the other experiments.
-Here, we first run the algorithm on one source task then transfer the same knowledge to the target task.
+Other experiments involve the \textit{REINFORCE} algorithm and was used as comparison with the results of the other experiments.
+Here, we first run the algorithm on one source task and then transfer the learned knowledge to the target task.
 In practice, this means that we start learning on the target task with the weights learned using the source task.
-The algorithm can still learn adapt all the weights using the target task.
+The algorithm can still learn adapt all the weights using experience gained on the target task.
 No sparseness on the weights was enforced.\\
 
-All three experiments were executed on the \emph{cart-pole} and acrobot environment.
-Each experiment consisted of 100 runs, each time using a different set of environments and thus problems to solve.\\
+Each experiment was repeated 100 times, each time using a different set of environments and thus problems to solve.\\
 Afterwards the rewards are averaged over all the runs.\\
 Trajectories for both sets of tasks contained of maximally 200 or 500 steps depending on the type of environment.
 This could be less in case the environment was in an end state.
 In case of the \emph{cart-pole} environment, this can mean for example that the cart tried to cross the left or right border or that the pole fell down.\\
-Hyperparameters, such as the learning rate of neural networks, were chosen by iteratively executing the previously mentioned experiment. Possible values for each hyperparameter were chosen manually.
+Hyperparameters, such as the learning rate of neural networks, were chosen manually.
 % section methodology (end)
 
 \section{Results}
-To evaluate our proposed algorithm, we use different experiments. First we compare the sequential and parallel version of our algorithm. We then see if feature extraction can improve the performance. Afterwards,  transferring a sparse representation from a random source task to the target task yields improvements.
+To evaluate our proposed algorithm, we use different experiments. First we compare the sequential and parallel version of our algorithm. We then see if feature extraction can improve the performance. Afterwards, we discuss results of an experiment where we transfer a sparse representation from a random source task to the target task. Afterwards, we evaluate the results of using only a single source task.\\
 When discussing the jumpstart and asymptotic performance, we use the mean reward at respectively the first 5 and the last 5 epochs (updates to the artificial neural network parameters).
 
 \subsection{Parallel and sequential knowledge transfer} % (fold)
@@ -93,7 +88,7 @@ For the sequential version, the AUC is $19446.096$, while it is $19655.268$ for 
 We now use a Wilcoxon rank-sum test with the null-hypothesis that there is no.
 We get $W=8.244$ and $1.665*10^{-16}$.
 With a significance level of $0.05$, we can reject the null-hypothesis and say that the medians of the 2 versions are different.
-By observing those medians, we can say that the parallel version is better.\\
+By observing those medians, we can say that the parallel version is better. As it does not first accumulate gradients but applies them as they are computed, it instantly affects other tasks and improves their performance.\\
 For the following experiments, when referring to "our transfer learning algorithm", the parallel version will be used.
 % subsection parallel_and_sequential_knowledge_transfer (end)
 
@@ -170,7 +165,7 @@ We will now discuss how exactly the behavior of these algorithms differ, startin
        \textit{TLA 10} & $\bm{-339.530}$ & $168.845$ & $\bm{-419.571}$ \\
     \hline
     \end{tabular}
-    \caption{Mean, standard deviation and median of the jumpstart performances for \textit{REINFORCE}, \textit{TLA 5} and \textit{TLA 10} applied to the Acrobot environment.}
+    \caption{Mean, standard deviation and median of the jumpstart performances for \textit{REINFORCE}, \textit{TLA 5} and \textit{TLA 10} applied to the \textit{acrobot} environment.}
     \label{tab:acrobot:nosparse:stats}
 \end{table}
 We see that \textit{TLA 10} performs the best. However, as seen by the standard deviations, the results can differ considerably. We will see if the differences in medians are significant by using a Wilcoxon rank-sum test with for each pair of algorithms the null-hypothesis that there is no difference between them.
@@ -186,7 +181,7 @@ The resulting p-values are shown in Table~\ref{tab:sparse:pvalues}.
        \textit{TLA 10} & $0.426$ & $0.179$ & \\
     \hline
     \end{tabular}
-    \caption{P-values for the Wilcoxon rank-sum test of the jumpstart performances using different algorithms, applied to the Acrobot environment, where the \textit{TLA} algorithms use sparse representation transfer.}
+    \caption{P-values for the Wilcoxon rank-sum test of the jumpstart performances using different algorithms, applied to the \textit{acrobot} environment, where the \textit{TLA} algorithms use sparse representation transfer.}
     \label{tab:sparse:pvalues}
 \end{table}
 We can say using each time a significance level of $0.05$ that there is no difference between any combination of algorithms.\\
@@ -194,6 +189,7 @@ We can say using each time a significance level of $0.05$ that there is no diffe
 As we could already see in Figure~\ref{fig:Acrobot:reward_target_re-akt5-akt10}, the learning performance of the \textit{REINFORCE} algorithm seems to be lower on average than the other algorithms.
 This is also visible when looking at the area under curve, which is $-30810.360$ for \textit{REINFORCE} algorithm and $-19437.733$ and $-16223.803$ for respectively \textit{TLA 5} and \textit{TLA 10}.\\
 
+\todo[inline]{Keep or remove this?}
 Last, we compare the asymptotic performances, again with the same test and the null-hypotheses that there are no differences between the asymptotic performances. The resulting p-values are shown in Table~\ref{tab:sparse:asymp:pvalues}.
 \begin{table}[htb]
     \centering
@@ -212,7 +208,7 @@ Last, we compare the asymptotic performances, again with the same test and the n
 
 With a significance level of $0.05$, we can say that there is a difference between \textit{REINFORCE} and \textit{TLA 5} and between \textit{REINFORCE} and \textit{TLA 10}.
 With the same significance level, we retain the null-hypothesis for \textit{TLA 5} and \textit{TLA 10}.
-Thus, we can say that using knowledge transfer yields a significant difference in the resulting performance, when applied to the Acrobot environment.
+Thus, we can say that using knowledge transfer yields a significant difference in the resulting performance, when applied to the \textit{acrobot} environment.
 To further discuss these differences, we look at the boxplots of the asymptotic performances for the three configurations. These are shown in Figure~\ref{fig:Acrobot:asymp_target_re-akt5-akt10}.
 \begin{figure}[htb]
     \centering
@@ -235,7 +231,7 @@ We can see that the median for the \textit{REINFORCE} algorithm is still the low
 % subsubsection cartpole:without_sparse_representation_transfer (end)
 \subsection{With sparse representation transfer} % (fold)
 \label{sub:with_sparse_representation_transfer}
-We now explore the results of transferring a sparse representation. After learning on the source tasks, we initialize the sparse representation weights with those of a randomly chosen sparse representation of a source task. The algorithm can then change this sparse representation to improve its performance on the target task. We compare the results to those when not transferring the sparse representation, both for the cart-pole and the acrobot environment.
+We now explore the results of transferring a sparse representation. After learning on the source tasks, we initialize the sparse representation weights with those of a randomly chosen sparse representation of a source task. The algorithm can then change this sparse representation to improve its performance on the target task. We compare the results to those when not transferring the sparse representation, both for the cart-pole and the \textit{acrobot} environment.
 \subsubsection{Cart-pole} % (fold)
 \label{ssub:with_sparse_representation_transfer:cartpole}
 To see how both version of the algorithm differ on average in terms of learning performance, we take a look at the learning curves, which are shown in Figure~\ref{fig:CartPole:st:reward_target_without-with}.
@@ -293,7 +289,7 @@ First, we see how the 2 versions perform initially, using the jumpstart performa
        \textit{TLA 10} & Yes & $\bm{-136.400}$ & $97.188$ & $\bm{-108.157}$ \\
     \hline
     \end{tabular}
-    \caption{Mean, standard deviation and median of the jumpstart performances \textit{TLA 5} and \textit{TLA 10} both with and without sparse representation transfer, applied to the Acrobot environment.}
+    \caption{Mean, standard deviation and median of the jumpstart performances \textit{TLA 5} and \textit{TLA 10} both with and without sparse representation transfer, applied to the \textit{acrobot} environment.}
     \label{tab:acrobot:sparse:stats}
 \end{table}
 Indeed, the versions using sparse representation transfer obtain initially obtain a higher reward and are more stable.\\
@@ -311,7 +307,7 @@ These are shown in Table~\ref{tab:acrobot:sparse:asymp:stats}.
        \textit{TLA 10} & Yes & $\bm{-106.626}$ & $64.108$ & $\bm{-91.087}$ \\
     \hline
     \end{tabular}
-    \caption{Mean, standard deviation and median of the asymptotic performances \textit{TLA 5} and \textit{TLA 10} both with and without sparse representation transfer, applied to the Acrobot environment.}
+    \caption{Mean, standard deviation and median of the asymptotic performances \textit{TLA 5} and \textit{TLA 10} both with and without sparse representation transfer, applied to the \textit{acrobot} environment.}
     \label{tab:acrobot:sparse:asymp:stats}
 \end{table}
 Again, the versions with sparse representation transfer perform better, because a higher mean and median reward is achieved and the standard deviations are lower.\\

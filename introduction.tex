@@ -1,9 +1,9 @@
 \chapter{Introduction}
 
 % Reinforcement learning
-Reinforcement learning is a branch from the machine learning field where we we learn from an environment and by interacting with it.
+Reinforcement learning is a branch from the machine learning field where we we learn from an environment by interacting with it.
 The reinforcement learning algorithm selects an action, executes it and can receive a reward.
-It can then change its way of selecting actions in order to get a higher possibly delayed reward.\\
+It can then change its way of selecting actions in order to get a higher reward, which is possibly received later on.\\
 The environment in which the agent acts can be for example a game like \textit{Pong}, a smart home controlling the room temperature or a self-driving car.\\
 
 % Artificial neural networks
@@ -13,33 +13,31 @@ The network receives an input as a vector of numerical values.
 These are then propagated to layers of units and results in one or more output units.\\
 In the context of reinforcement learning, these input units can be the current state of the environment.
 The output units can represent the action that has to be taken.
-The learning process can then involve changing the strength of connections between units.\\
+The learning process can then involve changing the strength of connections between units and as such influencing the output values.\\
 
 % Deep learning
-Deep learning also involves artificial neural networks.
-Here however, techniques are used to handle input spaces that are too big to use with more simple artificial neural networks.
+For high-dimensional inputs, different kinds of artificial neural networks must be used to be able to process these inputs. Techniques involving these networks are called deep learning methods.
 For example, an image can be used as input to the network.
 These typically include several thousands of pixels of each a certain color.
 Convolutional neural networks are able to detect patterns in the images using several layers of filters.
-Another deep learning network is the recurrent neural network, which is able to process a sequence of data such as a video.\\
+Another deep learning network is the recurrent neural network, which is able to process a sequence of data such as a video or text.\\
 
 % Deep reinforcement learning
-Deep learning and reinforcement learning can be combined, called deep reinforcement learning.
-As such, these algorithms are able to learn in an environment with a high-dimensional input space.
+By combining deep learning and reinforcement learning, it is possible to learn in an environment that has a high-dimensional input space. This is called deep reinforcement learning.
 For example, the agent can learn how to play \textit{Pong} just using an image of the screen, just like a human.\\
 
 % transfer learning
 An environment in which is learned is roughly defined by the possible states in which it can be, which actions can be taken and in which state one ends up in when taking an action being in a certain state.
 These however can be changed such that the environment is easier or harder to learn.
 In an environment where a self driving car must be controlled for example, the amount of obstacles may vary or the weather conditions may change.\\
-Although these change may require different capabilities of the agent, some knowledge may still be useful.
+Although these changes may require different capabilities of the agent, some knowledge may still be useful.
 It can thus be beneficial for the agent to transfer the already learned knowledge from the initial situation, called \textit{source task} to the agent learning in the new situation, called the \textit{target task}.
-This is called transfer learning. One use of this is for example in cases where it is too expensive or time consuming to learn in the real world. Instead, one can first learn using simulations and then transfer the knowledge to use and fine tune it in the real world, saving time and money.\\
+This domain is called transfer learning. One use of this is for example in cases where it is too expensive or time consuming to learn in the real world. Instead, one can first learn in a simulation and then transfer the knowledge to use and fine tune it in the real world, saving time and money.\\
 It is necessary to know from which source tasks to transfer knowledge and which knowledge to transfer.
 For this, we need to know how the tasks are related and possibly how an agent can interpret and act using the new state space and action space.\\
 
 In this thesis, we investigate the use of transfer learning in reinforcement learning using artificial neural networks.
 First, we will introduce the reader to the concepts of reinforcement learning, artificial neural networks, deep learning, deep reinforcement learning and transfer learning.
-Afterwards, we will discuss related work in the field of transfer learning applied to reinforcement learning.
+Afterwards, we will discuss related work in the field of transfer learning applied to reinforcement learning and deep reinforcement learning.
 We will then explain the algorithm that was used in experiments and how the experiments were conducted.
 Last, the results of the experiments will be discussed.
