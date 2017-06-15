@@ -1,12 +1,12 @@
 \chapter{Proposed algorithm}
 \label{cha:proposed_algorithm} % (fold)
-Our aim is to learn from multiple source tasks in order to have a better performance on a target task than when we wouldn't train on source tasks.
+Our aim is to learn from multiple source tasks using shared knowledge in order to have a better performance on a target task than when we wouldn't train on source tasks.
 While a version of the algorithm was implemented where the source tasks are executed sequentially for each episode, the focus is on a version where source tasks are learned simultaneously.
 More specifically, we combine the A3C algorithm \parencite{Mnih2016AsynchronousLearning} with the transfer learning algorithm in \cite{Isele2016UsingLearning}.
-This is done by executing A3C using tasks defined by different parameters instead of exactly the same ones and training them using both shared knowledge and knowledge specific to the task.\\
+This is done by executing A3C using tasks defined by different environment parameters instead of exactly the same ones and training them using both shared knowledge and knowledge that is specific to the task.\\
 
 Our approach only uses a latent basis over the policy space instead of using one over the policy space and another one over the descriptor space like in \cite{Isele2016UsingLearning}.\\
-For a task $t$, we can reconstruct the policy using the shared basis $L$ and the sparse coefficients over this basis for that specific task $s^{(t)}$: $\theta^{(t)} = Ls^{(t)}$, with $\theta^{(t)} \in \mathbb{R}^d$, $L \in \mathbb{R}^{d \times k}$ and $s^{(t)} \in \mathbb{R}^k$. The policy can then be combined with the state or features extracted from it by taking the weighted sum and passing it through a non-linearity, in this case the sigmoid function described in Section~\ref{ssub:sigmoid}.
+For a task $t$, we can reconstruct the policy using the shared basis $L$ and the sparse coefficients over this basis for that specific task $s^{(t)}$: $\theta^{(t)} = Ls^{(t)}$, with $\theta^{(t)} \in \mathbb{R}^d$, $L \in \mathbb{R}^{d \times k}$ and $s^{(t)} \in \mathbb{R}^k$. The policy can then be combined with the state or features extracted from it by taking the weighted sum and passing it through a non-linearity, in this case the softmax function described in Section~\ref{sub:softmax}.
 This results in a probability for each action.\\
 The architecture of the network used for one task is visualized in Figure~\ref{fig:algonn}.
 \begin{figure}[htb]
@@ -19,36 +19,33 @@ The architecture of the network used for one task is visualized in Figure~\ref{f
 The source tasks can be learned in two ways, either sequentially or in parallel.
 In the sequential way, we collect trajectories and calculate the gradients for every task after another.
 These gradients include both those for the sparse representation and for the knowledge base.
-They are calculated for every episode of a task like in the \texttt{REINFORCE} algorithm (explained in Section~\ref{sub:rl:policy_gradient}), i.e.\ with likelihood ratios using discounted rewards as a sample for the $Q$ values of the policy.\\
+They are calculated for every episode of a task like in the \textit{REINFORCE} algorithm (explained in Section~\ref{sub:rl:policy_gradient}), i.e.\ with likelihood ratios using discounted rewards as a sample for the $Q$ values of the policy.
 After evaluating every task, we sum and apply all of their gradients.
-The learning process for the source tasks then stops when a certain number of updates have been applied.\\
+The learning process for the source tasks stops when a certain number of updates have been applied.\\
 In the parallel way, all source tasks are learned at the same time, each executing a certain number of updates.
 Trajectories are collected for each task continuously and its gradients are applied immediately after they are calculated.
 This means that they are not first summed up like in the sequential method.\\
 The resulting pseudo code for the source tasks learned using the parallel method can be seen in Algorithm~\ref{algo:ownsource}.\\
-\begin{algorithm}[htb]
+\begin{algorithm}[H]
 \DontPrintSemicolon
 \emph{// Assume global knowledge base $L$ and global shared counter $T \gets 0$}\;
-% \emph{// Assume thread-specific parameter vector $\theta_g'$}\;
 Initialize thread-specific parameter vector $\theta^{(t)}$\;
 Initialize thread step counter $t\gets 1$\;
 \Repeat{$T > T_{max}$}{
     $\theta^{(t)} \gets Ls^{(t)}$\;
     Reset gradients: $d\theta^{(t)} \gets 0$\;
-    % Synchronize agent-specific parameters  $\theta_g' \gets \theta_g$\;
     $t_{start} \gets t$\;
     Initialize state $s_t$\;
     \Repeat{terminal $s_t$ \textbf{or} $t-t_{start} = t_{max}$}{
         Perform $a_t$ according to policy $\pi(a_t \vert s_t;\theta^{(t)})$\;
         Receive reward $r_t$ and new state $s_{t+1}$\;
         $t \gets t + 1$\;
-        $T \gets T + 1$\;
         }
     \For {$i \in \{t-1,\dots,t_{start} \}$} {
-        %Accumulate gradients w.r.t. $\theta'$: $d\theta \gets d\theta + \nabla_{\theta'} \log\pi(a_i|s_i;\theta') (R - V(s_i;\theta'_v))$\;
-        Accumulate gradients w.r.t. $\theta^{(t)}$: $\theta^{(t)} \gets \theta ^{(t)}+ \alpha \nabla_{\theta^{(t)}} \log \pi_{\theta^{(t)}}(s_t,a_t)v_t$\;
+        Accumulate gradients w.r.t. $\theta^{(t)}$: $d\theta^{(t)} \gets d\theta ^{(t)}+ \alpha \nabla_{\theta^{(t)}} \log \pi_{\theta^{(t)}}(s_i,a_i)v_i$\;
     }
     Perform asynchronous update of $\theta^{(t)}$ using $d\theta^{(t)}$\;
+    $T \gets T + 1$\;
 }
 \caption[Asynchronous knowledge transfer agent for a source task]{Asynchronous knowledge transfer agent for a source task.}
 \label{algo:ownsource}
@@ -62,6 +59,7 @@ The pseudo-code for the target task is shown in Algorithm~\ref{algo:owntarget}.\
 \emph{// Assume global knowledge base $L$}\;
 Initialize task-specific sparse representation $s^{(t)}$\;
 Initialize thread step counter $t\gets 1$\;
+$T \gets 0$\;
 \Repeat{$T > T_{max}$}{
     $t_{start} \gets t$\;
     Initialize state $s_t$\;
@@ -71,10 +69,10 @@ Initialize thread step counter $t\gets 1$\;
         $t \gets t + 1$\;
         }
     \For {$i \in \{t-1,\dots,t_{start} \}$} {
-        %Accumulate gradients w.r.t. $\theta'$: $d\theta \gets d\theta + \nabla_{\theta'} \log\pi(a_i|s_i;\theta') (R - V(s_i;\theta'_v))$\;
-        Accumulate gradients w.r.t. $s^{(t)}$: $s^{(t)} \gets s^{(t)} + \alpha \nabla_{s^{(t)}} \log \pi_{s^{(t)}}(s_t,a_t)v_t$\;
+        Accumulate gradients w.r.t. $s^{(t)}$: $ds^{(t)} \gets ds^{(t)} + \alpha \nabla_{s^{(t)}} \log \pi_{s^{(t)}}(s_i,a_i)v_i$\;
     }
     Perform update of $s^{(t)}$ using $ds^{(t)}$\;
+    $T \gets T + 1$\;
 }
 \caption[Knowledge transfer agent for the target task]{Knowledge transfer agent for the target task.}
 \label{algo:owntarget}

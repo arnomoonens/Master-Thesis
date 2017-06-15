@@ -139,7 +139,7 @@ Initialize thread step counter $t\gets 1$\;
     \begin{array}{l l}
       0  \quad & \text{if $s_t$ is terminal}\\
         V(s_t,\theta'_v) \quad & \text{otherwise // Bootstrap from last state}
-    \end{array}\right.$
+    \end{array}\right.$\;
     \For {$i \in \{t-1,\ldots,t_{start} \}$} {
         Accumulate gradients w.r.t. $\theta'$: $d\theta \gets d\theta + \nabla_{\theta'} \log\pi(a_i|s_i;\theta') (R - V(s_i;\theta'_v))$\;
         Accumulate gradients w.r.t. $\theta'_v$: $d\theta_v \gets d\theta_v + {\partial\left(R - V(s_i;\theta'_v)\right)^2}/{\partial \theta'_v}$\;

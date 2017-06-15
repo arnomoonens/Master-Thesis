@@ -39,7 +39,7 @@ Or in vector format:
 From hereon we will denote the weighted sum as $z \equiv \sum_i^n w_{ij} x_i \equiv \overrightarrow{w} \cdot \overrightarrow{x}$.\\
 
 \subsection{Perceptron} % (fold)
-\label{ssub:perceptron}
+\label{sub:perceptron}
 A perceptron unit, defined by \cite{Rosenblatt58}, gives as output either $-1$ or $+1$ depending on the linear combination of the input and the weights:
 \begin{equation}
 o(\overrightarrow{x}) = \begin{cases}
@@ -60,7 +60,7 @@ A schematic using the perceptron unit is shown in Figure~\ref{fig:perceptron}.\\
 % subsection perceptron (end)
 
 \subsection{Sigmoid} % (fold)
-\label{ssub:sigmoid}
+\label{sub:sigmoid}
 A disadvantage of the perceptron unit is that it is not differentiable in the whole domain (specifically at $x=0$). Why this is a problem will become clear in Section~\ref{sec:gradient_descent_and_backpropagation}.\\
 To solve this problem, a sigmoid function can be used.
 A sigmoid function is a differentiable function that is monotonically increasing and approaches an asymptote for $x \to \pm \infty$ \parencite{lecun2012neural}.
@@ -82,7 +82,7 @@ The behavior of this function is visualized in Figure~\ref{fig:sigmoid}.
 % subsection sigmoid (end)
 
 \subsection{Hyperbolic tangent} % (fold)
-\label{ssub:hyperbolic_tangent}
+\label{sub:hyperbolic_tangent}
 Another popular function and another kind of sigmoid function is the hyperbolic tangent function, also called \textit{tanh}.
 While the output of the sigmoid function ranges between $0$ and $+1$, here the output ranges between $-1$ and $+1$, just like the range (and the only possible values) of the perceptron.
 The formula of the hyperbolic tangent function, which can also be written in terms of the sigmoid function, is:
@@ -103,7 +103,7 @@ This function is visualized in Figure~\ref{fig:tanh}.
 % subsection hyperbolic_tangent (end)
 
 \subsection{Rectified Linear Unit} % (fold)
-\label{ssub:rectified_linear_unit}
+\label{sub:rectified_linear_unit}
 A rectified linear unit, also called a ReLU, is another popular and more recent activation function. It was first defined by \cite{conf/icml/NairH10}. The output is the identity function if $z \ge 0$ and $0$ otherwise:
 \begin{equation}
     f(z) = \begin{cases}
