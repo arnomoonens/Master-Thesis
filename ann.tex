@@ -23,20 +23,20 @@ A simple artificial neural network is visualized in Figure~\ref{fig:ann}.\\
     \label{fig:ann}
 \end{figure}
 As a non-input unit gets information from multiple units, these need to be combined to determine if the unit can be activated or not.
-This is done by applying a linear or non-linear function, called an activation function, to the weighted sum of the connected units.
+This is done by applying a non-linear function, called an activation function, to the weighted sum of the connected units.
 % section basics (end)
 
 \section{Activation functions} % (fold)
 \label{sec:activation_functions}
 Formally, an activation function $\phi$ will compute for unit $j$ with inputs from layer $x$:
 \begin{equation}
-    o = \phi\big(\sum_i^n w_{ij} x_i\big)
+    o = \phi\left(\sum_i^n w_{ij} x_i\right)
 \end{equation}
 Or in vector format:
 \begin{equation}
     o = \phi(\overrightarrow{w} \cdot \overrightarrow{x})
 \end{equation}
-From hereon we will denote the weighted sum as $z \equiv \sum_i^n w_{ij} x_i \equiv \overrightarrow{w} \cdot \overrightarrow{x}$.\\
+From hereon we will denote the weighted sum as $z \equiv \sum_i^n w_{ij} x_i = \overrightarrow{w} \cdot \overrightarrow{x}$.\\
 
 \subsection{Perceptron} % (fold)
 \label{sub:perceptron}
@@ -164,7 +164,7 @@ Where $z_i$ is the weighted sum for the current output to be computed and $z_j$ 
 %Why no algebraic solution?
 If we choose the weights of our network correctly, we might succeed in approximating a function.
 However, it is not always possible to separate the input space and have the right outputs using our artificial neural network.
-In that case, we might want the best possible solution, e.g.\ one that has the least amount of errors in producing outputs w.r.t. the correct outputs, also called the target outputs.
+In that case, we might want the best possible solution, e.g.\ one that has the least amount of errors in producing outputs w.r.t.\ the correct outputs, also called the target outputs.
 Furthermore, choosing the weights manually can be a tedious process.\\
 For these reasons, we use an algorithm called called backpropagation, which uses a variation of gradient descent.
 We will first discuss gradient descent as this provides the basis of the backpropagation algorithm.
@@ -179,7 +179,7 @@ This difference, called the training error is also needed to update the weights.
 However, here we assume that the learning algorithm and the training examples are fixed while learning.\\
 A common measure for the training error, the mean squared error (MSE), is defined as:
 \begin{equation}
-    E(\overrightarrow{w}) \equiv \frac{1}{N} \sum_{i=0}^N (y_i - f(x_i;\overrightarrow{w}))^2
+    E(\overrightarrow{w}) \equiv \frac{1}{2N} \sum_{i=0}^N (y_i - f(x_i;\overrightarrow{w}))^2
 \end{equation}
 Where $N$ is the number of training examples, $x_i$ is the input of a training example, $y_i$ is the target output of the training example and $f$ is our learning algorithm, which depends on the weight vector $\overrightarrow{w}$.\\
 
@@ -224,7 +224,7 @@ For a single weight vector component, the weight vector update becomes:
     w_i \gets w_i - \eta \frac{\delta E}{\delta w_i}
 \end{equation}
 
-Of course, in order to update the weights, we first need to calculate the derivate of $E$ w.r.t. each component $w_i$. As an example, we show the derivative when using a simple linear unit, which is defined as:
+Of course, in order to update the weights, we first need to calculate the derivate of $E$ w.r.t.\ each component $w_i$. As an example, we show the derivative when using a simple linear unit, which is defined as:
 \begin{equation}
     f(\overrightarrow{x};\overrightarrow{w}) = \overrightarrow{x} \cdot \overrightarrow{w}
 \end{equation}
@@ -232,11 +232,11 @@ We then get the following derivation:
 \begin{align}
     \label{eq:gradderiv}
     \begin{split}
-        \frac{\delta E}{\delta w_i} &= \frac{\delta}{\delta w_i} \frac{1}{N} \sum_{j=0}^N (y_j - o_j)^2\\
-        &= \frac{1}{N} \sum_{j=0}^N \frac{\delta}{\delta w_i} (y_j - o_j)^2\\
-        &= \frac{1}{N} \sum_{j=0}^N 2 (y_j - o_j) \frac{\delta}{\delta w_i} (y_j - o_j)\\
-        &= \frac{2}{N} \sum_{j=0}^N (y_j - o_j) \frac{\delta}{\delta w_i} (y_i - \overrightarrow{x_i} \cdot \overrightarrow{w})\\
-        &= \frac{2}{N} \sum_{j=0}^N (y_j - o_j)(-x_{ij})
+        \frac{\delta E}{\delta w_i} &= \frac{\delta}{\delta w_i} \frac{1}{2N} \sum_{j=0}^N (y_j - o_j)^2\\
+        &= \frac{1}{2N} \sum_{j=0}^N \frac{\delta}{\delta w_i} (y_j - o_j)^2\\
+        &= \frac{1}{2N} \sum_{j=0}^N 2 (y_j - o_j) \frac{\delta}{\delta w_i} (y_j - o_j)\\
+        &= \frac{1}{N} \sum_{j=0}^N (y_j - o_j) \frac{\delta}{\delta w_i} (y_i - \overrightarrow{x_i} \cdot \overrightarrow{w})\\
+        &= \frac{1}{N} \sum_{j=0}^N (y_j - o_j)(-x_{ij})
     \end{split}
 \end{align}
 Where $x_{ij}$ is the $i$'th input component of training example $j$ and $o_j \equiv f(x_j; \overrightarrow{w})$.
@@ -245,7 +245,7 @@ However, we can now see that we cannot use the perceptron unit because it is not
 
 Using the resulting formula of Equation~\ref{eq:gradderiv} along with Equation~\ref{eq:weightcomponentupdate}, we can also define how to update each component of the weight vector:
 \begin{equation}
-    w_i \gets w_i + \eta \frac{2}{N} \sum_{j=0}^N (y_j - o_j)x_{ij}
+    w_i \gets w_i + \eta \frac{1}{N} \sum_{j=0}^N (y_j - o_j)x_{ij}
 \end{equation}
 As we can see, for each weight vector, we need to apply the model to the input of each training example.
 For this reason, this version of gradient descent is also often called \textit{batch gradient descent}.
@@ -265,7 +265,7 @@ To do this, we use a different error function for each example $j$:
 \end{equation}
 The update for a single weight vector component when using a linear unit is then:
 \begin{equation}
-    w_i \gets w_i + 2 \eta(y_j- o_j)x_{ij}
+    w_i \gets w_i + \eta(y_j- o_j)x_{ij}
 \end{equation}
 The idea here is that these weight updates, when having iterated over all the training examples, will be a decent approximation relative to using our original error function.
 Note that the update using one training example affects the error of the next training example.\\
@@ -429,7 +429,7 @@ The weight update then becomes:
 
 \subsubsection{Dropout} % (fold)
 \label{ssub:dropout}
-Dropout is a way to prevent overfitting and is mostly applied to deep learning methods, which are explained in Chapter~\ref{cha:deep_learning}.
+Dropout \parencite{Srivastava2014Dropout} is a way to prevent overfitting and is mostly applied to deep learning methods, which are explained in Chapter~\ref{cha:deep_learning}.
 It does so by randomly leaving out some visible or hidden units.
 As a result, all incoming and outgoing connections to these temporarily removed units are also removed and the algorithm cannot rely on these connections.
 The simplest way of determining if a unit has to be removed is by removing it with a certain probability $p$, e.g.\ $p=0.5$.

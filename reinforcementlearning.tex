@@ -26,7 +26,7 @@ This function says how good it is to be in a certain state $s$ by stating the ex
 This expected value when starting in state $s$ and following a specific policy $\pi$ is denoted as $V^\pi(s)$:
 \begin{equation}
 \label{eq:vpolicy}
-V^\pi(s) = \ex_\pi\{R_t \vert s_t=s\}=\ex_\pi\big \{ \sum_{k=0}^{\infty}\gamma^k r_{t+k+1} \vert s_t=s\big \}
+V^\pi(s) = \ex_\pi\{R_t \vert s_t=s\}=\ex_\pi\left \{ \sum_{k=0}^{\infty}\gamma^k r_{t+k+1} \vert s_t=s\right \}
 \end{equation}
 Where $\gamma$ is a discount applied over time to past rewards.
 The optimal policy $\pi$ is the one that leads to the highest $V^\pi(s)$ for all $s \in \mathcal{S}$.
@@ -40,7 +40,7 @@ The resulting state-value function is $V^*(s) = \max_\pi V^\pi(s)$ for all $s \i
 It is also possible to define a value for taking an action in a certain state, which is the action-value function $Q(s,a)$.
 $Q^\pi(s,a)$ is the expected return after taking action $a$ in state $s$:
 \begin{equation}
-Q^\pi(s,a) = \ex_\pi\{R_t|s_t=s,a_t=a\}=\ex_\pi\big \{ \sum_{k=0}^{\infty}\gamma^k r_{t+k+1} | s_t=s,a_t=a\big \}
+Q^\pi(s,a) = \ex_\pi\{R_t|s_t=s,a_t=a\}=\ex_\pi\left \{ \sum_{k=0}^{\infty}\gamma^k r_{t+k+1} | s_t=s,a_t=a\right \}
 \end{equation}
 Similar to $V^*(s)$, $Q^*(s,a)$ is the action-value function we have when applying the optimal policy.\\
 Actions can be selected using for example $\epsilon$-greedy or softmax. In $\epsilon$-greedy action selection, the action with the highest $Q(s,a)$ is selected with probability $1-\epsilon$ and a random action is selected otherwise.\\
@@ -93,23 +93,23 @@ It may for example be unknown what the probability is of ending in a certain sta
 Monte Carlo methods collect sample returns and average them in order to approximate a value function.
 The incremental implementation for approximating $V$ is as follows:
 \begin{equation}
-V(s_t) \leftarrow V(s_t) + \alpha\big[R_t - V(s_t)\big]
+V(s_t) \leftarrow V(s_t) + \alpha\left[R_t - V(s_t)\right]
 \end{equation}
 Where $R_t$ is the actual return of an action and $\alpha$ is a constant step-size parameter. As was shown in equation \ref{eq:vpolicy}, to compute $R_t$ we need all the future rewards until the end of the episode.\\
 Temporal-Difference (TD) learning tries to solve this by bootstrapping techniques like in dynamic programming. To do this, in the update we replace the full return using the observed reward and the estimate of the value of the next state. This is known as TD(0):
 \begin{equation}
-V(s_t) \leftarrow V(s_t) + \alpha\big[r_{t+1}+\gamma V(s_{t+1}) - V(s_t)\big]
+V(s_t) \leftarrow V(s_t) + \alpha\left[r_{t+1}+\gamma V(s_{t+1}) - V(s_t)\right]
 \end{equation}
 These estimates can then be used for acting in an environment.\\
 Sarsa uses TD estimates for on-policy control. Because it is on-policy, we must estimate the action-value function $Q^\pi(s,a)$ for the current behavior policy $\pi$ and for all states $s$ and actions $a$. We consider transitions from state-action pair to state-action pair instead of transitions from state to state. The update is as follows:
 \begin{equation}
-Q(s_t,a_t) \leftarrow Q(s_t,a_t) + \alpha \big[ r_{t+1} + \gamma Q(s_{t+1},a_{t+1}) - Q(s_t,a_t) \big]
+Q(s_t,a_t) \leftarrow Q(s_t,a_t) + \alpha \left[ r_{t+1} + \gamma Q(s_{t+1},a_{t+1}) - Q(s_t,a_t) \right]
 \end{equation}
 We can then choose the action with the highest $Q^\pi(s_t,a_t)$, using for example $\epsilon$-greedy.
 %The Gamma parameter has a range of 0 to 1 (0 <= Gamma > 1).  If Gamma is closer to zero, the agent will tend to consider only immediate rewards.  If Gamma is closer to one, the agent will consider future rewards with greater weight, willing to delay the reward.
 Another control method, called Q-learning, also uses TD estimates but doesn't use the policy that is followed to estimate $Q^*$. This is called an off-policy algorithm. Here, we do a backup using the action that has the highest $Q$ value at the next state:
 \begin{equation}
-Q(s_t,a_t) \leftarrow Q(s_t,a_t) + \alpha \big[ r_{t+1} + \gamma \max_{a} Q(s_{t+1}, a) - Q(s_t,a_t) \big]
+Q(s_t,a_t) \leftarrow Q(s_t,a_t) + \alpha \left[ r_{t+1} + \gamma \max_{a} Q(s_{t+1}, a) - Q(s_t,a_t) \right]
 \end{equation}
 Note that the policy can still influence which state-action pairs are visited and updated. To guarantee finding the optimal behavior, it is required that all pairs continue to be updated.\\
 
@@ -135,7 +135,7 @@ R_t^{(n)} = r_{t+1} + \gamma r_{t+2} + \dots + \gamma^{n-1}r_{t+n} + \gamma^n V_
 There, we treat the terminal state as a state that always transitions to itself with zero reward. As such, treating an episodic task the same way as a continuing task doesn't influence the result, even if we discount the returns. All $n$-step returns that last up to or past termination will have the same value as the complete return.\\
 The increment to $V_t(s_t)$ is then defined by:
 \begin{equation}
-\Delta V_t(s_t) = \alpha \big[ R_t^{(n)} - V_t(s_t) \big]
+\Delta V_t(s_t) = \alpha \left[ R_t^{(n)} - V_t(s_t) \right]
 \end{equation}
 In on-line updating, the updates are done during the episode, as soon as a $\Delta V_t(s_t)$ is computed. In off-line updating, these increments are set aside and applied after the episode is done.\\
 $n$-step TD methods are rarely used because they are inconvenient to implement. To compute $n$-step returns, you have to wait $n$ steps to observe the resultant rewards and states.\\
@@ -146,7 +146,7 @@ R^\lambda_t = (1-\lambda) \sum_{n=1}^{\infty} \lambda^{n-1} R_t^{(n)}
 \end{equation}
 After a terminal state has been reached, all subsequent $n$-step returns are equal to $R_t$, so the $(1-\lambda)$ isn't applied. When $\lambda=1$, we will only have the conventional return $R_t$. The increment $\Delta V_t(s_t)$ is defined as:
 \begin{equation}
-\Delta V_t(s_t) = \alpha \big[ R_t^{\lambda} - V_t(s_t) \big]
+\Delta V_t(s_t) = \alpha \left[ R_t^{\lambda} - V_t(s_t) \right]
 \end{equation}
 In this forward view, we look for each state visited forward in time to all the future rewards and decide how best to combine them. After looking forward from a state and updating it, we move to the next one and don't work with that state anymore. Future states, however, are viewed and processed repeatedly. This way of thinking is visualized in Figure \ref{fig:TDForwardView}.
 \begin{figure}[htb]
@@ -493,7 +493,7 @@ As such, we can apply information of seen states to related states that haven't 
 Here, it is again possible to use function approximation.
 The error for the algorithm to minimize is the mean-squared error (MSE) between the true value of the state and the approximated one:
 \begin{equation}
-MSE(\overrightarrow{\theta_t}) = \sum_{s \in S} P(s) \big[ V^{\pi}(s) - V_t(s) \big]^2
+MSE(\overrightarrow{\theta_t}) = \sum_{s \in S} P(s) \left[ V^{\pi}(s) - V_t(s) \right]^2
 \end{equation}
 Where $\theta_t$ is a component of the model that the algorithm generated and $P$ is a distribution weighting the errors of different states.
 As there are less components $\overrightarrow{\theta_t}$ than states, the flexibility for approximation is limited.
@@ -516,14 +516,14 @@ Like already discussed, we assume that the states over which we want to minimize
 We can then use gradient descent, explained in Section~\ref{ssub:gradient_descent}, to adjust the parameter vector in order to minimize the error:
 \begin{align}
 \begin{split}
-\overrightarrow{\theta}_{t+1} &= \overrightarrow{\theta}_t - \frac{1}{2} \alpha \Delta_{\overrightarrow{\theta}_t} \big[ V^{\pi}(s_t) - V_t(s_t) \big]^2\\
-&= \overrightarrow{\theta}_t + \alpha \big[ V^{\pi}(s_t) - V_t(s_t) \big] \Delta_{\overrightarrow{\theta}_t} V_t(s_t)
+\overrightarrow{\theta}_{t+1} &= \overrightarrow{\theta}_t - \frac{1}{2} \alpha \Delta_{\overrightarrow{\theta}_t} \left[ V^{\pi}(s_t) - V_t(s_t) \right]^2\\
+&= \overrightarrow{\theta}_t + \alpha \left[ V^{\pi}(s_t) - V_t(s_t) \right] \Delta_{\overrightarrow{\theta}_t} V_t(s_t)
 \end{split}
 \end{align}
 Where $\alpha$ is a positive step-size parameter and $\nabla_{\overrightarrow{\theta}_t}$ denotes the vector of partial derivatives for every function $f$.\\
 If $V^{\pi}(s_t)$ is unavailable because we only have a noise-corrupted version or one with backed-up values, we can simple use $v_t$ instead of $V^{\pi}(s_t)$:
 \begin{equation}
-\overrightarrow{\theta}_{t+1} = \overrightarrow{\theta}_t + \alpha \big[ v_t - V_t(s_t) \big] \Delta_{\overrightarrow{\theta}_t} V_t(s_t)
+\overrightarrow{\theta}_{t+1} = \overrightarrow{\theta}_t + \alpha \left[ v_t - V_t(s_t) \right] \Delta_{\overrightarrow{\theta}_t} V_t(s_t)
 \end{equation}
 If $v_t$ is an unbiased estimate and so $E\{v_t\} = V^{\pi}(s_t)$ for each $t$, then $\overrightarrow{\theta}_t$ is guaranteed to converge to a local optimum under stochastic approximation conditions for decreasing the step-size parameter $\alpha$. This is the case for Monte Carlo state-value prediction.\\
 

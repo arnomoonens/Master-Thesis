@@ -79,11 +79,10 @@ First, the input is passed to an input gate $i_t$ that determines how much of th
 The architecture of an LSTM cell is shown in Figure~\ref{fig:lstm}.
 \begin{figure}[htb]
     \centering
-    \includegraphics[width=.8\linewidth]{images/lstm.png}
+    \includegraphics[width=.75\linewidth]{images/lstm.png}
     \caption[Long short-term memory cell]{The architecture of an LSTM cell. Source: \cite{journals/corr/Graves13}.}
     \label{fig:lstm}
 \end{figure}
-\\
 
 Another kind of recurrent unit is the Gated Recurrent Unit (GRU), which was introduced by \cite{Cho2014LearningTranslation}. It is simpler than LSTM but yields similar results.
 It also uses an internal memory, here called the \textit{hidden state} and denoted by $h$. An update gate $z$ determines how much of the previous memory we want to keep, depending on the previous hidden state and the input. A reset gate $r$ says how much of the previous hidden state we want to keep in the new hidden state, depending on the hidden state and the input. The new hidden state is then a combination of the partly "reset" previous hidden state and the input. The output is the sum of the previous hidden state and the new one, weighted by the reset gate.\\
