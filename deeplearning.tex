@@ -8,14 +8,14 @@ Generally, feature extractors need to be developed manually in order to represen
 
 In contrast, deep learning methods are able to learn multiple levels of representations of raw data without human guidance.
 Each level of features builds upon the previous one, starting from the input itself, and represents it in a more abstract way. These abstractions are generated as to recognize aspects of the input that are important for the task. Because of this, it is possible that small variations in the input have no influence on the abstraction and output.
-As these abstractions are learned automatically, there is no need anymore to create internal representations manually, which require more work as it is different for every kind of task. The generated abstractions may also recognize useful patterns in the data that might not be intuitive to a human and would not have been represented using the hand-crafted features.\\
+As these abstractions are learned automatically, there is no need anymore to create internal representations manually, which require more work as it is different for every task. The generated abstractions may also recognize useful patterns in the data that might not be intuitive to a human and would not have been represented using the hand-crafted features.\\
 
-In deep learning, the important aspects of the input can be detected automatically by combining different modules that have different functions in order to get higher abstractions and to eventually generate output.
-Most of these modules contain weights an can be trained, like explained in Section~\ref{sec:gradient_descent_and_backpropagation}.\\
+In deep learning, the important aspects of the input can be detected automatically by combining different modules that have different functionalities in order to get higher abstractions and to eventually generate output.
+Most of these modules contain weights and can be trained, like explained in Section~\ref{sec:gradient_descent_and_backpropagation}.\\
 Here, we explain artificial neural networks capable of learning representations using multi-dimensional arrays and sequential data, following the explanation by \cite{LeCun2015DeepLearning}.
 
 \section{Convolutional neural networks}
-Convolutional neural networks are neural networks that are inspired by the way the visual cortex of an animal works.
+Convolutional neural networks are neural networks that are inspired by the way the visual cortex of a human works.
 These networks get as input data in multi-dimensional arrays, such as 2-dimensional images with pixel intensities as the third dimension for example.\\
 A convolutional neural network is structured as a series of stages, which are combinations of layers.
 In the first stages, convolutional layers and pooling layers are used.
@@ -32,17 +32,17 @@ An example of this process is shown in Figure~\ref{fig:cnnfilter}.
     \label{fig:cnnfilter}
 \end{figure}
 
-These filters are used because local groups of values may be correlated and as such may have the same weights. This reduces the amount of weights that need to be trained. Furthermore, certain concepts and local statistics (of images) may be invariant to the location. A certain pattern or motif in an image might appear in different places of the image but may have the same meaning.\\
-The result of this convolutional operation (which is linear) operation is again a feature map and can then be passed to a non-linear function such as a \textit{ReLU}.\\
+These filters are useful because local groups of values may be correlated and as such may have the same weights. This reduces the amount of weights that need to be trained. Furthermore, certain concepts and local statistics (of images) may be invariant to the location. A certain pattern or motif in an image might appear in different places of the image but may have the same meaning.\\
+The result of this convolutional operation (which is linear) operation is again a feature map and can be passed to a non-linear function such as a \textit{ReLU}.\\
 
-These convolutional layers are then combined with pooling layers. Instead of detecting local conjunctions of features from the previous layer, pooling tries to merge semantically similar features into one. This is necessary because the positions of features that form a motif are not exact and can vary somewhat. It may not matter for example that an object is close or far in an image.
+Convolutional layers can also be combined with pooling layers. Instead of detecting local conjunctions of features from the previous layer, pooling tries to merge semantically similar features into one. This is necessary because the positions of features that form a motif may not always be exact and can vary somewhat. It may not matter for example that an object is close or far in an image.
 To detect the motifs more reliably, we course-grain their features. The typical pooling units compute the maximum or average of a local patch of units in one or a few feature maps. The neighboring pooling units do the same for patches that are shifted by one or more rows and/or columns and as such creating an invariance to small shifts and distortions.\\
 Popular convolutional networks, often using multiple layers of different types, include "AlexNet" \parencite{conf/nips/KrizhevskySH12}, "LeNet" \parencite{lecun-gradientbased-learning-applied-1998} and "GoogLeNet" \parencite{DBLP:journals/corr/SzegedyLJSRAEVR14}.\\
 A typical layout of a convolutional neural network is shown in Figure~\ref{fig:cnnlayout}, while a hierarchy of features extracted using a convolutional neural network is shown in Figure~\ref{fig:cnnfeatures}.\\
 \begin{figure}[htb]
     \centering
     \includegraphics[width=\linewidth]{images/cnnlayout.png}
-    \caption[Convolutional neural network layout]{Layout of a typical convolutional neural network, which uses convolutional layers, pooling layers and fully connected layers in order to detect an object in an image. Source: \url{https://www.clarifai.com/technology}}
+    \caption[Convolutional neural network layout]{Layout of a typical convolutional neural network, which uses convolutional layers, pooling layers and fully connected layers in order to detect an object in an image. Source: \cite{clarifai}.}
     \label{fig:cnnlayout}
 \end{figure}
 \begin{figure}[htb]
@@ -53,7 +53,7 @@ A typical layout of a convolutional neural network is shown in Figure~\ref{fig:c
 \end{figure}
 
 \section{Recurrent Neural Networks}
-Recurrent neural networks (RNNs) are used to process sequential data such as speech and language. Here, an input sequence is processed one element at a time. The first RNNs used a state vector in their units that contains history about the past elements in the sequence. This is visualized in Figure \ref{fig:rnnunrolled}.
+Recurrent neural networks (RNNs) are used to process sequential data such as speech and written text. Here, an input sequence is processed one element at a time. The first RNNs used a state vector in their units that contains history about the past elements in the sequence. This is visualized in Figure \ref{fig:rnnunrolled}.
 \begin{figure}[htb]
 \centering
 \includegraphics[width=0.8\linewidth]{images/RNN-unrolled.jpg} %source: http://www.wildml.com/2015/09/recurrent-neural-networks-tutorial-part-1-introduction-to-rnns/
@@ -62,19 +62,19 @@ Recurrent neural networks (RNNs) are used to process sequential data such as spe
 \end{figure}
 %The above diagram has outputs at each time step, but depending on the task this may not be necessary. For example, when predicting the sentiment of a sentence we may only care about the final output, not the sentiment after each word. Similarly, we may not need inputs at each time step. The main feature of an RNN is its hidden state, which captures some information about a sequence.
 
-Training them was a problem because of the vanishing or exploding gradients, as these gradients either shrink or grow at every time step. Theoretical and empirical evidence has shown that it is hard for these kind of networks to store information long enough and that they have difficulties to learn the long-term dependencies \parencite{bengio1994learning}.\\ %Sources for this: http://people.idsia.ch/~juergen/SeppHochreiter1991ThesisAdvisorSchmidhuber.pdf and http://www-dsi.ing.unifi.it/~paolo/ps/tnn-94-gradient.pdf
+Training them was a problem because of the vanishing or exploding gradients, as these gradients either shrink or grow at every time step. Theoretical and empirical evidence has shown that it is hard for these kind of networks to store information long enough and that they have difficulties to learn long-term dependencies \parencite{bengio1994learning}.\\ %Sources for this: http://people.idsia.ch/~juergen/SeppHochreiter1991ThesisAdvisorSchmidhuber.pdf and http://www-dsi.ing.unifi.it/~paolo/ps/tnn-94-gradient.pdf
 
-To learn RNNs, we also need to change the backpropagation algorithm in order to handle with the different time steps. Here, the error (for one training example) is just the sum of the errors at every time step: $e = \sum_t e_t$. The adapted backpropagation algorithm, called backpropagation through time (BPTT), also just sums up the gradient at every time step for every set of weights:  $\frac{\partial E}{\partial W} = \sum_t \frac{\partial E_t}{\partial W}$. For the weights $U$ and $V$ of Figure \ref{fig:rnnunrolled}, the gradients are computed just as in normal backpropagation. For $W$ however, we depend on the previous state, which cannot simple be treated as a constant, and must be replaced as well. Because of this, we get:
+To learn RNNs, we also need to change the backpropagation algorithm in order to handle the different time steps. Here, the error for one training example (in this case one sequence) is just the sum of the errors at every time step: $e = \sum_t e_t$. The adapted backpropagation algorithm, called backpropagation through time (BPTT), also just sums up the gradient at every time step for every set of weights:  $\frac{\partial E}{\partial W} = \sum_t \frac{\partial E_t}{\partial W}$. For the weights $U$ and $V$ of Figure \ref{fig:rnnunrolled}, the gradients are computed just as in normal backpropagation. $W$ however depends on the previous state, which cannot simply be treated as a constant and must be replaced as well. As such, we get:
 \begin{equation}
 \frac{\partial E_t}{\partial W} = \sum_{k=0}^t \frac{\partial E_t}{\partial \hat{y}_t} \frac{\partial \hat{y}_t}{\partial s_t} \frac{\partial s_t}{\partial s_k} \frac{\partial s_k}{\partial W}
 \end{equation}
-We see that training can be hard when the sequences are long, because we need to propagate back through the first time step.\\
+We see that training can be hard when the sequences are long, because we need to propagate back to the first time step.\\
 
-For the \textit{tanh} and \textit{sigmoid} function, the derivative is $0$ at both ends. This means that the gradients in other layers will also go towards zero and for small values in the matrix multiplications the gradient values are shrinking exponentially fast and become nearly zero after a few time steps. Because of this, steps far away won't contribute much to what you're currently computing, and as such the long-term dependencies are small. If the values of the partial derivatives are high however, we could get exploding gradients. These are however easier to detect and solve, because the value of the gradients will be too high to be presented by a variable in the programming language. The problem can also easily be solved by restricting the value in a certain range.\\ %source: http://www.jmlr.org/proceedings/papers/v28/pascanu13.pdf
-The problem of vanishing gradients can be solved by a better initialization of the weights, by regularization and by another non-linear function, namely the already explained \textit{ReLU}.
+For the \textit{tanh} and \textit{sigmoid} function, the derivative is $0$ at both ends. This means that the gradients in other layers will also go towards zero and for small values in the matrix multiplications the gradient values are shrinking exponentially fast and become nearly zero after a few time steps. Because of this, steps far away won't contribute much to what you're currently computing, and as such the long-term dependencies are small. If the values of the partial derivatives are high however, we could get exploding gradients. These are however easier to detect and solve in practice, because the value of the gradients will be too high to be presented by a variable in the programming language. The problem can also easily be solved by restricting the value of the gradient in a certain range.\\ %source: http://www.jmlr.org/proceedings/papers/v28/pascanu13.pdf
+The problem of vanishing gradients can be solved by a better initialization of the weights, by regularization and by another non-linear function, namely the \textit{ReLU} function explained in Section~\ref{sub:rectified_linear_unit}.
 For this function, the derivative is either 0 (when $z<0$) or 1 ($\frac{\partial z}{\partial z} = 1$).\\
 
-A way of solving this is using a long short-term memory. This is a combination of different units and has an explicit memory. One of the units has a connection with itself and is used to accumulate or forget the stored information. It can be learned using another unit to know when to forget something and when to remember past information.\\
+To better remember long-term dependencies, we introduce a long short-term memory (LSTM) \parencite{Hochreiter1997LSTM}. This is a combination of different units and has an explicit memory. One of the units has a connection with itself and is used to accumulate or forget the stored information. It can be learned using another unit to know when to forget something and when to remember past information.\\
 First, the input is passed to an input gate $i_t$ that determines how much of the input to let through into the memory. By also both adding and forgetting a part, determined using a forget gate $f_t$, the internal memory is updated. An output gate $o_t$ then determines how much of the internal memory to output to the next layer.
 The architecture of an LSTM cell is shown in Figure~\ref{fig:lstm}.
 \begin{figure}[htb]
@@ -97,4 +97,4 @@ The architecture of a GRU cell is visualized in Figure~\ref{fig:gru}.\\
 \end{figure}
 
 Other networks with memory include a Neural Turing Machine, in which a tape-like memory is used from which the network can read or write.\\
-Another kind is a memory network, in which a normal network is augmented by a associative memory.\\
+Another kind is a memory network, in which a normal network is augmented by an associative memory.\\
