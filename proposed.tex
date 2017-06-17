@@ -28,24 +28,24 @@ This means that they are not first summed up like in the sequential method.\\
 The resulting pseudo code for the source tasks learned using the parallel method can be seen in Algorithm~\ref{algo:ownsource}.\\
 \begin{algorithm}[H]
 \DontPrintSemicolon
-\emph{// Assume global knowledge base $L$ and global shared counter $T \gets 0$}\;
+\emph{// Assume global knowledge base $L$ and global shared counter $H \gets 0$}\;
 Initialize thread-specific parameter vector $\theta^{(t)}$\;
-Initialize thread step counter $t\gets 1$\;
-\Repeat{$T > T_{max}$}{
+Initialize thread step counter $h\gets 1$\;
+\Repeat{$H > H_{max}$}{
     $\theta^{(t)} \gets Ls^{(t)}$\;
     Reset gradients: $d\theta^{(t)} \gets 0$\;
-    $t_{start} \gets t$\;
-    Initialize state $s_t$\;
-    \Repeat{terminal $s_t$ \textbf{or} $t-t_{start} = t_{max}$}{
-        Perform $a_t$ according to policy $\pi(a_t \vert s_t;\theta^{(t)})$\;
-        Receive reward $r_t$ and new state $s_{t+1}$\;
-        $t \gets t + 1$\;
+    $h_{start} \gets h$\;
+    Initialize state $s_h$\;
+    \Repeat{terminal $s_h$ \textbf{or} $h-h_{start} = h_{max}$}{
+        Perform $a_h$ according to policy $\pi(a_h\vert s_h;\theta^{(t)})$\;
+        Receive reward $r_h$ and new state $s_{h+1}$\;
+        $h \gets h + 1$\;
         }
-    \For {$i \in \{t-1,\dots,t_{start} \}$} {
+    \For {$i \in \{h-1,\dots,h_{start} \}$} {
         Accumulate gradients w.r.t. $\theta^{(t)}$: $d\theta^{(t)} \gets d\theta ^{(t)}+ \alpha \nabla_{\theta^{(t)}} \log \pi_{\theta^{(t)}}(s_i,a_i)v_i$\;
     }
     Perform asynchronous update of $\theta^{(t)}$ using $d\theta^{(t)}$\;
-    $T \gets T + 1$\;
+    $H \gets H + 1$\;
 }
 \caption[Asynchronous knowledge transfer agent for a source task]{Asynchronous knowledge transfer agent for a source task.}
 \label{algo:ownsource}
@@ -58,21 +58,21 @@ The pseudo-code for the target task is shown in Algorithm~\ref{algo:owntarget}.\
 \DontPrintSemicolon
 \emph{// Assume global knowledge base $L$}\;
 Initialize task-specific sparse representation $s^{(t)}$\;
-Initialize thread step counter $t\gets 1$\;
-$T \gets 0$\;
-\Repeat{$T > T_{max}$}{
-    $t_{start} \gets t$\;
-    Initialize state $s_t$\;
-    \Repeat{terminal $s_t$ \textbf{or} $t-t_{start} = t_{max}$}{
-        Perform $a_t$ according to policy $\pi(a_t|s_t;L  s^{(t)})$\;
-        Receive reward $r_t$ and new state $s_{t+1}$\;
-        $t \gets t + 1$\;
+Initialize thread step counter $h\gets 1$\;
+$H \gets 0$\;
+\Repeat{$H > H_{max}$}{
+    $h_{start} \gets h$\;
+    Initialize state $s_h$\;
+    \Repeat{terminal $s_h$ \textbf{or} $h-h_{start} = h_{max}$}{
+        Perform $a_h$ according to policy $\pi(a_h \vert s_h; L  s^{(t)})$\;
+        Receive reward $r_h$ and new state $s_{h+1}$\;
+        $h \gets h + 1$\;
         }
-    \For {$i \in \{t-1,\dots,t_{start} \}$} {
+    \For {$i \in \{h-1,\dots,h_{start} \}$} {
         Accumulate gradients w.r.t. $s^{(t)}$: $ds^{(t)} \gets ds^{(t)} + \alpha \nabla_{s^{(t)}} \log \pi_{s^{(t)}}(s_i,a_i)v_i$\;
     }
     Perform update of $s^{(t)}$ using $ds^{(t)}$\;
-    $T \gets T + 1$\;
+    $H \gets H + 1$\;
 }
 \caption[Knowledge transfer agent for the target task]{Knowledge transfer agent for the target task.}
 \label{algo:owntarget}
