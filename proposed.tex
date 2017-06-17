@@ -6,6 +6,7 @@ More specifically, we combine the A3C algorithm \parencite{Mnih2016AsynchronousL
 This is done by executing A3C using tasks defined by different environment parameters instead of exactly the same ones and training them using both shared knowledge and knowledge that is specific to the task.\\
 
 Our approach only uses a latent basis over the policy space instead of using one over the policy space and another one over the descriptor space like in \cite{Isele2016UsingLearning}.\\
+Each task uses 2 sets of parameters in its artificial neural network: the shared knowledge base and the sparse coefficients (also called \emph{sparse representation}). As the name suggests, the shared knowledge base is used by every task and can capture knowledge that is common amongst those tasks. Each task has its own sparse coefficients over this shared basis. Using these sparse coefficients, each task can represent differences from the common knowledge in order to better perform on its environment.\\
 For a task $t$, we can reconstruct the policy using the shared basis $L$ and the sparse coefficients over this basis for that specific task $s^{(t)}$: $\theta^{(t)} = Ls^{(t)}$, with $\theta^{(t)} \in \mathbb{R}^d$, $L \in \mathbb{R}^{d \times k}$ and $s^{(t)} \in \mathbb{R}^k$. The policy can then be combined with the state or features extracted from it by taking the weighted sum and passing it through a non-linearity, in this case the softmax function described in Section~\ref{sub:softmax}.
 This results in a probability for each action.\\
 The architecture of the network used for one task is visualized in Figure~\ref{fig:algonn}.
@@ -35,16 +36,18 @@ Initialize thread step counter $h\gets 1$\;
     $\theta^{(t)} \gets Ls^{(t)}$\;
     Reset gradients: $d\theta^{(t)} \gets 0$\;
     $h_{start} \gets h$\;
-    Initialize state $s_h$\;
-    \Repeat{terminal $s_h$ \textbf{or} $h-h_{start} = h_{max}$}{
-        Perform $a_h$ according to policy $\pi(a_h\vert s_h;\theta^{(t)})$\;
-        Receive reward $r_h$ and new state $s_{h+1}$\;
+    Initialize state $x_h$\;
+    \Repeat{terminal $x_h$ \textbf{or} $h-h_{start} = h_{max}$}{
+        Perform $a_h$ according to policy $\pi(a_h\vert x_h;\theta^{(t)})$\;
+        Receive reward $r_h$ and new state $x_{h+1}$\;
         $h \gets h + 1$\;
         }
     \For {$i \in \{h-1,\dots,h_{start} \}$} {
-        Accumulate gradients w.r.t. $\theta^{(t)}$: $d\theta^{(t)} \gets d\theta ^{(t)}+ \alpha \nabla_{\theta^{(t)}} \log \pi_{\theta^{(t)}}(s_i,a_i)v_i$\;
+        Accumulate gradients w.r.t. $L$: $dL \gets dL+ \alpha \nabla_{L} \log \pi_{\theta^{(t)}}(x_i,a_i)v_i$\;
+        Accumulate gradients w.r.t. $s^{(t)}$: $ds^{(t)} \gets ds ^{(t)}+ \alpha \nabla_{s^{(t)}} \log \pi_{\theta^{(t)}}(s_i,a_i)v_i$\;
     }
-    Perform asynchronous update of $\theta^{(t)}$ using $d\theta^{(t)}$\;
+    Perform asynchronous update of $L$ using $dL$\;
+    Perform update of $s ^{(t)}$ using $ds ^{(t)}$\;
     $H \gets H + 1$\;
 }
 \caption[Asynchronous knowledge transfer agent for a source task]{Asynchronous knowledge transfer agent for a source task.}
@@ -62,14 +65,14 @@ Initialize thread step counter $h\gets 1$\;
 $H \gets 0$\;
 \Repeat{$H > H_{max}$}{
     $h_{start} \gets h$\;
-    Initialize state $s_h$\;
-    \Repeat{terminal $s_h$ \textbf{or} $h-h_{start} = h_{max}$}{
-        Perform $a_h$ according to policy $\pi(a_h \vert s_h; L  s^{(t)})$\;
-        Receive reward $r_h$ and new state $s_{h+1}$\;
+    Initialize state $x_h$\;
+    \Repeat{terminal $x_h$ \textbf{or} $h-h_{start} = h_{max}$}{
+        Perform $a_h$ according to policy $\pi(a_h \vert x_h; L  s^{(t)})$\;
+        Receive reward $r_h$ and new state $x_{h+1}$\;
         $h \gets h + 1$\;
         }
     \For {$i \in \{h-1,\dots,h_{start} \}$} {
-        Accumulate gradients w.r.t. $s^{(t)}$: $ds^{(t)} \gets ds^{(t)} + \alpha \nabla_{s^{(t)}} \log \pi_{s^{(t)}}(s_i,a_i)v_i$\;
+        Accumulate gradients w.r.t. $s^{(t)}$: $ds^{(t)} \gets ds^{(t)} + \alpha \nabla_{s^{(t)}} \log \pi_{s^{(t)}}(x_i,a_i)v_i$\;
     }
     Perform update of $s^{(t)}$ using $ds^{(t)}$\;
     $H \gets H + 1$\;

@@ -11,9 +11,8 @@ Determining which action to take can be done by using an artificial neural netwo
 It is inspired by the brain of a human and consists of interconnected elements called units.
 The network receives an input as a vector of numerical values.
 These are then propagated to layers of units and results in one or more output units.\\
-In the context of reinforcement learning, these input units can be the current state of the environment.
-The output units can represent the action that has to be taken.
-The learning process can then involve changing the strength of connections between units and as such influencing the output values.\\
+In this setting, the artificial neural network network represents a mapping from states to actions, which is trained using reinforcement learning.
+The learning process can then involve changing the strength of connections between units and as such influencing which action that will be taken.\\
 
 % Deep learning
 For high-dimensional inputs, large, multi-layered artificial neural networks must be used to be able to process these inputs. Techniques involving these networks are called deep learning methods.
@@ -24,9 +23,10 @@ Another deep learning network is the recurrent neural network, which is able to 
 
 % Deep reinforcement learning
 By combining deep learning and reinforcement learning, it is possible to learn in an environment that has a high-dimensional input space. This is called deep reinforcement learning.
-For example, the agent can learn how to play \textit{Pong} just using an image of the screen, just like a human.\\
+For example, the agent can learn how to play \textit{Pong} just using an image of the screen, just like a human.
+Asynchronous Advantage Actor Critic (A3C) is an example of a deep reinforcement learning algorithm that is able to learn on such environments. It accomplishes this by learning with multiple agents in parallel on identical environments and adapting the same set of parameters.\\
 
-% transfer learning
+% Transfer learning
 An environment in which is learned is roughly defined by the possible states in which it can be, which actions can be taken and in which state one ends up in when taking an action being in a certain state.
 These however can be changed such that the environment is easier or harder to learn.
 In an environment where a self driving car must be controlled for example, the amount of obstacles may vary or the weather conditions may change.\\
@@ -36,7 +36,13 @@ This domain is called transfer learning. One use of this is for example in cases
 It is necessary to know from which source tasks to transfer knowledge and which knowledge to transfer.
 For this, we need to know how the tasks are related and possibly how an agent can interpret and act using the new state space and action space.\\
 
-In this thesis, we investigate the use of transfer learning in reinforcement learning using artificial neural networks.
+In this thesis, we investigate the use of transfer learning in reinforcement learning using artificial neural networks. Our contributions include the following:
+\begin{itemize}
+    \item Expanding the \textit{A3C} algorithm to work on different tasks (i.e.\ non-identical environments).
+    \item Building a method to share knowledge between tasks.
+    \item Investigating the difference between learning sequentially and in parallel on source tasks.
+    \item Showing that knowledge transfer helps in executing a task.
+\end{itemize}
 First, we will introduce the reader to the concepts of reinforcement learning, artificial neural networks, deep learning, deep reinforcement learning and transfer learning.
 Afterwards, we will discuss related work in the field of transfer learning applied to reinforcement learning and deep reinforcement learning.
 We will then explain the algorithm that was used in experiments and how the experiments were conducted.

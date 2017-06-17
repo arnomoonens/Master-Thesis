@@ -112,7 +112,7 @@ After an amount (possibly the same amount as for the gradient update) of steps, 
 \begin{figure}[htb]
     \centering
     \includegraphics[width=.8\linewidth]{images/A3Carchitecture.png}
-    \caption[High-level overview of the A3C algorithm]{High-level overview of the A3C algorithm. Each worker synchronizes its artificial neural network parameters with the global network and updates these based on input from the environment from which it is gathering transitions.}
+    \caption[High-level overview of the A3C algorithm]{High-level overview of the A3C algorithm. Each worker synchronizes its artificial neural network parameters with the global network and updates these based on input from the environment from which it is gathering transitions. Source: \cite{Juliani2016A3C}.}
     \label{fig:a3carchitecture}
 \end{figure}
 In $n$-step Q-learning and advantage actor-critic, a forward-view is used instead of the more commonly used backward view (which uses eligibility traces).
