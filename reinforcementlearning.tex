@@ -22,7 +22,7 @@ Note that exactly one action has to be taken in a state and that the action prob
 Because feedback in the form of numerical rewards may not be immediate, a reinforcement learning algorithm must be able to backtrack which actions in certain situations lead to the rewards that the reinforcement learning algorithm received.\\
 
 To help with this, reinforcement learning algorithms often use a state-value function $V(s)$.
-This function says how good it is to be in a certain state $s$ by stating the expected return in the future starting from state $s$, where the return is the discounted rewards.
+This function says how good it is to be in a certain state $s$ by stating the expected return (under the current policy) in the future starting from state $s$, where the return is the discounted rewards.
 This expected value when starting in state $s$ and following a specific policy $\pi$ is denoted as $V^\pi(s)$:
 \begin{equation}
 \label{eq:vpolicy}
@@ -302,7 +302,7 @@ By setting it to $1$, we can achieve the opposite.
 %By David Silver.\\
 
 % Here, we parametrize the policy instead of the state value or state-action value function.
-Policy gradient methods aim to parametrize a policy instead of storing a value for each state-action pair
+Policy gradient methods parametrize a policy instead of storing a value for each state-action pair
 This is useful in problems where the state and/or action space is high-dimensional and/or continuous. They can also learn policies where a probability is provided for every action.\\
 Methods that parametrize the policy tend to have better convergence properties \parencite{Sutton1999PolicyApproximation}.
 However, policy gradient methods also come with a few disadvantages. They typically converge to a local optimum instead of a global optimum. It is also rather hard to evaluate a policy and it can have a high variance.\\
