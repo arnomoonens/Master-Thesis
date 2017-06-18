@@ -23,5 +23,7 @@ We can conclude that it is beneficial to learn on multiple source tasks in paral
 
 \section{Future work} % (fold)
 \label{sec:future_work}
+Most of the experiments in this thesis did not use feature extraction, as it was not necessary for the environments that were used. It would be interesting to execute experiments with an environment where feature extraction is necessary. This would require more complex artificial neural networks such as convolutional neural networks.\\
 
+Furthermore, one could explore the use of this algorithm to transfer knowledge between different types of environments. For example, one could share knowledge between \textit{cart-pole} and \textit{acrobot} environments. This would require the artificial neural network to process inputs of different shapes and to output actions of different action spaces. For this, task mapping may be necessary to cope with those differences.
 % section future_work (end)
