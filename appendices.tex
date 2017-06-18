@@ -6,13 +6,10 @@ For each agent, transitions on which to learn were collected in the same way. In
 % section data_collection (end)
 \section{Artificial neural network parameters} % (fold)
 \label{sec:artificial_neural_network_parameters}
-
-% section artificial_neural_network_parameters (end)
-% \begin{itemize}
-%     \item number of layers and units
-% \end{itemize}
 Weights are initialized using values drawn from a truncated normal distribution with mean $0$ and standard deviation $0.02$.
 This means that we draw values from a normal distribution with the same mean and standard deviation, except that only values maximally 2 standard deviations away from the mean can be drawn.\\
+Our transfer learning algorithm always used an $L_1$ loss for the sparse representations, with $\lambda = 0.05$.
+The sparse representation has a size of $10 \times n_a$, where $n_a$ is the number of actions for the environment. The knowledge base has the size $d^{l_1}  \times 10$, where $d^{l_1}$ is the number of features in the state or after feature extraction.
 To update weights, I used \textit{RMSProp}, described in Section~\ref{ssub:different_weight_updates}.
 The following hyperparameters were always used for both the sequential and the parallel version of the algorithm and for \textit{REINFORCE}:
 \begin{itemize}

@@ -44,7 +44,7 @@ Initialize thread step counter $h\gets 1$\;
         }
     \For {$i \in \{h-1,\dots,h_{start} \}$} {
         Accumulate gradients w.r.t. $L$: $dL \gets dL+ \alpha \nabla_{L} \log \pi_{\theta^{(t)}}(x_i,a_i)v_i$\;
-        Accumulate gradients w.r.t. $s^{(t)}$: $ds^{(t)} \gets ds ^{(t)}+ \alpha \nabla_{s^{(t)}} \log \pi_{\theta^{(t)}}(s_i,a_i)v_i$\;
+        Accumulate gradients w.r.t. $s^{(t)}$: $ds^{(t)} \gets ds ^{(t)}+ \alpha \nabla_{s^{(t)}} \log \pi_{\theta^{(t)}}(s_i,a_i)v_i + L_1(s^{(t)})$\;
     }
     Perform asynchronous update of $L$ using $dL$\;
     Perform update of $s ^{(t)}$ using $ds ^{(t)}$\;
@@ -72,7 +72,7 @@ $H \gets 0$\;
         $h \gets h + 1$\;
         }
     \For {$i \in \{h-1,\dots,h_{start} \}$} {
-        Accumulate gradients w.r.t. $s^{(t)}$: $ds^{(t)} \gets ds^{(t)} + \alpha \nabla_{s^{(t)}} \log \pi_{s^{(t)}}(x_i,a_i)v_i$\;
+        Accumulate gradients w.r.t. $s^{(t)}$: $ds^{(t)} \gets ds^{(t)} + \alpha \nabla_{s^{(t)}} \log \pi_{s^{(t)}}(x_i,a_i)v_i + L_1(s^{(t)})$\;
     }
     Perform update of $s^{(t)}$ using $ds^{(t)}$\;
     $H \gets H + 1$\;
