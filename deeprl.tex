@@ -116,7 +116,7 @@ After an amount (possibly the same amount as for the gradient update) of steps, 
     \label{fig:a3carchitecture}
 \end{figure}
 In $n$-step Q-learning and advantage actor-critic, a forward-view is used instead of the more commonly used backward view (which uses eligibility traces).
-Forward view was found to be easier when training neural networks with momentum-based methods and backpropagation through time.
+Forward view was found to be easier when training artificial neural networks with momentum-based methods and backpropagation through time.
 To do this, we first compute a certain number of steps (or until the episode is over).
 Then, the gradients are computed for each state-action pair encountered since the last update.
 Each n-step update uses the longest possible n-step return resulting in a one-step update for the last state, a two-step update for the second last state, and so on for a total of up to the previously determined number of maximum allowed steps.
