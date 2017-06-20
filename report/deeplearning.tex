@@ -48,7 +48,7 @@ A typical layout of a convolutional neural network is shown in Figure~\ref{fig:c
 \begin{figure}[htb]
     \centering
     \includegraphics[width=\linewidth]{images/cnnfeatures.png}
-    \caption[Convolutional neural network features hierarchy]{A hierarchy of features with as low-level features contours of faces. A more complex layer represents parts of faces. The final layer shows whole faces and can be used for classification or regression. Note that these features don't always have an intuitive meaning. Source: \cite{conf/icml/LeeGRN09}.}
+    \caption[Convolutional neural network features hierarchy]{A hierarchy of features with as low-level features contours of faces. A more complex layer represents parts of faces. The final layer shows whole faces and can be used for classification or regression. Note that these features do not always have an intuitive meaning. Source: \cite{conf/icml/LeeGRN09}.}
     \label{fig:cnnfeatures}
 \end{figure}
 
@@ -70,7 +70,7 @@ To learn RNNs, we also need to change the backpropagation algorithm in order to 
 \end{equation}
 We see that training can be hard when the sequences are long, because we need to propagate back to the first time step.\\
 
-For the \textit{tanh} and \textit{sigmoid} function, the derivative is $0$ at both ends. This means that the gradients in other layers will also go towards zero and for small values in the matrix multiplications the gradient values are shrinking exponentially fast and become nearly zero after a few time steps. Because of this, steps far away won't contribute much to what you're currently computing, and as such the long-term dependencies are small. If the values of the partial derivatives are high however, we could get exploding gradients. These are however easier to detect and solve in practice, because the value of the gradients will be too high to be presented by a variable in the programming language. The problem can also easily be solved by restricting the value of the gradient in a certain range.\\ %source: http://www.jmlr.org/proceedings/papers/v28/pascanu13.pdf
+For the \textit{tanh} and \textit{sigmoid} function, the derivative is $0$ at both ends. This means that the gradients in other layers will also go towards zero and for small values in the matrix multiplications the gradient values are shrinking exponentially fast and become nearly zero after a few time steps. Because of this, steps far away will not contribute much to what you are currently computing, and as such the long-term dependencies are small. If the values of the partial derivatives are high however, we could get exploding gradients. These are however easier to detect and solve in practice, because the value of the gradients will be too high to be presented by a variable in the programming language. The problem can also easily be solved by restricting the value of the gradient in a certain range.\\ %source: http://www.jmlr.org/proceedings/papers/v28/pascanu13.pdf
 The problem of vanishing gradients can be solved by a better initialization of the weights, by regularization and by another non-linear function, namely the \textit{ReLU} function explained in Section~\ref{sub:rectified_linear_unit}.
 For this function, the derivative is either 0 (when $z<0$) or 1 ($\frac{\partial z}{\partial z} = 1$).\\
 

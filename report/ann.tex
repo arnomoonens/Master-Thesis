@@ -393,7 +393,7 @@ For example, we can multiply the learning rate of a certain weight by a factor g
 This means that, when the gradients agree on the direction, we give them more influence.
 If they are not consistent and disagree in subsequent steps, we decrease the influence. We can also put a limit on the learning rate as to not let it grow to excessively low or high amounts.
 
-However, by just using an adaptive learning rate, we can have the problem of weights themselves growing too high in unwanted situations. For example, when a gradient is for 9 subsequent steps a small positive amount (e.g.\ $0.1$) and once a large negative amount (e.g.\ $-0.9$), we don't want to change the weights a lot because they balance each other out.
+However, by just using an adaptive learning rate, we can have the problem of weights themselves growing too high in unwanted situations. For example, when a gradient is for 9 subsequent steps a small positive amount (e.g.\ $0.1$) and once a large negative amount (e.g.\ $-0.9$), we do not want to change the weights a lot because they balance each other out.
 Using the current algorithm however, the learning rate and as a result the weights would become too high because we only look at the signs and not the magnitude of the gradients.\\
 Right now, we are dividing the gradient by its absolute value in order to just get $+1$ or $-1$ depending on the sign. It is however better to divide each weight by a moving average of the squared weight using the gradients of the past steps:
 \begin{subequations}

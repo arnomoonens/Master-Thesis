@@ -7,7 +7,7 @@ After describing these environments, we describe the methodology of our experime
 \label{sub:cartpole_environment}
 In the 2-dimensional \textit{cart-pole} environment \parencite{journals/tsmc/BartoSA83}, a pole is placed vertically on a cart.
 The goal in this environment is to keep the pole balanced vertically (i.e.\ keep the angle of the pole between thresholds) and to keep the cart between 2 borders.
-An agent can either move left or right. It can't stay at its current position.
+An agent can either move left or right. It cannot stay at its current position.
 The state is defined by 4 continuous-valued attributes: the position of the cart, the velocity of the cart, the angle of the pole and the angular velocity of the pole.
 A discrete value of $1$ is given as a reward each time the pole is balanced and the cart is between bounds.
 The episode ends either when these requirements are not fulfilled anymore or 200 steps have been executed.
@@ -216,7 +216,7 @@ To further discuss these differences, we look at the boxplots of the asymptotic 
     \caption{Boxplots of the asymptotic performances of \textit{REINFORCE}, \textit{TLA 5} and \textit{TLA 10} using the \textit{acrobot} environment.}
     \label{fig:nosparse:Acrobot:asymp_target_re-akt5-akt10}
 \end{figure}
-We can see that the median for the \textit{REINFORCE} algorithm is still the lowest possible reward for this environment. This means that in at least half of the cases, the \textit{REINFORCE} algorithm cannot improve and cannot get past the minimum reward. In contrast, the medians of \textit{TLA 5} and \textit{TLA 10} are respectively $-105.305$ and $-98.391$. Only some outliers of these algorithms don't get past the minimum reward.
+We can see that the median for the \textit{REINFORCE} algorithm is still the lowest possible reward for this environment. This means that in at least half of the cases, the \textit{REINFORCE} algorithm cannot improve and cannot get past the minimum reward. In contrast, the medians of \textit{TLA 5} and \textit{TLA 10} are respectively $-105.305$ and $-98.391$. Only some outliers of these algorithms do not get past the minimum reward.
 % subsubsection acrobot (end)
 
 % To further explore the jumpstart performance, we will look at boxplots of the jumpstarts of both algorithms, computed using all the 100 runs of both algorithms. These are shown in Figure~\ref{fig:boxplot_tla_re_5envs}.

@@ -29,8 +29,8 @@ Last, the task learning method may also restrict which reinforcement learning al
 Several metrics exist to evaluate the learning performance and solution quality of transfer learning algorithms. Generally, one metric does not give a complete representation of the overall performance of the algorithm. Because of this, often multiple metrics are used.\\
 Here we will list the most popular ones:
 \begin{itemize}
-    \item \textit{Jumpstart}: This is the initial improvement that the target task has over an algorithm that doesn't use knowledge transfer. However, little to no learning has occurred yet. Because of this, learning performance can't be measured. The metric also does not give an indication about the final performance, i.e.\ the performance after having learned.
-    \item \textit{Asymptotic performance}: This is the opposite of \textit{jumpstart} performance and measures the performance improvement after having learned the target task or during the last time steps of the algorithm. However, this is hard to measure because one has to know when the task learning algorithm converged. Furthermore, the task learning algorithm and the algorithm that doesn't use knowledge transfer may require a different training time in order to converge.
+    \item \textit{Jumpstart}: This is the initial improvement that the target task has over an algorithm that does not use knowledge transfer. However, little to no learning has occurred yet. Because of this, learning performance can't be measured. The metric also does not give an indication about the final performance, i.e.\ the performance after having learned.
+    \item \textit{Asymptotic performance}: This is the opposite of \textit{jumpstart} performance and measures the performance improvement after having learned the target task or during the last time steps of the algorithm. However, this is hard to measure because one has to know when the task learning algorithm converged. Furthermore, the task learning algorithm and the algorithm that does not use knowledge transfer may require a different training time in order to converge.
     \item \textit{Total reward}: This is the total reward that the algorithm has accumulated during learning, i.e.\ the area under the learning curve. In case of improvement, this area is bigger than when transfer learning isn't used. This can be achieved when the transfer learning algorithm has a higher learning rate.
     However, convergence is again an issue here. An algorithm that learns slower and thus takes more time to converge may accumulate a higher total reward than a faster algorithm, although the latter may even reach a higher performance. This metric is only useful for tasks that always have the same duration.
     \item \textit{Transfer ratio}: This is the ratio of the total reward improvement that the transfer learning algorithm has over the other algorithm. Because it uses the \textit{total reward} metric, it suffers from the same issues. Furthermore, it is also influenced by the reward structure. For example, an agent always receiving a reward of $+1$ at the end of the episode may result in a different ratio.
@@ -43,8 +43,8 @@ A graph with 4 of the 5 metrics is shown in Figure~\ref{fig:TLmetrics}.
     \caption[Transfer learning metrics]{A graph comparing the \textit{jumpstart}, \textit{time to threshold} and \textit{asymptotic performance} metrics between the algorithm that uses knowledge transfer and the one that does not use it. Note that here the transfer learning algorithm performs better on all three metrics. It can also be seen that the total reward is higher. Source: \cite{Taylor2009TransferSurvey}.}
     \label{fig:TLmetrics}
 \end{figure}
-Instead of comparing the transfer learning algorithm with an algorithm that doesn't use knowledge transfer, it is also possible to compare the algorithm with the performance of humans (by averaging their performances).
-However, metrics must be chosen carefully such that they don't favor the algorithm or the human and that they cannot be abused.
+Instead of comparing the transfer learning algorithm with an algorithm that does not use knowledge transfer, it is also possible to compare the algorithm with the performance of humans (by averaging their performances).
+However, metrics must be chosen carefully such that they do not favor the algorithm or the human and that they cannot be abused.
 
 \section{Related work}
 % Types of knowledge that is transferred: Value functions, features extracted from value functions, heuristics, policies
@@ -113,7 +113,7 @@ Again, after learning the source tasks, the parameters of the function approxima
 
 2 other approaches use a hierarchical Bayesian model. They use this to find parameters that make up the dynamics and reward function of a problem. In \cite{sunmola2006model}, transitions of source tasks are used as a prior to find parameters for models.
 After getting transitions from the target task, the most probable model for the target task transitions is transferred and used.\\
-\cite{conf/icml/WilsonFRT07} use a similar approach, but they don't make a distinction between source and target tasks. Instead, problems (MDPs) are executed sequentially and models are built using an already acquired set of transitions and models of previous tasks.\\
+\cite{conf/icml/WilsonFRT07} use a similar approach, but they do not make a distinction between source and target tasks. Instead, problems (MDPs) are executed sequentially and models are built using an already acquired set of transitions and models of previous tasks.\\
 
 In \cite{Isele2016UsingLearning}, a multi-task learning method is presented that learns tasks simultaneously by using a predefined description for each task.
 When a new task arrives along with its features, obtained from its task descriptor, a policy can be generated that immediately results in a good performance, even though the algorithm was not applied on that task before and the task descriptor, task order and task distribution were not known on beforehand. This is called \textit{zero-shot learning}.

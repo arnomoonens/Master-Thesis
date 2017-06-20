@@ -12,12 +12,14 @@
 *.loa
 *.lof
 *.pdf
-!titlepage.pdf
+*.lot
+*.bcf
+*.run.xml
 
 *.sublime-workspace
 .ipynb_checkpoints
-/main.lot
-
-/main.bcf
-
-/main.run.xml
+_minted-*
+test*
+*.nav
+*.snm
+*.vrb

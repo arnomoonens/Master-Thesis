@@ -84,7 +84,7 @@ Q^{*}(s,a) &= E\{r_{t+1} + \gamma \max_{a'} Q^{*}(s_{t+1},a') \vert s_t=s, a_t=a
 
 \section{Monte Carlo and Temporal-Difference}
 \label{sub:rl_mctd}
-Unlike dynamic programming, model-free methods don't require complete knowledge of the environment.
+Unlike dynamic programming, model-free methods do not require complete knowledge of the environment.
 Instead, only sample transitions are needed.
 This way, 2 problems with dynamic programming can be solved.
 First, the model may be large, which makes it infeasible to use for computing for example an optimal policy.
@@ -132,7 +132,7 @@ The $n$-step target can be formulated as:
 \begin{equation}
 R_t^{(n)} = r_{t+1} + \gamma r_{t+2} + \dots + \gamma^{n-1}r_{t+n} + \gamma^n V_t(s_{t+n})
 \end{equation}
-There, we treat the terminal state as a state that always transitions to itself with zero reward. As such, treating an episodic task the same way as a continuing task doesn't influence the result, even if we discount the returns. All $n$-step returns that last up to or past termination will have the same value as the complete return.\\
+There, we treat the terminal state as a state that always transitions to itself with zero reward. As such, treating an episodic task the same way as a continuing task does not influence the result, even if we discount the returns. All $n$-step returns that last up to or past termination will have the same value as the complete return.\\
 The increment to $V_t(s_t)$ is then defined by:
 \begin{equation}
 \Delta V_t(s_t) = \alpha \left[ R_t^{(n)} - V_t(s_t) \right]
@@ -148,7 +148,7 @@ After a terminal state has been reached, all subsequent $n$-step returns are equ
 \begin{equation}
 \Delta V_t(s_t) = \alpha \left[ R_t^{\lambda} - V_t(s_t) \right]
 \end{equation}
-In this forward view, we look for each state visited forward in time to all the future rewards and decide how best to combine them. After looking forward from a state and updating it, we move to the next one and don't work with that state anymore. Future states, however, are viewed and processed repeatedly. This way of thinking is visualized in Figure \ref{fig:TDForwardView}.
+In this forward view, we look for each state visited forward in time to all the future rewards and decide how best to combine them. After looking forward from a state and updating it, we move to the next one and do not work with that state anymore. Future states, however, are viewed and processed repeatedly. This way of thinking is visualized in Figure \ref{fig:TDForwardView}.
 \begin{figure}[htb]
 \includegraphics[width=.9\linewidth]{images/TDForwardView.png}
 \caption[TD forward view]{The forward view, where each state value is updated by looking forward to the states and their rewards that follow. Source: \cite{Sutton1998ReinforcementIntroduction}.}
@@ -221,14 +221,14 @@ $e(s,a) \gets 0$ for all $s,a$\;
 \label{algo:sarsalambda}
 \end{algorithm}
 Two methods exist to combine TD($\lambda$) and Q-learning and thus getting Q($\lambda$): Watkins' Q($\lambda$) and Peng's Q($\lambda$).\\
-Here, we must cut off the look ahead until the first exploratory action instead of the episode's end. This is done because this exploratory action doesn't have any relationship with the greedy policy. Recall that Q-learning is an off-policy method and the policy learned about is not necessarily the same as the one that is used to select actions. As such, it can learn about the greedy policy while following a policy involving exploratory and possibly suboptimal actions.
+Here, we must cut off the look ahead until the first exploratory action instead of the episode's end. This is done because this exploratory action does not have any relationship with the greedy policy. Recall that Q-learning is an off-policy method and the policy learned about is not necessarily the same as the one that is used to select actions. As such, it can learn about the greedy policy while following a policy involving exploratory and possibly suboptimal actions.
 
 For Watkins' Q($\lambda$), if $a_{t+n}$ is the first exploratory action, the longest backup is toward:
 \begin{equation}
 r_{t+1} + \gamma r_{t+2} + \dots + \gamma^{n-1} r_{t+n} + \gamma^n \max_a Q_t(s_{t+n},a)
 \end{equation}
 Where we assume off-line updating.\\
-In the backward view, we update the eligibility traces just like in Sarsa, with the only exception that we don't use the eligibility trace of the previous time step when a suboptimal (exploratory) action is taken. We get the following result:
+In the backward view, we update the eligibility traces just like in Sarsa, with the only exception that we do not use the eligibility trace of the previous time step when a suboptimal (exploratory) action is taken. We get the following result:
 \begin{equation}
 e_t(s,a) = I_{s s_t} * I_{a a_t} + \begin{cases}
     \gamma \lambda e_{t-1}(s,a) & \text{if $Q_{t-1}(s_t,a_t) = \max_a Q_{t-1}(s_t,a)$;} \\
@@ -294,7 +294,7 @@ e_t(s,a) = \begin{cases}
 
 Another possible improvement if set correctly is a $\lambda$ that can be different at each time step $t$.
 For example, it may depend on the current state: $\lambda_t = \lambda(s_t)$.
-When we are sure about the estimate of the state $s_t$, it can be set to zero so we don't have to use estimates of the following states anymore.
+When we are sure about the estimate of the state $s_t$, it can be set to zero so we do not have to use estimates of the following states anymore.
 By setting it to $1$, we can achieve the opposite.
 
 \section{Policy gradient}
@@ -322,11 +322,11 @@ The policy gradient has the form of $\pi_{\theta}(s,a)$, where $\theta$ is a par
         \end{equation}
 \end{itemize}
 Where $d^{\pi_{\theta}}$ is the stationary distribution of the Markov chain for $\pi_{\theta}$. The stationary distribution $\bar{\pi}$ of a Markov distribution $P$ is a probability distribution such that $\bar{\pi} = \bar{\pi} P$. It can be thought of as denoting how much time is spent in each state. This way, values/rewards of states which are visited often are given a higher importance.\\
-As such, we need to find the parameters $\theta$ that maximize $J(\theta)$. This optimization problem can be solved using approaches that don't use a gradient, such as hill climbing or genetic algorithms. However, here we focus on gradient descent. In this case, we move the parameter values along the gradient using the quality function: $\Delta \theta = \alpha \nabla_{\theta} J(\theta)$, where $\alpha$ is the step-size parameter and $\nabla_{\theta} J(\theta)$ is the partial derivative for every dimension of $\theta$. To estimate each partial derivative, we can compute the policy objective function $J(\theta)$ for a slightly changed value of $\theta$, determined by $\epsilon$. For each dimension $k$, this is:
+As such, we need to find the parameters $\theta$ that maximize $J(\theta)$. This optimization problem can be solved using approaches that do not use a gradient, such as hill climbing or genetic algorithms. However, here we focus on gradient descent. In this case, we move the parameter values along the gradient using the quality function: $\Delta \theta = \alpha \nabla_{\theta} J(\theta)$, where $\alpha$ is the step-size parameter and $\nabla_{\theta} J(\theta)$ is the partial derivative for every dimension of $\theta$. To estimate each partial derivative, we can compute the policy objective function $J(\theta)$ for a slightly changed value of $\theta$, determined by $\epsilon$. For each dimension $k$, this is:
 \begin{equation}
 \frac{\partial J(\theta)}{\partial \theta_k} \approx \frac{J(\theta + \epsilon u_k) - J(\theta)}{\epsilon}
 \end{equation}
-where $u_k$ is a one-hot vector with a value of $1$ in dimension $k$ and $0$ elsewhere. This kind of gradient is called a Finite Difference gradient. It is a simple, black-box way that works for every policy because we don't need the derivative, but it is inaccurate and inefficient. We also need to determine the value of $\epsilon$ ourselves, which influences the accuracy.\\
+where $u_k$ is a one-hot vector with a value of $1$ in dimension $k$ and $0$ elsewhere. This kind of gradient is called a Finite Difference gradient. It is a simple, black-box way that works for every policy because we do not need the derivative, but it is inaccurate and inefficient. We also need to determine the value of $\epsilon$ ourselves, which influences the accuracy.\\
 
 Instead, we will solve the problem analytically. We assume that the policy is differentiable when it is non-zero and that we know the gradient.
 
@@ -438,7 +438,7 @@ The policy gradient will then be exactly:
 \begin{equation}
 \nabla_{\theta}J(\theta) = \ex_{\pi_{\theta}} [\nabla_{\theta} \log \pi_{\theta}(s,a) Q_w(s,a)]
 \end{equation}
-To reduce the variance in the policy gradient we subtract the baseline function $B(s)$ from it. This doesn't change the expectation:
+To reduce the variance in the policy gradient we subtract the baseline function $B(s)$ from it. This does not change the expectation:
 \begin{align}
 \begin{split}
 \ex_{\pi_{\theta}} [\nabla_{\theta} \log \pi_{\theta}(s,a)B(s)] &= \sum_{s \in S} d^{\pi_{\theta}}(s) \sum_a \nabla_{\theta} \pi_{\theta}(s,a)B(s)\\
@@ -536,7 +536,7 @@ The gradient with respect to $\overrightarrow{\theta}_t$ is then:
 \nabla_{\overrightarrow{\theta}_t} V_t(s) = \overrightarrow{\phi}_s
 \end{equation}
 As can be seen, this update is rather simple. Furthermore, there is only one optimum (or several ones which are equally good), $\overrightarrow{\theta}^{*}$. As a result, the method is guaranteed to converge to or near a local optimum.\\
-Note that this linear form doesn't allow for the representation of interactions between features, for example when the presence of a certain features is good only if another feature is absent. For this, we need to introduce features that are combinations of feature values.\\
+Note that this linear form does not allow for the representation of interactions between features, for example when the presence of a certain features is good only if another feature is absent. For this, we need to introduce features that are combinations of feature values.\\
 
 \subsection{Coarse coding}
 \label{subs:rl_cc}
