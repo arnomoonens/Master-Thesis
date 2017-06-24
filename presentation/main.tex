@@ -1,6 +1,4 @@
 \documentclass{beamer}
-
-\usepackage{minted}
 \usepackage{hyperref}
 
 %\usetheme{vub}
@@ -12,31 +10,195 @@
 \author{Arno Moonens}
 \date{June 30, 2017}
 
+% To center the contents of a frame vertically
+\makeatletter
+\define@key{beamerframe}{c}[true]{% centered
+  \beamer@frametopskip=0pt plus 1fill\relax%
+  \beamer@framebottomskip=0pt plus 1fill\relax%
+  \beamer@frametopskipautobreak=0pt plus .4\paperheight\relax%
+  \beamer@framebottomskipautobreak=0pt plus .6\paperheight\relax%
+  \def\beamer@initfirstlineunskip{}%
+}
+\makeatother
+
+% To change footnote size
+\let\oldfootnotesize\footnotesize
+\renewcommand*{\footnotesize}{\oldfootnotesize\tiny}
+
+\setbeamertemplate{caption}{\raggedright\insertcaption\par}
+
 \AtBeginPart{\frame{\partpage}}
 % \AtBeginSection{\frame{\sectionpage}}
 % \AtBeginSubsection{\frame{\subsectionpage}}
+
+\graphicspath{ {../images/} }
 
 \begin{document}
 \frame{\titlepage}
 
 \begin{frame}{Outline}
-
+    \vskip0pt plus 2fill
   {\color{vubbleu}\large Background}
   \tableofcontents[part=1]
 
-  {\color{vubbleu}\large Results}
+  {\color{vubbleu}\large Experiments}
   \tableofcontents[part=2]
 \end{frame}
 
 \part{Background}
 
-\part{Results}
-\section{First}
+\section{Artificial neural networks}
+\begin{frame}[fragile]\frametitle{Artificial neural networks}
+\framesubtitle{Architecture}
+\vskip0pt plus 3fill
+\begin{columns}
+\begin{column}{0.5\textwidth}
+\includegraphics[width=\linewidth]{neuron.png}
+\end{column}
+\vrule
+\begin{column}{0.5\textwidth}
+\includegraphics[width=\linewidth]{ann.png}
+\end{column}
+\end{columns}
+\end{frame}
 
-\begin{frame}[fragile]{Title}
-\framesubtitle{Subtitle}
+\section{Reinforcement learning}
+\begin{frame}[fragile]\frametitle{Reinforcement learning}
+\vskip0pt plus 1fill
+\begin{center}
+    \includegraphics[width=.7\linewidth]{reinforcementlearning.png}
+    \footnote{Source: \url{https://www.analyticsvidhya.com/blog/2017/01/introduction-to-reinforcement-learning-implementation/}}
+\end{center}
+\begin{itemize}
+    \item Goal: maximize a reward
+    \begin{itemize}
+        \item By changing its policy $\pi$
+    \end{itemize}
+    \item Policy gradient:
+    \begin{itemize}
+        \item Policy is parametrized: $\pi_\theta(s,a)$
+        \item Input: states
+        \item Output: action (probabilities)
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
+\section{Deep reinforcement learning}
+\begin{frame}[fragile]{Deep reinforcement learning}
+\framesubtitle{A3C architecture}
+\vskip0pt plus 10fill
+\begin{center}
+    \includegraphics[width=.7\linewidth]{A3Carchitecture}
+\end{center}
+\end{frame}
+
+\section{Transfer learning}
+\begin{frame}[fragile]{Transfer learning}
+% \framesubtitle{A3C architecture}
+\vskip0pt plus 10fill
+\begin{center}
+    % \includegraphics[width=.7\linewidth]{A3Carchitecture}
+\end{center}
+\end{frame}
+
+\section{Transfer learning}
+
+\part{Experiments}
+\section{Proposed algorithm}
+\begin{frame}[fragile]{Proposed algorithm}
+\framesubtitle{Architecture}
+\vskip0pt plus 1fill
+\begin{center}
+    \includegraphics[width=\linewidth]{knowledge_transfer.png}
+\end{center}
+\end{frame}
+
+\section{Experimental setup}
+\begin{frame}[fragile]{Experimental setup}
+\framesubtitle{Environments}
+\begin{figure}[htb]
+    \begin{minipage}{0.55\textwidth}
+            \includegraphics[width=\linewidth]{cartpole.png}
+            \caption{Cart-Pole}
+    \end{minipage}\hfill
+    \begin{minipage}{0.45\textwidth}
+            \includegraphics[width=\linewidth]{acrobot.png}
+            \caption{Acrobot}
+    \end{minipage}
+\end{figure}
 
 \end{frame}
 
+\section{Results}
+\frame{\sectionpage}
+\begin{frame}[fragile]{Parallel and sequential knowledge transfer}
+\framesubtitle{Cart-pole}
+\vskip0pt plus 3fill
+\begin{center}
+    \includegraphics[width=.8\linewidth]{results/CartPole/kt_akt/reward_source-target_5tasks.png}
+\end{center}
+\end{frame}
+
+\begin{frame}[fragile]{Feature extraction}
+\framesubtitle{Cart-pole}
+\vskip0pt plus 3fill
+\begin{center}
+    \includegraphics[width=.8\linewidth]{results/CartPole/feature_extraction.png}
+\end{center}
+\end{frame}
+
+\begin{frame}[fragile]{Different amount of source tasks}
+\framesubtitle{Cart-pole}
+\vskip0pt plus 3fill
+\begin{center}
+    \includegraphics[width=.8\linewidth]{results/CartPole/no_sparse_transfer/reward_target_re-akt5-akt10.png}
+\end{center}
+\end{frame}
+
+\begin{frame}[fragile]{Different amount of source tasks}
+\framesubtitle{Acrobot}
+\vskip0pt plus 3fill
+\begin{center}
+    \includegraphics[width=.8\linewidth]{results/Acrobot/no_sparse_transfer/reward_target_re-akt5-akt10.png}
+\end{center}
+\end{frame}
+
+\begin{frame}[fragile]{Transfer of sparse representation}
+\framesubtitle{Cart-pole}
+\vskip0pt plus 3fill
+\begin{center}
+    \includegraphics[width=.8\linewidth]{results/CartPole/sparse_transfer/reward_target_re-akt5-akt10.png}
+\end{center}
+\end{frame}
+
+\begin{frame}[fragile]{Transfer of sparse representation}
+\framesubtitle{Acrobot}
+\vskip0pt plus 3fill
+\begin{center}
+    \includegraphics[width=.8\linewidth]{results/Acrobot/sparse_transfer/reward_target_re-akt5-akt10.png}
+\end{center}
+\end{frame}
+
+\begin{frame}[fragile]{REINFORCE using a source and target task}
+\framesubtitle{Cart-pole}
+\vskip0pt plus 3fill
+\begin{center}
+    \includegraphics[width=.8\linewidth]{results/CartPole/reinforce_2tasks.png}
+\end{center}
+\end{frame}
+
+\begin{frame}[fragile]{REINFORCE using a source and target task}
+\framesubtitle{Acrobot}
+\vskip0pt plus 3fill
+\begin{center}
+    \includegraphics[width=.8\linewidth]{results/Acrobot/reinforce_2tasks.png}
+\end{center}
+\end{frame}
+
+\begin{frame}[c]{The end}
+\begin{center}
+    \color{vubbleu} \LARGE\vubfont Thank you for listening!
+\end{center}
+\end{frame}
 
 \end{document}
