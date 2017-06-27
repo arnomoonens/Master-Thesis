@@ -1,4 +1,4 @@
-\documentclass{beamer}
+
 \usepackage{hyperref}
 
 %\usetheme{vub}
@@ -32,6 +32,13 @@
 % \AtBeginSubsection{\frame{\subsectionpage}}
 
 \graphicspath{ {../images/} }
+
+\makeatletter
+\def\beamer@framenotesbegin{% at beginning of slide
+  \gdef\beamer@noteitems{}%
+  \gdef\beamer@notes{{}}% used to be totally empty.
+}
+\makeatother
 
 \begin{document}
 \frame{\titlepage}
@@ -140,14 +147,23 @@
 \end{center}
 \end{frame}
 
+\begin{frame}[fragile]{Proposed algorithm}
+\framesubtitle{Learning source tasks}
+\vskip1.5cm plus 2fill
+\begin{center}
+    \includegraphics[width=.75\linewidth]{knowledge_transfer_tasks.png}
+\end{center}
+\end{frame}
+
 \section{Experimental setup}
 \begin{frame}[fragile]{Experimental setup}
 \framesubtitle{Environments}
-\vskip0pt plus 2fill
+\vskip1.1cm plus 2.5fill
 \begin{figure}[htb]
     \begin{minipage}{0.55\textwidth}
             \includegraphics[width=\linewidth]{cartpole.png}
             \caption{Cart-Pole. Source: \cite{grant1990modelling}.}
+            \vskip0.9cm
             \begin{itemize}
                 \item Different cart mass
                 \item Different pole mass \& length
@@ -184,7 +200,8 @@
 
 \begin{frame}[fragile]{Different amount of source tasks}
 \framesubtitle{Cart-pole}
-\vskip0pt plus 3fill
+\vskip1.5cm plus 0.5cm minus 0.1cm
+Using 5 and 10 tasks, compared with \textit{REINFORCE}.
 \begin{center}
     \includegraphics[width=.8\linewidth]{results/CartPole/no_sparse_transfer/reward_target_re-akt5-akt10.png}
 \end{center}
@@ -200,7 +217,8 @@
 
 \begin{frame}[fragile]{Transfer of sparse representation}
 \framesubtitle{Cart-pole}
-\vskip0pt plus 3fill
+\vskip1.5cm plus 0.5cm minus 0.1cm
+Transfer of shared knowledge base and randomly chosen sparse representation.
 \begin{center}
     \includegraphics[width=.8\linewidth]{results/CartPole/sparse_transfer/reward_target_re-akt5-akt10.png}
 \end{center}
@@ -216,7 +234,8 @@
 
 \begin{frame}[fragile]{REINFORCE using a source and target task}
 \framesubtitle{Cart-pole}
-\vskip0pt plus 3fill
+\vskip1.5cm plus 0.5cm minus 0.1cm
+Transfer of ANN weights.
 \begin{center}
     \includegraphics[width=.8\linewidth]{results/CartPole/reinforce_2tasks.png}
 \end{center}
@@ -261,7 +280,6 @@
 
 \begin{frame}[allowframebreaks]
 \frametitle{References}
-\vskip0pt plus 1fill
 \footnotesize{
 \bibliographystyle{apalike}
 \bibliography{../Mendeley.bib}

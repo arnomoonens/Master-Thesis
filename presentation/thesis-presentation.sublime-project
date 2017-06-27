@@ -6,6 +6,7 @@
 		}
 	],
     "settings": {
+        "TEXroot": "presentation-slides.tex",
         "builder_settings": {
             "options": [
                 "--shell-escape"
