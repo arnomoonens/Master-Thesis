@@ -6,7 +6,7 @@
 %\usetheme[showsection]{vub}
 
 \title{Knowledge transfer in deep reinforcement learning}
-\subtitle{Master thesis}
+% \subtitle{Master thesis}
 \author{Arno Moonens}
 \date{June 30, 2017}
 
@@ -37,19 +37,22 @@
 \frame{\titlepage}
 
 \begin{frame}{Outline}
-    \vskip0pt plus 2fill
+    \vskip0pt plus 3fill
   {\color{vubbleu}\large Background}
   \tableofcontents[part=1]
 
   {\color{vubbleu}\large Experiments}
   \tableofcontents[part=2]
+
+  {\color{vubbleu}\large Conclusions}
+  \tableofcontents[part=3]
 \end{frame}
 
 \part{Background}
 
 \section{Artificial neural networks}
 \begin{frame}[fragile]\frametitle{Artificial neural networks}
-\framesubtitle{Architecture}
+% \framesubtitle{Architecture}
 \vskip0pt plus 3fill
 \begin{columns}
 \begin{column}{0.5\textwidth}
@@ -60,6 +63,17 @@
 \includegraphics[width=\linewidth]{ann.png}
 \end{column}
 \end{columns}
+\end{frame}
+
+\section{Deep learning}
+\begin{frame}[t]\frametitle{Deep learning}
+\framesubtitle{Convolutional neural networks}
+\vskip0pt plus 0.9fill
+\begin{center}
+    \includegraphics[width=\linewidth]{cnnlayout.png} \footnote{Source: \cite{clarifai}}\\
+    \vskip0pt plus 0.1fill
+    \includegraphics[width=\linewidth]{cnnfeatures.png} \footnote{Source: \cite{conf/icml/LeeGRN09}}
+\end{center}
 \end{frame}
 
 \section{Reinforcement learning}
@@ -88,13 +102,12 @@
 \framesubtitle{A3C architecture}
 \vskip0pt plus 10fill
 \begin{center}
-    \includegraphics[width=.7\linewidth]{A3Carchitecture}
+    \includegraphics[width=.7\linewidth]{A3Carchitecture} \footnote{Source: \cite{Juliani2016A3C}}
 \end{center}
 \end{frame}
 
 \section{Transfer learning}
 \begin{frame}[fragile]{Transfer learning}
-% \framesubtitle{A3C architecture}
 \vskip0pt plus 1fill
 \begin{columns}
 \begin{column}{0.4\textwidth}
@@ -117,8 +130,6 @@
 \end{center}
 \end{frame}
 
-\section{Transfer learning}
-
 \part{Experiments}
 \section{Proposed algorithm}
 \begin{frame}[fragile]{Proposed algorithm}
@@ -132,14 +143,22 @@
 \section{Experimental setup}
 \begin{frame}[fragile]{Experimental setup}
 \framesubtitle{Environments}
+\vskip0pt plus 2fill
 \begin{figure}[htb]
     \begin{minipage}{0.55\textwidth}
             \includegraphics[width=\linewidth]{cartpole.png}
-            \caption{Cart-Pole}
+            \caption{Cart-Pole. Source: \cite{grant1990modelling}.}
+            \begin{itemize}
+                \item Different cart mass
+                \item Different pole mass \& length
+            \end{itemize}
     \end{minipage}\hfill
     \begin{minipage}{0.45\textwidth}
             \includegraphics[width=\linewidth]{acrobot.png}
-            \caption{Acrobot}
+            \caption{Acrobot. Source: \cite{fremaux2013reinforcement}.}
+            \begin{itemize}
+                \item Different length \& mass for each pole
+            \end{itemize}
     \end{minipage}
 \end{figure}
 
@@ -211,6 +230,8 @@
 \end{center}
 \end{frame}
 
+\part{Conclusions}
+\section{Conclusions}
 \begin{frame}[fragile]{Conclusions}
 \begin{itemize}
     \item Parallel learning on source tasks better than sequentially
@@ -220,10 +241,31 @@
 \end{itemize}
 \end{frame}
 
+
+\begin{frame}[fragile]{Conclusions}
+\framesubtitle{Future work}
+\begin{itemize}
+    \item Apply on environments with feature extraction (e.g. \textit{Pong}, \textit{Breakout})
+    \item Transfer between different environments
+    \begin{itemize}
+        \item Using task mappings
+    \end{itemize}
+\end{itemize}
+\end{frame}
+
 \begin{frame}[c]{The end}
 \begin{center}
     \color{vubbleu} \LARGE\vubfont Thank you for listening!
 \end{center}
+\end{frame}
+
+\begin{frame}[allowframebreaks]
+\frametitle{References}
+\vskip0pt plus 1fill
+\footnotesize{
+\bibliographystyle{apalike}
+\bibliography{../Mendeley.bib}
+}
 \end{frame}
 
 \end{document}

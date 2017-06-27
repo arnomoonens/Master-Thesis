@@ -62,15 +62,26 @@ Recurrent neural networks (RNNs) are used to process sequential data such as spe
 \end{figure}
 %The above diagram has outputs at each time step, but depending on the task this may not be necessary. For example, when predicting the sentiment of a sentence we may only care about the final output, not the sentiment after each word. Similarly, we may not need inputs at each time step. The main feature of an RNN is its hidden state, which captures some information about a sequence.
 
-Training them was a problem because of the vanishing or exploding gradients, as these gradients either shrink or grow at every time step. Theoretical and empirical evidence has shown that it is hard for these kind of networks to store information long enough and that they have difficulties to learn long-term dependencies \parencite{bengio1994learning}.\\ %Sources for this: http://people.idsia.ch/~juergen/SeppHochreiter1991ThesisAdvisorSchmidhuber.pdf and http://www-dsi.ing.unifi.it/~paolo/ps/tnn-94-gradient.pdf
+Training them was a problem because of the vanishing or exploding gradients, as these gradients either shrink or grow at every time step.
+Theoretical and empirical evidence has shown that it is hard for these kind of networks to store information long enough and that they have difficulties to learn long-term dependencies \parencite{bengio1994learning}.\\ %Sources for this: http://people.idsia.ch/~juergen/SeppHochreiter1991ThesisAdvisorSchmidhuber.pdf and http://www-dsi.ing.unifi.it/~paolo/ps/tnn-94-gradient.pdf
 
-To learn RNNs, we also need to change the backpropagation algorithm in order to handle the different time steps. Here, the error for one training example (in this case one sequence) is just the sum of the errors at every time step: $e = \sum_t e_t$. The adapted backpropagation algorithm, called backpropagation through time (BPTT), also just sums up the gradient at every time step for every set of weights:  $\frac{\partial E}{\partial W} = \sum_t \frac{\partial E_t}{\partial W}$. For the weights $U$ and $V$ of Figure \ref{fig:rnnunrolled}, the gradients are computed just as in normal backpropagation. $W$ however depends on the previous state, which cannot simply be treated as a constant and must be replaced as well. As such, we get:
+To learn RNNs, we also need to change the backpropagation algorithm in order to handle the different time steps.
+Here, the error for one training example (in this case one sequence) is just the sum of the errors at every time step: $e = \sum_t e_t$.
+The adapted backpropagation algorithm, called backpropagation through time (BPTT), also just sums up the gradient at every time step for every set of weights:  $\frac{\partial E}{\partial W} = \sum_t \frac{\partial E_t}{\partial W}$.
+For the weights $U$ and $V$ of Figure \ref{fig:rnnunrolled}, the gradients are computed just as in normal backpropagation.
+$W$ however depends on the previous state, which cannot simply be treated as a constant and must be replaced as well.
+As such, we get:
 \begin{equation}
 \frac{\partial E_t}{\partial W} = \sum_{k=0}^t \frac{\partial E_t}{\partial \hat{y}_t} \frac{\partial \hat{y}_t}{\partial s_t} \frac{\partial s_t}{\partial s_k} \frac{\partial s_k}{\partial W}
 \end{equation}
 We see that training can be hard when the sequences are long, because we need to propagate back to the first time step.\\
 
-For the \textit{tanh} and \textit{sigmoid} function, the derivative is $0$ at both ends. This means that the gradients in other layers will also go towards zero and for small values in the matrix multiplications the gradient values are shrinking exponentially fast and become nearly zero after a few time steps. Because of this, steps far away will not contribute much to what you are currently computing, and as such the long-term dependencies are small. If the values of the partial derivatives are high however, we could get exploding gradients. These are however easier to detect and solve in practice, because the value of the gradients will be too high to be presented by a variable in the programming language. The problem can also easily be solved by restricting the value of the gradient in a certain range.\\ %source: http://www.jmlr.org/proceedings/papers/v28/pascanu13.pdf
+For the \textit{tanh} and \textit{sigmoid} function, the derivative is $0$ at both ends.
+This means that the gradients in other layers will also go towards zero and for small values in the matrix multiplications the gradient values are shrinking exponentially fast and become nearly zero after a few time steps.
+Because of this, steps far away will not contribute much to what you are currently computing, and as such the long-term dependencies are small.
+If the values of the partial derivatives are high however, we could get exploding gradients.
+These are however easier to detect and solve in practice, because the value of the gradients will be too high to be presented by a variable in the programming language.
+The problem can also easily be solved by restricting the value of the gradient in a certain range.\\ %source: http://www.jmlr.org/proceedings/papers/v28/pascanu13.pdf
 The problem of vanishing gradients can be solved by a better initialization of the weights, by regularization and by another non-linear function, namely the \textit{ReLU} function explained in Section~\ref{sub:rectified_linear_unit}.
 For this function, the derivative is either 0 (when $z<0$) or 1 ($\frac{\partial z}{\partial z} = 1$).\\
 
@@ -85,7 +96,11 @@ The architecture of an LSTM cell is shown in Figure~\ref{fig:lstm}.
 \end{figure}
 
 Another kind of recurrent unit is the Gated Recurrent Unit (GRU), which was introduced by \cite{Cho2014LearningTranslation}. It is simpler than LSTM but yields similar results.
-It also uses an internal memory, here called the \textit{hidden state} and denoted by $h$. An update gate $z$ determines how much of the previous memory we want to keep, depending on the previous hidden state and the input. A reset gate $r$ says how much of the previous hidden state we want to keep in the new hidden state, depending on the hidden state and the input. The new hidden state is then a combination of the partly "reset" previous hidden state and the input. The output is the sum of the previous hidden state and the new one, weighted by the reset gate.\\
+It also uses an internal memory, here called the \textit{hidden state} and denoted by $h$.
+An update gate $z$ determines how much of the previous memory we want to keep, depending on the previous hidden state and the input.
+A reset gate $r$ says how much of the previous hidden state we want to keep in the new hidden state, depending on the hidden state and the input.
+The new hidden state is then a combination of the partly "reset" previous hidden state and the input.
+The output is the sum of the previous hidden state and the new one, weighted by the reset gate.\\
 By always setting the reset gate to $1$ and the update gate to $0$ we get again the classic RNN architecture.\\
 The architecture of a GRU cell is visualized in Figure~\ref{fig:gru}.\\
 \begin{figure}[htb]
