@@ -1,3 +1,5 @@
 \documentclass{beamer}
+\let\notebackup\note
+\renewcommand{\note}[1]{\notebackup{\large #1}}
 \setbeameroption{show only notes}
 \input{main.tex}

@@ -70,6 +70,15 @@
 \includegraphics[width=\linewidth]{ann.png}
 \end{column}
 \end{columns}
+\note{
+    \begin{itemize}
+        \item ANN = function approximator
+        \item multiple layers each with units
+        \item each unit: non-linear function of linear combination of units at previous layer
+        \item each connection between units can vary in strength
+        \item Error is differentiated to compute change in weights (backpropagation)
+    \end{itemize}
+}
 \end{frame}
 
 \section{Deep learning}
@@ -81,6 +90,14 @@
     \vskip0pt plus 0.1fill
     \includegraphics[width=\linewidth]{cnnfeatures.png} \footnote{Source: \cite{conf/icml/LeeGRN09}}
 \end{center}
+\note{
+\begin{itemize}
+    \item Handle high-dimensional data
+    \item CNN = primarily used for images
+    \item Slide filter over image
+    \item Each level higher level representations
+\end{itemize}
+}
 \end{frame}
 
 \section{Reinforcement learning}
@@ -102,6 +119,19 @@
         \item Output: action (probabilities)
     \end{itemize}
 \end{itemize}
+\note{
+    \begin{itemize}
+        \item Learn by trial-and-error
+        \item Use policy to select actions
+        \item Action produced using value function for state and action or directly: policy gradient
+        \item Policy gradient:
+        \begin{itemize}
+            \item Parameterized policy
+            \item Action probabilities
+            \item Parameters updated to improve rewards
+        \end{itemize}
+    \end{itemize}
+}
 \end{frame}
 
 \section{Deep reinforcement learning}
@@ -111,6 +141,20 @@
 \begin{center}
     \includegraphics[width=.7\linewidth]{A3Carchitecture} \footnote{Source: \cite{Juliani2016A3C}}
 \end{center}
+\note{
+    \begin{itemize}
+        \item Combination of deep learning \& reinforcement learning
+        \item Applied on environments with images as input
+        \item Able to deal with correlated subsequent observations (they cause instability)
+        \item A3C
+        \begin{itemize}
+            \item Learn in parallel on same kind of environment (same parameters)
+            \item Global network with all the weights
+            \item Each worker has copy
+            \item Worker learns and then updates weights of global network
+        \end{itemize}
+    \end{itemize}
+}
 \end{frame}
 
 \section{Transfer learning}
@@ -135,6 +179,19 @@
 \end{columns}
 \begin{center}
 \end{center}
+\note{
+    \begin{itemize}
+        \item Use information about source task to improve target task performance
+        \begin{itemize}
+            \item Jumpstart, Asymptotic, Total reward, Time until threshold
+        \end{itemize}
+        \item Transfer representation (FE), transitions or policies
+        \item Tasks with same/different state and action space
+        \begin{itemize}
+            \item Task mapping may be necessary
+        \end{itemize}
+    \end{itemize}
+}
 \end{frame}
 
 \part{Experiments}
@@ -145,6 +202,17 @@
 \begin{center}
     \includegraphics[width=\linewidth]{knowledge_transfer.png}
 \end{center}
+\note{
+    \begin{itemize}
+        \item Policy factorized as knowledge base \& sparse representation
+        \begin{itemize}
+            \item Shared knowledge base
+            \item Shared feature extraction
+            \item Each task has own sparse representation
+        \end{itemize}
+        \item Softmax to get action probabilities
+    \end{itemize}
+}
 \end{frame}
 
 \begin{frame}[fragile]{Proposed algorithm}
@@ -153,6 +221,15 @@
 \begin{center}
     \includegraphics[width=.75\linewidth]{knowledge_transfer_tasks.png}
 \end{center}
+\note{
+    \begin{itemize}
+        \item Similar to A3C
+        \item Global network has no sparse representation
+        \item Each environment has different parameters (next slide)
+        \item Global network is always transferred to target task
+        \item Random sparse repr. can also be transferred
+    \end{itemize}
+}
 \end{frame}
 
 \section{Experimental setup}
@@ -177,7 +254,23 @@
             \end{itemize}
     \end{minipage}
 \end{figure}
-
+\note{
+    \begin{itemize}
+        \item Cart-pole:
+        \begin{itemize}
+            \item Balance pole on cart as long as possible
+            \item Force on cart
+            \item Different cart mass
+            \item Different pole mass \& length
+        \end{itemize}
+        \item Acrobot:
+        \begin{itemize}
+            \item 2 joint arms
+            \item Outer point must be above threshold in min. steps
+            \item Different arm lengths and masses
+        \end{itemize}
+    \end{itemize}
+}
 \end{frame}
 
 \section{Results}
