@@ -53,6 +53,12 @@
 
   {\color{vubbleu}\large Conclusions}
   \tableofcontents[part=3]
+  \note{
+  \begin{itemize}
+      \item Goal: algorithm that is combination of deep RL algorithm and transfer learning
+      \item First: discuss necessary knowledge
+  \end{itemize}
+  }
 \end{frame}
 
 \part{Background}
@@ -74,6 +80,11 @@
     \begin{itemize}
         \item ANN = function approximator
         \item multiple layers each with units
+        \begin{itemize}
+            \item Input layer: its values is the data
+            \item (Hidden layer(s)): Both receive info of units and get used by units of other layers
+            \item Output layer: uses inputs of previous layer, output is directly
+        \end{itemize}
         \item each unit: non-linear function of linear combination of units at previous layer
         \item each connection between units can vary in strength
         \item Error is differentiated to compute change in weights (backpropagation)
@@ -94,7 +105,9 @@
 \begin{itemize}
     \item Handle high-dimensional data
     \item CNN = primarily used for images
+    \item Filter is matrix of weights smaller than image
     \item Slide filter over image
+    \item Only this filter is used instead of connection for every pixel
     \item Each level higher level representations
 \end{itemize}
 }
@@ -122,6 +135,7 @@
 \note{
     \begin{itemize}
         \item Learn by trial-and-error
+        \item Do action in a state \rightarrow get reward
         \item Use policy to select actions
         \item Action produced using value function for state and action or directly: policy gradient
         \item Policy gradient:
@@ -181,7 +195,7 @@
 \end{center}
 \note{
     \begin{itemize}
-        \item Use information about source task to improve target task performance
+        \item Use information about source task(s) to improve target task performance
         \begin{itemize}
             \item Jumpstart, Asymptotic, Total reward, Time until threshold
         \end{itemize}
@@ -204,6 +218,7 @@
 \end{center}
 \note{
     \begin{itemize}
+        \item Architecture for a specific task $t$
         \item Policy factorized as knowledge base \& sparse representation
         \begin{itemize}
             \item Shared knowledge base
@@ -239,7 +254,7 @@
 \begin{figure}[htb]
     \begin{minipage}{0.55\textwidth}
             \includegraphics[width=\linewidth]{cartpole.png}
-            \caption{Cart-Pole. Source: \cite{grant1990modelling}.}
+            \caption{Cart-pole \cite{grant1990modelling}.}
             \vskip0.9cm
             \begin{itemize}
                 \item Different cart mass
@@ -248,7 +263,7 @@
     \end{minipage}\hfill
     \begin{minipage}{0.45\textwidth}
             \includegraphics[width=\linewidth]{acrobot.png}
-            \caption{Acrobot. Source: \cite{fremaux2013reinforcement}.}
+            \caption{Acrobot \cite{fremaux2013reinforcement}.}
             \begin{itemize}
                 \item Different length \& mass for each pole
             \end{itemize}
@@ -281,14 +296,35 @@
 \begin{center}
     \includegraphics[width=.8\linewidth]{results/CartPole/kt_akt/reward_source-target_5tasks.png}
 \end{center}
+\note{
+    \begin{itemize}
+        \item About the same asymptotic performance
+        \item Parallel version is faster (higher total reward (Area Under Curve))
+        \item Parallel: changes get applied immediately and effect other tasks
+        \item Sequential: changes are accumulated and applied after evaluating every task
+        \item Following experiments: parallel version
+    \end{itemize}
+}
 \end{frame}
 
 \begin{frame}[fragile]{Feature extraction}
 \framesubtitle{Cart-pole}
 \vskip0pt plus 3fill
+Feature extraction layer with 5 and 10 units.
 \begin{center}
     \includegraphics[width=.8\linewidth]{results/CartPole/feature_extraction.png}
 \end{center}
+\note{
+    \begin{itemize}
+        \item Feature extraction does not seem necessary
+        \begin{itemize}
+            \item It slows down learning
+        \end{itemize}
+        \item In general it's necessary for high-dimensional input spaces
+        \item (there was no time to disassemble Atari games)
+        \item Following experiments: no feature extraction
+    \end{itemize}
+}
 \end{frame}
 
 \begin{frame}[fragile]{Different amount of source tasks}
@@ -298,14 +334,31 @@ Using 5 and 10 tasks, compared with \textit{REINFORCE}.
 \begin{center}
     \includegraphics[width=.8\linewidth]{results/CartPole/no_sparse_transfer/reward_target_re-akt5-akt10.png}
 \end{center}
+\note{
+    \begin{itemize}
+        \item Faster convergence than \textit{REINFORCE}
+        \item Jumpstart TLA 10 > TLA 5 > REINFORCE
+        \item Same asymptotic performances
+    \end{itemize}
+}
 \end{frame}
 
 \begin{frame}[fragile]{Different amount of source tasks}
 \framesubtitle{Acrobot}
 \vskip0pt plus 3fill
-\begin{center}
-    \includegraphics[width=.8\linewidth]{results/Acrobot/no_sparse_transfer/reward_target_re-akt5-akt10.png}
-\end{center}
+\begin{figure}[htb]
+    \centering
+    \includegraphics[width=.8\linewidth]{results/Acrobot/no_sparse_transfer/asymp_target_re-akt5-akt10.png}
+    \caption{Asymptotic performances}
+\end{figure}
+\note{
+    \begin{itemize}
+        \item our algorithm is again better
+        \item Asymp. performances for REINFORCE vary a lot\dots
+        \item But most of the times we don't get past minimum reward
+        \item No significant difference between TLA 5 \& TLA 10
+    \end{itemize}
+}
 \end{frame}
 
 \begin{frame}[fragile]{Transfer of sparse representation}
@@ -313,16 +366,28 @@ Using 5 and 10 tasks, compared with \textit{REINFORCE}.
 \vskip1.5cm plus 0.5cm minus 0.1cm
 Transfer of shared knowledge base and randomly chosen sparse representation.
 \begin{center}
-    \includegraphics[width=.8\linewidth]{results/CartPole/sparse_transfer/reward_target_re-akt5-akt10.png}
+    \includegraphics[width=.8\linewidth]{results/CartPole/sparse_transfer/reward_target_without_with.png}
 \end{center}
+\note{
+    \begin{itemize}
+        \item Same asymptotic performances
+        \item Median jumpstart for Sparse: $200$ instead of about $165$
+    \end{itemize}
+}
 \end{frame}
 
 \begin{frame}[fragile]{Transfer of sparse representation}
 \framesubtitle{Acrobot}
 \vskip0pt plus 3fill
 \begin{center}
-    \includegraphics[width=.8\linewidth]{results/Acrobot/sparse_transfer/reward_target_re-akt5-akt10.png}
+    \includegraphics[width=.8\linewidth]{results/Acrobot/sparse_transfer/reward_target_without_with.png}
 \end{center}
+\note{
+    \begin{itemize}
+        \item Both jumpstart \& asymptotic performances are better
+        \item No significant difference between TLA 5 sparse \& TLA 10 sparse
+    \end{itemize}
+}
 \end{frame}
 
 \begin{frame}[fragile]{REINFORCE using a source and target task}
@@ -332,6 +397,13 @@ Transfer of ANN weights.
 \begin{center}
     \includegraphics[width=.8\linewidth]{results/CartPole/reinforce_2tasks.png}
 \end{center}
+\note{
+    \begin{itemize}
+        \item Learns faster
+        \item Higher jumpstart performance
+        \item Same asymptotic performance
+    \end{itemize}
+}
 \end{frame}
 
 \begin{frame}[fragile]{REINFORCE using a source and target task}
@@ -340,6 +412,13 @@ Transfer of ANN weights.
 \begin{center}
     \includegraphics[width=.8\linewidth]{results/Acrobot/reinforce_2tasks.png}
 \end{center}
+\note{
+    \begin{itemize}
+        \item Learns faster
+        \item Higher jumpstart performance
+        \item Higher asymptotic performance
+    \end{itemize}
+}
 \end{frame}
 
 \part{Conclusions}
@@ -351,6 +430,14 @@ Transfer of ANN weights.
     \item Our algorithm performs better than \textit{REINFORCE}
     \item It is better to use multiple source tasks
 \end{itemize}
+\note{
+    \begin{itemize}
+        \item Parallel better than sequentially
+        \item Feature extraction wasn't beneficial for \textit{cart-pole} and \textit{acrobot}
+        \item Our algorithm performs better than \textit{REINFORCE}
+        \item It is better to use multiple source tasks
+    \end{itemize}
+}
 \end{frame}
 
 
@@ -363,6 +450,15 @@ Transfer of ANN weights.
         \item Using task mappings
     \end{itemize}
 \end{itemize}
+\note{
+    \begin{itemize}
+        \item Apply on environments with feature extraction (e.g. \textit{Pong}, \textit{Breakout})
+        \item Transfer between different environments
+        \begin{itemize}
+            \item Using task mappings
+        \end{itemize}
+    \end{itemize}
+}
 \end{frame}
 
 \begin{frame}[c]{The end}
