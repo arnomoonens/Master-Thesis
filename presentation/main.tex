@@ -1,4 +1,4 @@
-
+\usepackage{bm} % To put math text in bold
 \usepackage{hyperref}
 
 %\usetheme{vub}
@@ -135,7 +135,7 @@
 \note{
     \begin{itemize}
         \item Learn by trial-and-error
-        \item Do action in a state \rightarrow get reward
+        \item Do action in a state -> get reward
         \item Use policy to select actions
         \item Action produced using value function for state and action or directly: policy gradient
         \item Policy gradient:
@@ -196,6 +196,8 @@
 \note{
     \begin{itemize}
         \item Use information about source task(s) to improve target task performance
+        \item For example same game with different difficulty
+        \item Improve:
         \begin{itemize}
             \item Jumpstart, Asymptotic, Total reward, Time until threshold
         \end{itemize}
@@ -203,6 +205,7 @@
         \item Tasks with same/different state and action space
         \begin{itemize}
             \item Task mapping may be necessary
+            \item To use information about source tasks on target task
         \end{itemize}
     \end{itemize}
 }
@@ -218,12 +221,15 @@
 \end{center}
 \note{
     \begin{itemize}
+        \item combines transfer learning with A3C
         \item Architecture for a specific task $t$
+        \item Uses policy gradient
         \item Policy factorized as knowledge base \& sparse representation
         \begin{itemize}
-            \item Shared knowledge base
+            \item Shared knowledge base: information common amongst tasks
             \item Shared feature extraction
-            \item Each task has own sparse representation
+            \item Each task has own sparse representation: how task differs from common knowledge
+            \item Sparse repr actually kept sparse by adding value to error: L1 loss
         \end{itemize}
         \item Softmax to get action probabilities
     \end{itemize}
@@ -241,8 +247,10 @@
         \item Similar to A3C
         \item Global network has no sparse representation
         \item Each environment has different parameters (next slide)
+        \item Source tasks learned sequentially or in parallel
         \item Global network is always transferred to target task
         \item Random sparse repr. can also be transferred
+        \item On target task: only sparse repr can be changed!
     \end{itemize}
 }
 \end{frame}
@@ -273,7 +281,7 @@
     \begin{itemize}
         \item Cart-pole:
         \begin{itemize}
-            \item Balance pole on cart as long as possible
+            \item Balance pole vertically on cart as long as possible
             \item Force on cart
             \item Different cart mass
             \item Different pole mass \& length
@@ -298,6 +306,7 @@
 \end{center}
 \note{
     \begin{itemize}
+        \item Source tasks until epoch 100; then target task
         \item About the same asymptotic performance
         \item Parallel version is faster (higher total reward (Area Under Curve))
         \item Parallel: changes get applied immediately and effect other tasks
@@ -327,15 +336,26 @@ Feature extraction layer with 5 and 10 units.
 }
 \end{frame}
 
-\begin{frame}[fragile]{Different amount of source tasks}
+\begin{frame}[fragile]{Different amount of tasks}
 \framesubtitle{Cart-pole}
 \vskip1.5cm plus 0.5cm minus 0.1cm
 Using 5 and 10 tasks, compared with \textit{REINFORCE}.
 \begin{center}
-    \includegraphics[width=.8\linewidth]{results/CartPole/no_sparse_transfer/reward_target_re-akt5-akt10.png}
+    \includegraphics[width=.6\linewidth]{results/CartPole/no_sparse_transfer/reward_target_re-akt5-akt10.png}
 \end{center}
+\begin{tabular}{llccc}
+\hline
+Algorithm & Mean & Standard deviation & Median \\
+\hline
+   REINFORCE  & $86.060$ & $25.330$ & $86.886$ \\
+   \textit{TLA 5} & $158.237$ & $23.153$ & $163.840$ \\
+   \textit{TLA 10} & $\bm{165.120}$ & $21.955$ & $\bm{169.034}$ \\
+\hline
+\end{tabular}
 \note{
     \begin{itemize}
+        \item target task performance
+        \item REINFORCE directly on target task
         \item Faster convergence than \textit{REINFORCE}
         \item Jumpstart TLA 10 > TLA 5 > REINFORCE
         \item Same asymptotic performances
@@ -353,6 +373,7 @@ Using 5 and 10 tasks, compared with \textit{REINFORCE}.
 \end{figure}
 \note{
     \begin{itemize}
+        \item asymptotic performances gives more info here
         \item our algorithm is again better
         \item Asymp. performances for REINFORCE vary a lot\dots
         \item But most of the times we don't get past minimum reward
@@ -364,10 +385,20 @@ Using 5 and 10 tasks, compared with \textit{REINFORCE}.
 \begin{frame}[fragile]{Transfer of sparse representation}
 \framesubtitle{Cart-pole}
 \vskip1.5cm plus 0.5cm minus 0.1cm
-Transfer of shared knowledge base and randomly chosen sparse representation.
+Also transfer a randomly chosen sparse representation.
 \begin{center}
-    \includegraphics[width=.8\linewidth]{results/CartPole/sparse_transfer/reward_target_without_with.png}
+    \includegraphics[width=.55\linewidth]{results/CartPole/sparse_transfer/reward_target_without_with.png}
 \end{center}
+    \begin{tabular}{llccc}
+    \hline
+    Algorithm & Sparse transfer & Mean & SD & Median \\
+    \hline
+       \textit{TLA 5} & No & $158.237$ & $23.153$ & $163.840$ \\
+       \textit{TLA 10} & No & $165.120$ & $21.955$ & $169.034$ \\
+       \textit{TLA 5} & Yes & $192.613$ & $28.179$ & $\bm{200.000}$ \\
+       \textit{TLA 10} & Yes & $\bm{196.125}$ & $21.640$ & $\bm{200.000}$ \\
+    \hline
+    \end{tabular}
 \note{
     \begin{itemize}
         \item Same asymptotic performances
@@ -399,6 +430,7 @@ Transfer of ANN weights.
 \end{center}
 \note{
     \begin{itemize}
+        \item REINFORCE first on source task then on target task
         \item Learns faster
         \item Higher jumpstart performance
         \item Same asymptotic performance
@@ -410,8 +442,17 @@ Transfer of ANN weights.
 \framesubtitle{Acrobot}
 \vskip0pt plus 3fill
 \begin{center}
-    \includegraphics[width=.8\linewidth]{results/Acrobot/reinforce_2tasks.png}
+    \includegraphics[width=.7\linewidth]{results/Acrobot/reinforce_2tasks.png}
 \end{center}
+\begin{tabular}{llccc}
+\hline
+Algorithm & Jumpstart & Asymptotic \\
+\hline
+   \textit{REINFORCE source \& target} & $-500$ & $-203.426$ \\
+   \textit{TLA 5} & $\bm{-110.482}$ & $\bm{-93.085}$ \\
+\hline
+\end{tabular}
+(medians)
 \note{
     \begin{itemize}
         \item Learns faster
@@ -425,21 +466,26 @@ Transfer of ANN weights.
 \section{Conclusions}
 \begin{frame}[fragile]{Conclusions}
 \begin{itemize}
-    \item Parallel learning on source tasks better than sequentially
-    \item Feature extraction wasn't beneficial for \textit{cart-pole} and \textit{acrobot}
-    \item Our algorithm performs better than \textit{REINFORCE}
+    \item It's better to use transfer learning
+    \begin{itemize}
+        \item Our algorithm performs better than \textit{REINFORCE}
+    \end{itemize}
     \item It is better to use multiple source tasks
+    \item Parallel learning on source tasks better than sequentially
+    \item Feature extraction wasn't beneficial for our environments
 \end{itemize}
 \note{
     \begin{itemize}
-        \item Parallel better than sequentially
-        \item Feature extraction wasn't beneficial for \textit{cart-pole} and \textit{acrobot}
-        \item Our algorithm performs better than \textit{REINFORCE}
+        \item It's better to use transfer learning
+        \begin{itemize}
+            \item Our algorithm performs better than \textit{REINFORCE}
+        \end{itemize}
         \item It is better to use multiple source tasks
+        \item Parallel learning on source tasks better than sequentially
+        \item Feature extraction wasn't beneficial for our environments
     \end{itemize}
 }
 \end{frame}
-
 
 \begin{frame}[fragile]{Conclusions}
 \framesubtitle{Future work}
@@ -453,6 +499,7 @@ Transfer of ANN weights.
 \note{
     \begin{itemize}
         \item Apply on environments with feature extraction (e.g. \textit{Pong}, \textit{Breakout})
+        \item For example using CNN
         \item Transfer between different environments
         \begin{itemize}
             \item Using task mappings
