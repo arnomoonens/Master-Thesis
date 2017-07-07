@@ -108,7 +108,8 @@
     \item Filter is matrix of weights smaller than image
     \item Slide filter over image
     \item Only this filter is used instead of connection for every pixel
-    \item Each level higher level representations
+    \item multiple convolutional layers
+    \item Each layer higher level representations
 \end{itemize}
 }
 \end{frame}
@@ -140,7 +141,7 @@
         \item Action produced using value function for state and action or directly: policy gradient
         \item Policy gradient:
         \begin{itemize}
-            \item Parameterized policy
+            \item Parameterized policy: for example using ANN
             \item Action probabilities
             \item Parameters updated to improve rewards
         \end{itemize}
@@ -160,12 +161,14 @@
         \item Combination of deep learning \& reinforcement learning
         \item Applied on environments with images as input
         \item Able to deal with correlated subsequent observations (they cause instability)
+        \item and forgetting because of changing data distributions
+        \item Problem with ANN: overfitting \& local minima
         \item A3C
         \begin{itemize}
             \item Learn in parallel on same kind of environment (same parameters)
             \item Global network with all the weights
             \item Each worker has copy
-            \item Worker learns and then updates weights of global network
+            \item Worker gathers experience and then updates weights of global network
         \end{itemize}
     \end{itemize}
 }
@@ -196,7 +199,7 @@
 \note{
     \begin{itemize}
         \item Use information about source task(s) to improve target task performance
-        \item For example same game with different difficulty
+        \item For example program learns to drive in simul. \& then in real world
         \item Improve:
         \begin{itemize}
             \item Jumpstart, Asymptotic, Total reward, Time until threshold
@@ -273,12 +276,13 @@
             \includegraphics[width=\linewidth]{acrobot.png}
             \caption{Acrobot \cite{fremaux2013reinforcement}.}
             \begin{itemize}
-                \item Different length \& mass for each pole
+                \item Different length \& mass for each arm
             \end{itemize}
     \end{minipage}
 \end{figure}
 \note{
     \begin{itemize}
+        \item Variations of...
         \item Cart-pole:
         \begin{itemize}
             \item Balance pole vertically on cart as long as possible
@@ -288,7 +292,7 @@
         \end{itemize}
         \item Acrobot:
         \begin{itemize}
-            \item 2 joint arms
+            \item Contains of 2 joint arms
             \item Outer point must be above threshold in min. steps
             \item Different arm lengths and masses
         \end{itemize}
@@ -357,6 +361,7 @@ Algorithm & Mean & Standard deviation & Median \\
         \item target task performance
         \item REINFORCE directly on target task
         \item Faster convergence than \textit{REINFORCE}
+        \item In table jumpstart performances
         \item Jumpstart TLA 10 > TLA 5 > REINFORCE
         \item Same asymptotic performances
     \end{itemize}
@@ -373,7 +378,7 @@ Algorithm & Mean & Standard deviation & Median \\
 \end{figure}
 \note{
     \begin{itemize}
-        \item asymptotic performances gives more info here
+        \item boxplot of asymptotic performances gives more info here
         \item our algorithm is again better
         \item Asymp. performances for REINFORCE vary a lot\dots
         \item But most of the times we don't get past minimum reward
@@ -401,7 +406,9 @@ Also transfer a randomly chosen sparse representation.
     \end{tabular}
 \note{
     \begin{itemize}
+        \item instead of random initialization
         \item Same asymptotic performances
+        \item in table jumpstart
         \item Median jumpstart for Sparse: $200$ instead of about $165$
     \end{itemize}
 }
@@ -424,13 +431,13 @@ Also transfer a randomly chosen sparse representation.
 \begin{frame}[fragile]{REINFORCE using a source and target task}
 \framesubtitle{Cart-pole}
 \vskip1.5cm plus 0.5cm minus 0.1cm
-Transfer of ANN weights.
+Transfer of ANN weights from source to target task.
 \begin{center}
     \includegraphics[width=.8\linewidth]{results/CartPole/reinforce_2tasks.png}
 \end{center}
 \note{
     \begin{itemize}
-        \item REINFORCE first on source task then on target task
+        \item REINFORCE first on single source task then on target task
         \item Learns faster
         \item Higher jumpstart performance
         \item Same asymptotic performance
@@ -476,6 +483,7 @@ Algorithm & Jumpstart & Asymptotic \\
 \end{itemize}
 \note{
     \begin{itemize}
+        \item In our experiments...
         \item It's better to use transfer learning
         \begin{itemize}
             \item Our algorithm performs better than \textit{REINFORCE}
